@@ -1,0 +1,1932 @@
+swagger: '2.0'
+host: api.zoop.ws
+info:
+  title: Métodos de Cobrança
+  version: "1.1"
+
+securityDefinitions:
+  basicAuth:
+    type: basic
+security:
+  - basicAuth: []
+
+schemes:
+  - https
+
+tags:
+  - name: 'Transação'
+    description: Operações de pagamento com dados de cartão de crédito
+  - name: 'Transação Cartão Presente (CHIP&PIN)'
+    description: Operações de pagamento com maquininha chip e senha
+  - name: 'Boleto'
+    description: Operações de pagamento via boleto bancário registrado
+  - name: 'Cartão'
+    description: Cartões de crédito/débito utilizados nos pagamentos
+  - name: 'Regra de Divisão'
+    description: Regras de divisão (split) de um pagamento
+  - name: 'Recibo'
+    description: Recibos de pagamentos realizados com sucesso
+
+paths:
+  /v1/marketplaces/{marketplace_id}/transactions:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+    get:
+      summary: Listar transaçoes do marketplace
+      tags:
+        - Transação
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/limitParam'
+        - $ref: '#/parameters/sortParam'
+        - $ref: '#/parameters/offsetParam'
+        - $ref: '#/parameters/dateRangeParam'
+        - $ref: '#/parameters/dateRangeGTParam'
+        - $ref: '#/parameters/dateRangeGTEParam'
+        - $ref: '#/parameters/dateRangeLTParam'
+        - $ref: '#/parameters/dateRangeLTEParam'
+        - name: reference_id
+          in: query
+          type: string
+          description: "Retorna transações onde o reference id for igual o informado"
+          required: false
+        - name: status
+          in: query
+          type: string
+          description: "Retorna transações onde o status for igual o informado. Para busca múltipla basta concatenar com ,"
+          required: false
+          enum:
+            - succeeded
+            - failed
+            - canceled
+            - pre_authorized
+            - reversed
+            - refunded
+            - pending
+            - new
+            - partial_refunded
+            - dispute
+            - charged_back
+        - name: payment_type
+          in: query
+          type: string
+          description: "Retorna transações onde o payment type for igual o informado. Para busca múltipla basta concatenar com ,"
+          required: false
+          enum:
+            - credit
+            - debit
+            - wallet
+            - boleto
+      responses:
+        '200':
+          description: Transações recuperadas com sucesso
+          schema:
+            $ref: '#/definitions/Transactions'
+        '404':
+          description: 'Marketplace não encontrado'
+    post:
+      summary: Criar transação Cartão Não Presente
+      tags:
+        - Transação
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: marketplace_id
+          in: path
+          description: identificador do marketplace
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Transacao
+          schema:
+            $ref: '#/definitions/TransactionCNPRequest'
+      responses:
+        '200':
+          description: Transação criada com sucesso
+          schema:
+            $ref: '#/definitions/TransactionResponse'
+        '404':
+          description: 'Transação não encontrada'
+  /v1/marketplaces/{marketplace_id}/sellers/{seller_id}/transactions:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador do seller
+        required: true
+        type: string
+    get:
+      summary: Listar transaçoes por vendedor
+      tags:
+        - Transação
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/limitParam'
+        - $ref: '#/parameters/sortParam'
+        - $ref: '#/parameters/offsetParam'
+        - $ref: '#/parameters/dateRangeParam'
+        - $ref: '#/parameters/dateRangeGTParam'
+        - $ref: '#/parameters/dateRangeGTEParam'
+        - $ref: '#/parameters/dateRangeLTParam'
+        - $ref: '#/parameters/dateRangeLTEParam'
+      responses:
+        '200':
+          description: Transações recuperadas com sucesso
+          schema:
+            $ref: '#/definitions/Transactions'
+        '404':
+          description: 'Marketplace não encontrado'
+  /v1/marketplaces/{marketplace_id}/transactions/{transaction_id}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        type: string
+    get:
+      summary: Recuperar detalhes de transação pelo identificador
+      tags:
+        - Transação
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transação recuperada com sucesso
+          schema:
+            $ref: '#/definitions/TransactionResponse'
+        '404':
+          description: 'Transação não encontrada'
+    put:
+      summary: Alterar detalhes de transação pelo identificador
+      tags:
+        - Transação
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: marketplace_id
+          in: path
+          description: identificador do marketplace
+          required: true
+          type: string
+        - name: transaction_id
+          in: path
+          description: identificador da transação
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Transacao
+          required: true
+          schema:
+            $ref: '#/definitions/TransactionUpdateRequest'
+      responses:
+        '200':
+          description: Transação alterada com sucesso
+          schema:
+            $ref: '#/definitions/TransactionResponse'
+        '404':
+          description: 'Transação não encontrada'
+  /v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/void:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        type: string
+    post:
+      tags:
+        - Transação
+      summary: 'Estornar transação cartão não presente'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Transacao
+          schema:
+            $ref: '#/definitions/TransactionVoidRequest'
+      responses:
+        '200':
+          description: Transação estornada com sucesso
+          schema:
+            $ref: '#/definitions/TransactionResponse'
+        '400':
+          description: Requisição/Parametros inválidos
+        '404':
+          description: Marketplace/Transação não encontrado
+  /v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/capture:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        type: string
+    post:
+      tags:
+        - Transação
+      summary: 'Capturar transação cartão não presente'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Transacao
+          schema:
+            $ref: '#/definitions/TransactionCaptureRequest'
+      responses:
+        '200':
+          description: Transação capturada com sucesso
+          schema:
+            $ref: '#/definitions/TransactionResponse'
+        '400':
+          description: Requisição/Parametros inválidos
+        '404':
+          description: Marketplace/Transação não encontrado
+  /v1/marketplaces/{marketplace_id}/cards:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Cartão'
+      summary: 'Associar cartão com comprador'
+      description: 'Associar token de cartão com comprador'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Dados do cartao e customer
+          required: true
+          schema:
+            $ref: '#/definitions/CardRequest'
+      responses:
+        '200':
+          description: Cartão associado com sucesso
+        '400':
+          description: Requisição/Parâmetros invalidos
+        '404':
+          description: Marketplace/ não encontrado
+  /v1/marketplaces/{marketplace_id}/cards/{card_id}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: card_id
+        in: path
+        description: identificador do cartão
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Cartão'
+      summary: 'Recuperar detalhes de cartão pelo identificador'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Cartão recuperado com sucesso
+        '404':
+          description: Marketplace/Cartão não encontrado
+    delete:
+      tags:
+        - 'Cartão'
+      summary: 'Remover cartão pelo identificador'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Cartão removido com sucesso
+        '404':
+          description: Marketplace/Cartão não encontrado
+    put:
+      tags:
+        - 'Cartão'
+      summary: 'Atualizar detalhes de cartão pelo identificador'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Cartão atualizado com sucesso
+        '404':
+          description: Marketplace/Cartão não encontrado
+  /v1/marketplaces/{marketplace_id}/sources:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Source'
+      summary: 'Criar source para utilizacão transação'
+      description: 'Um objeto source permite você aceitar uma variedade de formas de pagamento'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Dados do source
+          required: true
+          schema:
+            $ref: '#/definitions/SourceRequest'
+      responses:
+        '201':
+          description: Source criado com sucesso
+          schema:
+            $ref: '#/definitions/SourceResponse'
+        '400':
+          description: Requisição/Parâmetros invalidos
+        '404':
+          description: Marketplace/ não encontrado
+  /v1/marketplaces/{marketplace_id}/sources/{source_id}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: source_id
+        in: path
+        description: identificador do source
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Source'
+      summary: 'Recuperar detalhes de source tão pelo identificador'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Source recuperado com sucesso
+          schema:
+            $ref: '#/definitions/SourceResponse'
+        '404':
+          description: Marketplace/Source não encontrado
+    delete:
+      tags:
+        - 'Source'
+      summary: 'Remover source pelo identificador'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Source removido com sucesso
+        '404':
+          description: Marketplace/Source não encontrado
+
+  /v1/card-present/terminals:
+    post:
+      tags:
+        - 'Transação Cartão Presente (CHIP&PIN)'
+      summary: 'Criar novo terminal'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '201':
+          description: Terminal cadastrado com sucesso
+        '400':
+          description: 'Missing required param'
+
+  /v1/card-present/terminals/{terminal_id}:
+    parameters:
+      - name: terminal_id
+        in: path
+        description: identificador do terminal
+        required: true
+        type: string
+    put:
+      tags:
+        - 'Transação Cartão Presente (CHIP&PIN)'
+      summary: 'Alterar detalhes de terminal pelo identificador'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Terminal alterado com sucesso
+        '400':
+          description: 'Missing required param'
+        '404':
+          description: Terminal não encontrado
+    get:
+      tags:
+        - 'Transação Cartão Presente (CHIP&PIN)'
+      summary: 'Recuperar detalhes de terminal pelo identificador'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Terminal recuperado com sucesso
+        '404':
+          description: Terminal não encontrado
+    delete:
+      tags:
+        - 'Transação Cartão Presente (CHIP&PIN)'
+      summary: 'Remover terminal pelo identificador'
+      description: ''
+      responses:
+        '200':
+          description: Terminal removido com sucesso
+        '404':
+          description: Terminal não encontrado
+
+  /v1/card-present/terminals/search:
+    get:
+      tags:
+        - 'Transação Cartão Presente (CHIP&PIN)'
+      summary: 'Buscar terminal pelo serial number'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Busca realizada com sucesso
+        '400':
+          description: 'Missing required param'
+
+  /v1/card-present/terminals/{terminal_id}/logon:
+    parameters:
+      - name: terminal_id
+        in: path
+        description: terminal_id
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Transação Cartão Presente (CHIP&PIN)'
+      summary: 'Recuperar parâmetros de inicialização por terminal'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Terminal recuperado com sucesso
+        '404':
+          description: Terminal não encontrado
+
+
+  /v1/card-present/marketplaces/{marketplace_id}/sellers/{seller_id}/transactions:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador do seller
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Transação Cartão Presente (CHIP&PIN)'
+      summary: 'Criar transação cartão presente'
+      deprecated: true
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transação criada com sucesso
+          schema:
+            $ref: '#/definitions/TransactionResponse'
+        '400':
+          description: 'Missing required param'
+        '404':
+          description: Marketplace/Seller não encontrado
+
+  /v1.1/card-present/marketplaces/{marketplace_id}/sellers/{seller_id}/transactions:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador do seller
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Transação Cartão Presente (CHIP&PIN)'
+      summary: 'Criar transação cartão presente'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transação criada com sucesso
+          schema:
+            $ref: '#/definitions/TransactionResponse'
+        '400':
+          description: 'Missing required param'
+        '404':
+          description: Marketplace/Seller não encontrado
+
+  /v1.1/card-present/marketplaces/{marketplace_id}/transactions/{transaction_id}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        type: string
+    put:
+      tags:
+        - 'Transação Cartão Presente (CHIP&PIN)'
+      summary: 'Confirmar transação cartão presente'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transação confirmada com sucesso
+          schema:
+            $ref: '#/definitions/TransactionResponse'
+        '400':
+          description: 'Missing required param'
+        '404':
+          description: Marketplace/Seller não encontrado
+
+  /v1/card-present/marketplaces/{marketplace_id}/sellers/{seller_id}/preauthorizations:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador do seller
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Transação Cartão Presente (CHIP&PIN)'
+      summary: 'Criar transação de pre-autorização cartão presente'
+      description: ''
+      deprecated: true
+      responses:
+        '200':
+          description: Transação de pre-autorização criada com sucesso
+        '400':
+          description: 'Missing required param'
+        '404':
+          description: Marketplace/Seller não encontrado
+
+  /v1/card-present/marketplaces/{marketplace_id}/preauthorizations/{transaction_id}/capture:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: transaction_id
+        in: path
+        description: identificador do transação de pre-autorização
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Transação Cartão Presente (CHIP&PIN)'
+      summary: 'Capturar transação de pre-autorização cartão presente'
+      description: ''
+      deprecated: true
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transação capturada com sucesso
+        '400':
+          description: 'Missing required param'
+        '404':
+          description: Marketplace/Transação não encontrado
+
+  /v1/card-present/marketplaces/{marketplace_id}/transactions/{transaction_id}/void:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: transaction_id
+        in: path
+        description: identificador do transação
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Transação Cartão Presente (CHIP&PIN)'
+      summary: 'Estornar transação cartão presente'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transação estornada com sucesso
+          schema:
+            $ref: '#/definitions/TransactionResponse'
+        '400':
+          description: 'Missing required param'
+        '404':
+          description: Marketplace/Transação não encontrado
+
+  /v1/card-present/marketplaces/{marketplace_id}/preauthorizations/{transaction_id}/void:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: transaction_id
+        in: path
+        description: identificador do transação de pre-autorização
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Transação Cartão Presente (CHIP&PIN)'
+      summary: 'Estornar transação de pre-autorização cartão presente'
+      description: ''
+      deprecated: true
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transação de pre-autorização estornada com sucesso
+        '400':
+          description: 'Missing required param'
+        '404':
+          description: Marketplace/Transação não encontrado
+
+  /v1/card-present/marketplaces/{marketplace_id}/transactions/{transaction_id}/reversals:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: transaction_id
+        in: path
+        description: identificador do transação
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Transação Cartão Presente (CHIP&PIN)'
+      summary: 'Desfazer transação de cartão presente'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transação desfeita com sucesso
+          schema:
+            $ref: '#/definitions/TransactionResponse'
+        '400':
+          description: 'Missing required param'
+        '404':
+          description: Marketplace/Transação não encontrado
+
+  /v1/card-present/marketplaces/{marketplace_id}/preauthorizations/{transaction_id}/reversals:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: transaction_id
+        in: path
+        description: identificador do transação de pre-autorização
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Transação Cartão Presente (CHIP&PIN)'
+      summary: 'Desfazer transação de pre-autorização cartão presente'
+      description: ''
+      deprecated: true
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transação de pre-autorização desfeita com sucesso
+        '400':
+          description: 'Missing required param'
+        '404':
+          description: Marketplace/Transação não encontrado
+
+  /v2/card-present/terminals/{terminal_id}/logon:
+    parameters:
+      - name: terminal_id
+        in: path
+        description: identificador do terminal
+        required: true
+        type: string
+    post:
+      tags:
+        - "Transação Cartão Presente (CHIP&PIN)"
+      summary: 'Recuperar parâmetros de inicialização por terminal'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Logon recuperado com sucesso
+        '404':
+          description: Terminal não encontrado
+
+  /v1/card-present/marketplaces/{marketplace_id}/sellers/{seller_id}/advices:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador do seller
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Transação Cartão Presente (CHIP&PIN)'
+      summary: 'Processar aviso de falha transação cartão presente'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transação de aviso realizada com sucesso
+        '400':
+          description: 'Missing required param'
+        '404':
+          description: Marketplace/Seller não encontrado
+
+  /v1/marketplaces/{marketplace_id}/receipts/{receipt_id}/emails:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: receipt_id
+        in: path
+        description: identificador do recibo
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Recibo'
+      summary: 'Enviar recibo por email'
+      description: ''
+      consumes:
+        - application/json
+      responses:
+        '200':
+          description: Recibo enviado com sucesso
+        '404':
+          description: Marketplace/Recibo não encontrada
+
+  /v1/marketplaces/{marketplace_id}/receipts/{receipt_id}/texts:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: receipt_id
+        in: path
+        description: identificador do recibo
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Recibo'
+      summary: 'Enviar recibo por SMS'
+      description: ''
+      consumes:
+        - application/json
+      responses:
+        '200':
+          description: Recibo enviado com sucesso
+        '404':
+          description: Marketplace/Recibo não encontrada
+
+  /v1/marketplaces/{marketplace_id}/receipts/{receipt_id}/send:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: receipt_id
+        in: path
+        description: identificador do recibo
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Recibo'
+      summary: 'Enviar recibo por sms.email'
+      description: ''
+      consumes:
+        - application/json
+      responses:
+        '200':
+          description: Recibo enviado com sucesso
+        '404':
+          description: Marketplace/Recibo não encontrada
+
+  /v1/marketplaces/{marketplace_id}/receipts/{receipt_id}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: receipt_id
+        in: path
+        description: identificador do recibo
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Recibo'
+      summary: 'Recuperar detalhes do recibo'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Recibo recuperado com sucesso
+        '404':
+          description: Marketplace/Recibo não encontrada
+    put:
+      tags:
+        - 'Recibo'
+      summary: 'Alterar detalhes do recibo'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Recibo alteardo com sucesso
+        '404':
+          description: Marketplace/Recibo não encontrada
+
+  /v1/receipts/{marketplace_id}/{receipt_id}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: receipt_id
+        in: path
+        description: identificador do recibo
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Recibo'
+      summary: 'Renderizar template de recibo HTML'
+      description: ''
+      security: []
+      produces:
+        - text/html
+      responses:
+        '200':
+          description: Recibo renderizado com sucesso
+        '404':
+          description: Marketplace/Recibo não encontrada
+
+  /v1/marketplaces/{marketplace_id}/boletos/{boleto_id}/emails:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: boleto_id
+        in: path
+        description: identificador do boleto
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Boleto'
+      summary: 'Enviar cobrança de boleto por email'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Boleto enviado por email
+        '404':
+          description: Marketplace/Boleto não encontrado
+
+  /v1/marketplaces/{marketplace_id}/boletos/{boleto_id}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: boleto_id
+        in: path
+        description: identificador do boleto
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Boleto'
+      summary: 'Recuperar detalhes de boleto'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Boleto recuperado com sucesso
+        '404':
+          description: Marketplace/Boleto não encontrado
+
+  /v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/split_rules:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: marketplace_id
+        required: true
+        type: string
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        type: string
+    get:
+      tags:
+        - "Regra de Divisão"
+      summary: 'Recuperar detalhes de regra de divisão por transação'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Split recuperado com sucesso
+        '404':
+          description: Marketplace/Transação não encontrado
+    post:
+      tags:
+        - "Regra de Divisão"
+      summary: 'Criar regra de divisão por transação'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Regra de divisão
+          schema:
+            $ref: '#/definitions/SplitRuleRequest'
+      responses:
+        '200':
+          description: Split criado com sucesso
+        '404':
+          description: Marketplace/Transação não encontrado
+
+  /v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/split_rules/{id}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        type: string
+      - name: id
+        in: path
+        description: identificador do split
+        required: true
+        type: string
+    get:
+      tags:
+        - "Regra de Divisão"
+      summary: 'Recupera detalhes de regra de divisão por transação'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Split recuperado com sucesso
+        '404':
+          description: Marketplace/Transação não encontrado
+    put:
+      tags:
+        - "Regra de Divisão"
+      summary: 'Alterar regra de divisão por transação'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Split alterado com sucesso
+        '404':
+          description: Marketplace/Transação não encontrado
+    delete:
+      tags:
+        - "Regra de Divisão"
+      summary: 'Remover regra de divisão por transação'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Split criado com sucesso
+        '404':
+          description: Marketplace/Transação não encontrado
+
+definitions:
+  Transactions:
+    type: object
+    properties:
+      resource:
+        type: string
+        example: "list"
+      uri:
+        type: string
+        example: "/v1/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/transactions"
+      limit:
+        type: number
+        example: 100
+      offset:
+        type: number
+        example: 0
+      has_more:
+        type: boolean
+        example: false
+      query_count:
+        type: number
+        example: 2
+      total:
+        type: number
+        example: 2
+      items:
+          $ref: '#/definitions/TransactionResponse'
+  TransactionResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 0009462369b14ee596aabfd27faa97f7
+      status:
+        type: string
+        enum:
+          - new
+          - pending
+          - succeeded
+          - canceled
+          - reversed
+          - failed
+          - pre_authorized
+        example: succeeded
+      resource:
+        type: string
+        example: transaction
+      amount:
+        type: string
+        example: "1.00"
+      original_amount:
+        type: string
+        example: "1.00"
+      currency:
+        type: string
+        example: "BRL"
+      description:
+        type: string
+        example: "BRL"
+      payment_type:
+        enum:
+          - credit
+          - debit
+          - wallet
+          - boleto
+        example: credit
+      transaction_number:
+        type: string
+        example: "W-12343124"
+      sales_receipt:
+        type: string
+        example: "00d5ce5086c84c0f824cf660b020881a"
+      on_behalf_of:
+        type: string
+        example: "1e5ee2e290d040769806c79e6ef94ee1"
+      statement_descriptor:
+        type: string
+        example: "CORRENTISTA 03  3011"
+      payment_method:
+        type: object
+        properties:
+          id:
+            type: string
+            example: "2f008ac254964e658be566241cc87c1a"
+          resource:
+            type: string
+            example: "card"
+          description:
+            type: string
+            example: null
+          card_brand:
+            type: string
+            example: "Visa"
+          first4_digits:
+            type: string
+            example: "4893"
+          last4_digits:
+            type: string
+            example: null
+          expiration_month:
+            type: string
+            example: "7"
+          expiration_year:
+            type: string
+            example: "2023"
+          holder_name:
+            type: string
+            example: "LEITE/ANDRE S DE M"
+          is_active:
+            type: boolean
+            example: false
+          is_valid:
+            type: boolean
+            example: true
+          is_verified:
+            type: boolean
+            example: false
+          customer:
+            type: string
+            example: "e4e8c5b569da48b28d896385f5481bcf"
+          fingerprint:
+            type: string
+            example: "9f2843f0c1b08d6018927b4e5e884a869ae49"
+          uri:
+            type: string
+            example: "/v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/2f008ac254964e658be566241cc87c1a"
+          metadata:
+            type: object
+          created_at:
+            type: string
+            format: dateTime
+            example: "2015-04-17T06:39:52+00:00"
+          updated_at:
+            type: string
+            format: dateTime
+            example: "2015-04-17T06:39:52+00:00"
+      point_of_sale:
+        type: object
+        properties:
+          entry_mode:
+            type: string
+            enum:
+              - manually_keyed
+              - magstripe
+              - barcode
+              - ocr
+              - chip
+              - contactless_chip
+              - magstripe_fallback
+              - manually_keyed_fallback
+              - contactless_magstripe
+            example: "chip"
+          identification_number:
+            type: string
+            example: "4b7d03e6aa01463bb5673f04a7717db9"
+      refunded:
+        type: boolean
+        example: false
+      voided:
+        type: boolean
+        example: false
+      captured:
+        type: boolean
+        example: false
+      fees:
+        type: string
+        example: "0.05"
+      fee_details:
+        type: object
+        properties:
+          amount:
+            type: string
+            example: "0.05"
+          prepaid:
+            type: boolean
+            example: true
+          currency:
+            type: string
+            example: "BRL"
+          type:
+            type: string
+            example: "zoop_credit_fee_d0"
+          description:
+            type: string
+            example: "Zoop prepaid card-present credit fee"
+      uri:
+        type: string
+        example: |
+          /v1/marketplaces/3249465a7753536b62545a6a684b0000/transactions/0009462369b14ee596aabfd27faa97f7
+      metadata:
+        type: object
+      expected_on:
+        type: string
+        format: dateTime
+        example: "2015-04-17T06:39:52+00:00"
+      created_at:
+        type: string
+        format: dateTime
+        example: "2015-04-17T06:39:52+00:00"
+      updated_at:
+        type: string
+        format: dateTime
+        example: "2015-04-17T06:39:52+00:00"
+  TransactionUpdateRequest:
+    type: object
+    properties:
+      description:
+        type: string
+        example: "BRL"
+      metadata:
+        type: object
+  TransactionVoidRequest:
+    type: object
+    required:
+      - on_behalf_of
+      - amount
+    properties:
+      on_behalf_of:
+        type: string
+        description: Identificador do seller responsável pela venda
+        example: 1e5ee2e290d040769806c79e6ef94ee1
+      amount:
+        type: integer
+        description: valor da venda a ser estornado em centavos
+  TransactionCaptureRequest:
+    type: object
+    required:
+      - on_behalf_of
+      - amount
+    properties:
+      on_behalf_of:
+        type: string
+        description: Identificador do seller responsável pela venda
+        example: 1e5ee2e290d040769806c79e6ef94ee1
+      amount:
+        type: integer
+        description: "valor da venda a ser capturado em centavos. para captura parcial basta enviar valor a menor, sendo possível realizar somente uma captura parcial por autorização"
+  SplitRuleRequest:
+    type: object
+    required:
+      - on_behalf_of
+      - amount
+    properties:
+      recipient:
+        type: string
+        description: Identificador do seller recebedor
+        example: 1e5ee2e290d040769806c79e6ef94ee1
+      liable:
+        type: boolean
+        description: define se o recebedor arca com prejuízo em caso de chargeback ou não. 1 arca; 0 não arca.
+        default: 0
+      charge_processing_fee:
+        type: boolean
+        description: define se vai ser feito split em cima do valor bruto (0) ou do valor líquido (1) da transação
+        default: 0
+      percentage:
+        type: integer
+        description: percentual da venda a ser splitado.
+      amount:
+        type: integer
+        description: valor em centavos a ser splitado.
+  CardRequest:
+    type: object
+    required:
+      - token
+      - customer
+    properties:
+      token:
+        type: string
+        description: Identificador do token de cartão a ser associado ao customer
+        example: 1e5ee2e290d040769806c79e6ef94ee1
+      customer:
+        type: string
+        description: Identificador do customer
+  SourceResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 0009462369b14ee596aabfd27faa97f7
+      status:
+        type: string
+        enum:
+          - pending
+          - charged
+          - deleted
+        example: charged
+      usage:
+        type: string
+        enum:
+          - single_use
+          - reusable
+        default: single_use
+      amount:
+        type: string
+        example: "1.00"
+        description: valor a ser cobrado na venda (opcional)
+      currency:
+        type: string
+        example: "BRL"
+        description: moeda do valor a ser cobrado na venda (opcional)
+      description:
+        type: string
+        example: "BRL"
+        description: descrição da venda quando gerada (opcional)
+      type:
+        type: string
+        enum:
+          - wallet
+          - card
+          - card_and_wallet
+          - token
+          - multiple_cards
+          - customer
+          - three_d_secure
+          - debit_online
+        example: card
+      capture:
+        type: boolean
+        example: false
+        description: "Capturar transação (true) ou criar uma pre-autorização (false) para ser capturada a posteriori"
+      on_behalf_of:
+        type: string
+        example: "1e5ee2e290d040769806c79e6ef94ee1"
+      reference_id:
+        type: string
+        example: "10902"
+        description: "ID referência da sua aplicação VARCHAR(500)"
+      card:
+        type: object
+        description: "objeto obrigatório no tipo card e card_and_wallet"
+        properties:
+          id:
+            type: string
+            example: "2f008ac254964e658be566241cc87c1a"
+          amount:
+            type: string
+            example: "1.00"
+            description: valor a ser cobrado na venda (opcional)
+          resource:
+            type: string
+            example: "card"
+          description:
+            type: string
+            example: null
+          card_brand:
+            type: string
+            example: "Visa"
+          first4_digits:
+            type: string
+            example: "4893"
+          last4_digits:
+            type: string
+            example: null
+          expiration_month:
+            type: string
+            example: "7"
+          expiration_year:
+            type: string
+            example: "2023"
+          holder_name:
+            type: string
+            example: "LEITE/ANDRE S DE M"
+          is_active:
+            type: boolean
+            example: false
+          is_valid:
+            type: boolean
+            example: true
+          is_verified:
+            type: boolean
+            example: false
+          customer:
+            type: string
+            example: "e4e8c5b569da48b28d896385f5481bcf"
+          fingerprint:
+            type: string
+            example: "9f2843f0c1b08d6018927b4e5e884a869ae49"
+          uri:
+            type: string
+            example: "/v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/2f008ac254964e658be566241cc87c1a"
+          metadata:
+            type: object
+          created_at:
+            type: string
+            format: dateTime
+            example: "2015-04-17T06:39:52+00:00"
+          updated_at:
+            type: string
+            format: dateTime
+            example: "2015-04-17T06:39:52+00:00"
+      cards:
+        type: array
+        description: "objeto obrigatório no tipo multiple_cards"
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "2f008ac254964e658be566241cc87c1a"
+            amount:
+              type: string
+              example: "1.00"
+              description: valor a ser cobrado na venda (opcional)
+            resource:
+              type: string
+              example: "card"
+            description:
+              type: string
+              example: null
+            card_brand:
+              type: string
+              example: "Visa"
+            first4_digits:
+              type: string
+              example: "4893"
+            last4_digits:
+              type: string
+              example: null
+            expiration_month:
+              type: string
+              example: "7"
+            expiration_year:
+              type: string
+              example: "2023"
+            holder_name:
+              type: string
+              example: "LEITE/ANDRE S DE M"
+            is_active:
+              type: boolean
+              example: false
+            is_valid:
+              type: boolean
+              example: true
+            is_verified:
+              type: boolean
+              example: false
+            customer:
+              type: string
+              example: "e4e8c5b569da48b28d896385f5481bcf"
+            fingerprint:
+              type: string
+              example: "9f2843f0c1b08d6018927b4e5e884a869ae49"
+            uri:
+              type: string
+              example: "/v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/2f008ac254964e658be566241cc87c1a"
+            metadata:
+              type: object
+            created_at:
+              type: string
+              format: dateTime
+              example: "2015-04-17T06:39:52+00:00"
+            updated_at:
+              type: string
+              format: dateTime
+              example: "2015-04-17T06:39:52+00:00"
+      installment_plan:
+        type: object
+        properties:
+          mode:
+            type: string
+            enum:
+              - interest_free
+              - with_interest
+            description: "modo de parcelamento, com juros no emissor (with_interest), ou sem juros (interest_free), com o custo já calculado no valor da transação. "
+          number_installments:
+            type: integer
+            description: número de parcelas (1-10)
+      statement_descriptor:
+        type: string
+        example: "CORRENTISTA 03  3011"
+      customer:
+        type: object
+        description: identificador do comprador que será cobrado
+        properties:
+          id:
+            type: string
+            example: "1e5ee2e290d040769806c79e6ef94ee1"
+            description: "identificador do comprador que será cobrado para source tipo customer, wallet e card_and_wallet"
+          amount:
+            type: integer
+            example: 100
+            description: valor a ser cobrado neste customer (opcional)
+      token:
+        type: object
+        description: "identificador do token de cartão que será cobrado obrigatorio no source tipo token"
+        properties:
+          id:
+            type: string
+            description: "identificador do cartão para source tipo card"
+            example: "1e5ee2e290d040769806c79e6ef94ee1"
+          amount:
+            type: integer
+            example: 100
+            description: valor a ser cobrado neste token (opcional)
+      uri:
+        type: string
+        example: |
+          /v1/marketplaces/3249465a7753536b62545a6a684b0000/sources/0009462369b14ee596aabfd27faa97f7
+      metadata:
+        type: object
+      created_at:
+        type: string
+        format: dateTime
+        example: "2015-04-17T06:39:52+00:00"
+      updated_at:
+        type: string
+        format: dateTime
+        example: "2015-04-17T06:39:52+00:00"
+  SourceRequest:
+    type: object
+    required:
+      - type
+      - usage
+    properties:
+      usage:
+        type: string
+        enum:
+          - single_use
+          - reusable
+        default: single_use
+      amount:
+        type: integer
+        example: 100
+        description: valor em centavos a ser cobrado na venda (opcional)
+      currency:
+        type: string
+        example: "BRL"
+        description: moeda do valor a ser cobrado na venda (opcional)
+      description:
+        type: string
+        example: "BRL"
+        description: descrição da venda quando gerada (opcional)
+      type:
+        type: string
+        enum:
+          - wallet
+          - card
+          - card_and_wallet
+          - token
+          - multiple_cards
+          - customer
+          - three_d_secure
+          - debit_online
+        example: card
+      capture:
+        type: boolean
+        example: false
+        description: "Capturar transação (true) ou criar uma pre-autorização (false) para ser capturada a posteriori"
+      on_behalf_of:
+        type: string
+        example: "1e5ee2e290d040769806c79e6ef94ee1"
+      reference_id:
+        type: string
+        example: "10902"
+        description: "ID referência da sua aplicação VARCHAR(500)"
+      card:
+        type: object
+        description: "objeto obrigatório no tipo card e card_and_wallet"
+        properties:
+          id:
+            type: string
+            example: "8c795953db6342be9fc14a36d5308bed"
+            description: "identificador do cartão para source tipo card"
+          amount:
+            type: integer
+            example: 100
+            description: valor a ser cobrado neste cartao (opcional)
+          holder_name:
+            type: string
+          expiration_month:
+            type: string
+            description: mês de expiração do cartão (MM)
+          expiration_year:
+            type: string
+            description: ano de expiração do cartão (AAAA)
+          card_number:
+            type: string
+            description: Número do cartão
+          security_code:
+            type: string
+            description: Código de segurança do cartão (CVC)
+      cards:
+        type: array
+        description: "objeto obrigatório no tipo multiple_cards"
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "8c795953db6342be9fc14a36d5308bed"
+              description: "identificador do cartão para source tipo card"
+            amount:
+              type: integer
+              example: 100
+              description: valor a ser cobrado neste cartao (opcional)
+            holder_name:
+              type: string
+              description: Nome do portador
+            expiration_month:
+              type: string
+              description: mês de expiração do cartão (MM)
+            expiration_year:
+              type: string
+              description: ano de expiração do cartão (AAAA)
+            card_number:
+              type: string
+              description: Número do cartão obrigatório caso não seja enviado card id
+            security_code:
+              type: string
+              description: Código de segurança do cartão (CVC)
+      installment_plan:
+        type: object
+        properties:
+          mode:
+            type: string
+            enum:
+              - interest_free
+              - with_interest
+            description: "modo de parcelamento, com juros no emissor (with_interest), ou sem juros (interest_free), com o custo já calculado no valor da transação. "
+          number_installments:
+            type: integer
+            description: número de parcelas (1-10)
+      statement_descriptor:
+        type: string
+        example: "CORRENTISTA 03  3011"
+      customer:
+        type: object
+        description: identificador do comprador que será cobrado
+        properties:
+          id:
+            type: string
+            example: "1e5ee2e290d040769806c79e6ef94ee1"
+            description: "identificador do comprador que será cobrado para source tipo customer, wallet e card_and_wallet"
+          amount:
+            type: integer
+            example: 100
+            description: valor a ser cobrado neste customer (opcional)
+      token:
+        type: object
+        description: "identificador do token de cartão que será cobrado obrigatorio no source tipo token"
+        properties:
+          id:
+            type: string
+            description: "identificador do cartão para source tipo card"
+            example: "1e5ee2e290d040769806c79e6ef94ee1"
+          amount:
+            type: integer
+            example: 100
+            description: valor a ser cobrado neste token (opcional)
+      metadata:
+        type: object
+  TransactionCNPRequest:
+    type: object
+    required:
+      - amount
+      - currency
+      - description
+      - payment_type
+      - on_behalf_of
+    properties:
+      amount:
+        type: integer
+        example: 100
+        description: "valor em centavos a ser cobrado pela transação"
+      currency:
+        type: string
+        example: "BRL"
+      description:
+        type: string
+        example: "BRL"
+      payment_type:
+        type: string
+        enum:
+          - credit
+          - debit
+          - wallet
+          - boleto
+        example: credit
+      capture:
+        type: boolean
+        example: false
+        description: "Capturar transação (true) ou criar uma pre-autorização (false) para ser capturada a posteriori"
+      on_behalf_of:
+        type: string
+        example: "1e5ee2e290d040769806c79e6ef94ee1"
+      reference_id:
+        type: string
+        example: "10902"
+        description: "ID referência da sua aplicação VARCHAR(500)"
+      payment_method:
+        type: object
+        properties:
+          expiration_date:
+            type: string
+            example: 20170410
+            description: 'Data de vencimento utilizado nas vendas por boleto'
+          top_instructions:
+            type: array
+            description: 'Instruções para o comprador utilizado nas vendas por boleto'
+            items:
+              type: string
+      source:
+        $ref: '#/definitions/SourceRequest'
+      installment_plan:
+        type: object
+        properties:
+          mode:
+            type: string
+            enum:
+              - interest_free
+              - with_interest
+            description: "modo de parcelamento, com juros no emissor (with_interest), ou sem juros (interest_free), com o custo já calculado no valor da transação. "
+          number_installments:
+            type: integer
+            description: número de parcelas (1-10)
+      statement_descriptor:
+        type: string
+        example: "CORRENTISTA 03  3011"
+      customer:
+        type: string
+        description: identificador do comprador que será cobrado
+        example: "1e5ee2e290d040769806c79e6ef94ee1"
+      token:
+        type: string
+        description: identificador do token de cartão que será cobrado
+        example: "1e5ee2e290d040769806c79e6ef94ee1"
+      metadata:
+        type: object
+
+
+parameters:
+  limitParam:
+    name: limit
+    in: query
+    description: Limita o número de objetos retornados, podendo ser entre 1 e 100
+    required: false
+    type: number
+    format: int32
+    default: 20
+  sortParam:
+    name: sort
+    in: query
+    description: Determinar como ordenar a lista em relação a data de criação do objeto
+    required: false
+    type: string
+    enum:
+      - time-descending
+      - time-ascending
+    default: time-descending
+  offsetParam:
+    name: offset
+    in: query
+    description: Determina o ponto de inicio dos registros retornados
+    required: false
+    type: number
+    format: int32
+    default: 0
+  dateRangeParam:
+    name: date_range
+    in: query
+    description: Filtro na lista base de objetos pela data de criação. O valor pode ser uma string com um horário em UTC timestamp, ou pode ser uma lista com os parametros abaixo
+    required: false
+    type: number
+  dateRangeGTParam:
+    name: date_range[gt]
+    in: query
+    description: Retorna valores onde a data maior que o timestamp informado
+    required: false
+    type: number
+  dateRangeGTEParam:
+    name: date_range[gte]
+    in: query
+    description: Retorna valores onde a data for maior ou igual que o timestamp informado
+    required: false
+    type: number
+  dateRangeLTParam:
+    name: date_range[lt]
+    in: query
+    description: Retorna valores onde a data for menor que o timestamp informado
+    required: false
+    type: number
+  dateRangeLTEParam:
+    name: date_range[lte]
+    in: query
+    description: Retorna valores onde a data for menor ou igual que o timestamp informado
+    required: false
+    type: number

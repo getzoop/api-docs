@@ -1,0 +1,758 @@
+swagger: '2.0'
+host: api.zoop.ws
+info:
+  title: Pagamentos e Transferências
+  version: "1.1"
+
+securityDefinitions:
+  basicAuth:
+    type: basic
+security:
+  - basicAuth: []
+
+schemes:
+  - https
+
+
+tags:
+  - name: 'Transferência'
+    description: Depósitos para conta bancária e conta de cartão
+  - name: 'Conta Bancária'
+    description: Conta bancária
+  - name: 'Recebível'
+    description: Parcelas de recebimento de uma transação
+  - name: 'Política de Recebimento'
+    description: Política de Recebimento de vendas
+  - name: 'Plano de Vendas'
+    description: 'Plano de taxas de venda'
+
+paths:
+  /v1/marketplaces/{marketplace_id}/sellers/{seller_id}/transfers:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador do seller
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Transferência'
+      summary: 'Listar transferências por seller'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transferências encontradas
+        '404':
+          description: Marketplace/Seller não encontrado
+  /v1/marketplaces/{marketplace_id}/bank_accounts/{bank_account_id}/transfers:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: bank_account_id
+        in: path
+        description: identificador da conta bancária
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Transferência'
+      summary: 'Criar transferência para bancária'
+      parameters:
+        - in: body
+          name: body
+          description: Document object
+          required: true
+          schema:
+            $ref: '#/definitions/Transfer'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transferências recuperadas com sucesso
+        '404':
+          description: Marketplace/Conta bancária não encontrado
+  /v1/marketplaces/{marketplace_id}/transfers:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Transferência'
+      summary: 'Listar transferência por marketplace'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transferências recuperadas com sucesso
+        '404':
+          description: Marketplace não encontrado
+  /v1/marketplaces/{marketplace_id}/transfers/{transfer_id}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: transfer_id
+        in: path
+        description: identificador do transferênci
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Transferência'
+      summary: 'Recuperar detalhes de transferência'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transferência recuperada com sucesso
+        '404':
+          description: Marketplace/Transferência não encontrada
+  /v1/marketplaces/{marketplace_id}/transfers/{transfer_id}/transactions:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: transfer_id
+        in: path
+        description: identificador do transferência
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Transferência'
+      summary: 'Listar transações associadas a transferência'
+      description: ''
+      deprecated: true
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transferência recuperada com sucesso
+        '404':
+          description: Marketplace/Transferência não encontrada
+  /v2/marketplaces/{marketplace_id}/sellers/{seller_id}/future-transfers:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador do seller
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Lançamentos Futuros'
+      summary: 'Listar lançamentos futuros por seller'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Lançamentos futuros recuperados com sucesso
+        '404':
+          description: Seller não encontrado
+  /v1/marketplaces/{marketplace_id}/bank_accounts/{bank_account_id}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador de marketplace_id
+        required: true
+        type: string
+      - name: bank_account_id
+        in: path
+        description: identificador de conta bancária
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Conta Bancária'
+      summary: 'Recuperar detalhes de conta bancária por identificador'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Conta bancária recuperada com sucesso
+        '404':
+          description: Marketplace/Conta Bancária não encontrada
+    put:
+      tags:
+        - 'Conta Bancária'
+      summary: 'Alterar detalhes de conta bancária'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Conta bancária alterada com sucesso
+        '400':
+          description: Requisição/Parâmetros inválidos
+        '404':
+          description: Marketplace/Conta Bancária não encontrada
+    delete:
+      tags:
+        - 'Conta Bancária'
+      summary: 'Alterar detalhes de conta bancária'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Conta bancária recuperada com sucesso
+        '400':
+          description: Requisição/Parâmetros inválidos
+        '404':
+          description: Marketplace/Conta Bancária não encontrada
+  /v1/marketplaces/{marketplace_id}/bank_accounts:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador de marketplace_id
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Conta Bancária'
+      summary: 'Listar contas bancárias por marketplace'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Conta bancária recuperada com sucesso
+        '404':
+          description: Marketplace não encontrado
+    post:
+      tags:
+        - 'Conta Bancária'
+      summary: 'Associar conta bancaria com customer'
+      description: 'Associar token de cartão com comprador'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Bank Account object
+          required: true
+          schema:
+            $ref: '#/definitions/BankAccount'
+      responses:
+        '200':
+          description: Conta bancária associado com sucesso
+        '400':
+          description: Requisição/Parâmetros invalidos
+        '404':
+          description: Marketplace não encontrado
+  /v1/marketplaces/{marketplace_id}/sellers/{seller_id}/bank_accounts:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador do seller
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Conta Bancária'
+      summary: 'Listar contas bancárias por seller'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Conta bancária recuperada com sucesso
+        '404':
+          description: Marketplace não encontrado
+  /v1/marketplaces/{marketplace_id}/receivables/{receivable_id}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: receivable_id
+        in: path
+        description: identificador do recebível
+        required: true
+        type: string
+    get:
+      tags:
+        - "Recebível"
+      summary: 'Recuperar detalhes de recebível'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Recebível recuperado com sucesso
+        '404':
+          description: Marketplace/Recebível não encontrado
+  /v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/receivables:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        type: string
+    get:
+      tags:
+        - "Recebível"
+      summary: 'Listar recebíveis por transação'
+      description: 'Listar todas as parcelas de recebimento por transação'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Recebível listado com sucesso
+        '404':
+          description: Marketplace/Transação não encontrado
+  /v1/marketplaces/{marketplace_id}/sellers/{seller_id}/receivables:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador da seller
+        required: true
+        type: string
+    get:
+      tags:
+        - "Recebível"
+      summary: 'Listar recebíveis por seller'
+      description: 'Listar todas as parcelas de recebimento por seller'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Recebível listado com sucesso
+        '404':
+          description: Marketplace/Seller não encontrado
+  /v1/marketplaces/{marketplace_id}/sellers/{seller_id}/receiving_policy:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador da seller
+        required: true
+        type: string
+    get:
+      tags:
+        - "Política de Recebimento"
+      summary: 'Recuperar política de recebimento por seller'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Politica recuperada com sucesso
+        '404':
+          description: Marketplace/Seller não encontrado
+    post:
+      tags:
+        - "Política de Recebimento"
+      summary: 'Alterar política de recebimento por seller'
+      description: ''
+      parameters:
+        - in: body
+          name: body
+          description: Receiving Policy object
+          required: true
+          schema:
+            $ref: '#/definitions/ReceivingPolicy'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Politica alterada com sucesso
+        '404':
+          description: Marketplace/Seller não encontrado
+  /v2/marketplaces/{marketplace_id}/transfers/{owner}/to/{receiver}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do markteplace
+        required: true
+        type: string
+      - name: owner
+        in: path
+        description: identificador do customer pagador
+        required: true
+        type: string
+      - name: receiver
+        in: path
+        description: identificador do customer recebedor
+        required: true
+        type: string
+    post:
+      tags:
+        - "Transferência"
+      summary: 'Criar transferência P2P'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: TransferP2P object
+          required: true
+          schema:
+            $ref: '#/definitions/TransferP2P'
+      responses:
+        '200':
+          description: Transferência criada com sucesso
+        '404':
+          description: Marketplace/Customer não encontrado
+  /v1/marketplaces/{marketplace_id}/plans:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Criar plano de vendas'
+      deprecated: true
+      description: 'Planos com taxa e políticas para credito de recebíveis'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Plano de venda criado com sucesso
+        '404':
+          description: Marketplace não encontrado
+    get:
+      tags:
+        - 'Plano de Vendas'
+      description: ''
+      deprecated: true
+      summary: 'Listar plano de vendas por marketplace'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Plano de venda listado com sucesso
+        '404':
+          description: Marketplace não encontrado
+  /v1/marketplaces/{marketplace_id}/plans/{plan_id}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: plan_id
+        in: path
+        description: identificador do plano
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Recuperar detalhes de plano de venda'
+      deprecated: true
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Plano de venda criado com sucesso
+        '404':
+          description: Marketplace/Plano não encontrado
+    delete:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Remover plano de venda'
+      description: ''
+      deprecated: true
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Plano de venda removido com sucesso
+        '404':
+          description: Marketplace/Plano não encontrado
+  /v1/marketplaces/{marketplace_id}/subscriptions:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Criar assinatura de plano de venda'
+      description: ''
+      deprecated: true
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Assinatura de plano de venda removido com sucesso
+        '404':
+          description: Marketplace não encontrado
+    get:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Listar assinaturas de plano de venda'
+      description: ''
+      deprecated: true
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Assinatura de plano de venda listado com sucesso
+        '404':
+          description: Marketplace não encontrado
+  /v1/marketplaces/{marketplace_id}/subscriptions/{subscription_id}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: subscription_id
+        in: path
+        description: identificador da assinatura de plano de venda
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Plano de Vendas'
+      deprecated: true
+      summary: 'Recuperar detalhes de assinatura de plano de venda'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Assinatura de plano de venda recuperado com sucesso
+        '404':
+          description: Marketplace não encontrado
+    delete:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Remover assinatura de plano de venda'
+      deprecated: true
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Assinatura de plano de venda removido com sucesso
+        '404':
+          description: Marketplace não encontrado
+  /v1/marketplaces/{marketplace_id}/sellers/{seller_id}/subscriptions:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador da seller
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Recuperar assinatura de plano de venda por seller'
+      description: ''
+      deprecated: true
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Assinatura de plano de venda recuperado com sucesso
+        '404':
+          description: Marketplace não encontrado
+  /v1/marketplaces/{marketplace_id}/buyers/{buyer_id}/subscriptions:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: buyer_id
+        in: path
+        description: identificador do buyer
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Recuperar assinatura de plano de venda por comprador'
+      description: ''
+      deprecated: true
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Assinatura de plano de venda recuperado com sucesso
+        '404':
+          description: Marketplace não encontrado
+
+parameters:
+  limitParam:
+    name: limit
+    in: query
+    description: Limita o número de objetos retornados, podendo ser entre 1 e 100
+    required: false
+    type: number
+    format: int32
+    default: 20
+  sortParam:
+    name: sort
+    in: query
+    description: Determinar como ordenar a lista em relação a data de criação do objeto
+    required: false
+    type: string
+    enum:
+      - time-descending
+      - time-ascending
+    default: time-descending
+  offsetParam:
+    name: offset
+    in: query
+    description: Determina o ponto de inicio dos registros retornados
+    required: false
+    type: number
+    format: int32
+    default: 0
+  dateRangeParam:
+    name: date_range
+    in: query
+    description: Filtro na lista base de objetos pela data de criação. O valor pode ser uma string com um horário em UTC timestamp, ou pode ser uma lista com os parametros abaixo
+    required: false
+    type: number
+  dateRangeGTParam:
+    name: date_range[gt]
+    in: query
+    description: Retorna valores onde a data maior que o timestamp informado
+    required: false
+    type: number
+  dateRangeGTEParam:
+    name: date_range[gte]
+    in: query
+    description: Retorna valores onde a data for maior ou igual que o timestamp informado
+    required: false
+    type: number
+  dateRangeLTParam:
+    name: date_range[lt]
+    in: query
+    description: Retorna valores onde a data for menor que o timestamp informado
+    required: false
+    type: number
+  dateRangeLTEParam:
+    name: date_range[lte]
+    in: query
+    description: Retorna valores onde a data for menor ou igual que o timestamp informado
+    required: false
+    type: number
+definitions:
+  Transfer:
+    type: object
+    properties:
+      amount:
+        type: integer
+        example: 3500
+      statement_descriptor:
+        type: string
+        example: Zoop Tecnologia
+      description:
+        type: string
+        example: Saque dia 24.09.2017
+  TransferP2P:
+    type: object
+    properties:
+      amount:
+        type: integer
+        example: 3500
+      description:
+        type: string
+        example: Cobrança de mensalidade
+  ReceivingPolicy:
+    type: object
+    properties:
+      transfer_interval:
+        type: string
+        enum:
+          - daily
+          - weekly
+          - monthly
+        default: daily
+        example: daily
+      transfer_day:
+        type: integer
+        example: 1
+      transfer_enabled:
+        type: boolean
+        example: true
+      minimum_transfer_value:
+        type: integer
+        example: 100
+  BankAccount:
+    type: object
+    properties:
+      customer:
+        type: string
+        example: 064bf90479e34865afb90cc4a0efe2cc
+      token:
+        type: string
+        example: 2d55be7859544074a7ae9ffe60fdf6d9

@@ -1,0 +1,1250 @@
+swagger: '2.0'
+info:
+  description: Planos e Assinaturas
+  version: 1.0.0
+  title: Planos e Assinaturas
+basePath: /v2
+host: api.zoop.ws
+securityDefinitions:
+  basicAuth:
+    type: basic
+security:
+  - basicAuth: []
+schemes:
+ - https
+tags:
+  - name: 'Planos'
+    description: 'Um plano define como assinaturas serão vendidas, renovadas e faturadas'
+  - name: 'Assinaturas'
+    description: 'Assinatura é a relação entre um plano e um cliente'
+  - name: 'Faturas'
+    description: 'A fatura totaliza, em valores financeiros, mercadorias ou serviços que serão cobrados do cliente'
+  - name: 'Descontos'
+    description: 'Representa um desconto aplicado a uma assinatura ou fatura'
+
+paths:
+  /marketplaces/{marketplace_id}/plans:
+    get:
+      tags:
+        - Planos
+      summary: Listar planos por marketplace
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/limitParam'
+        - $ref: '#/parameters/sortParam'
+        - $ref: '#/parameters/offsetParam'
+        - $ref: '#/parameters/dateRangeParam'
+        - $ref: '#/parameters/dateRangeGTParam'
+        - $ref: '#/parameters/dateRangeGTEParam'
+        - $ref: '#/parameters/dateRangeLTParam'
+        - $ref: '#/parameters/dateRangeLTEParam'
+        - in: path
+          name: marketplace_id
+          required: true
+          type: string
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanResponse'
+        400:
+          description: bad input parameter
+    post:
+      tags:
+        - Planos
+      summary: Criar um plano
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: marketplace_id
+        required: true
+        type: string
+      - in: body
+        name: plan
+        description: plan to add
+        schema:
+          $ref: '#/definitions/PlanRequest'
+      responses:
+        201:
+          description: plano criado com sucesso
+        400:
+          description: invalid input, object invalid
+
+
+  /marketplaces/{marketplace_id}/plans/{plan_id}:
+    get:
+      tags:
+        - Planos
+      summary: Recupera um plano pelo identificador
+      produces:
+        - application/json
+      parameters:
+      - in: path
+        name: marketplace_id
+        required: true
+        type: string
+      - in: path
+        name: plan_id
+        required: true
+        type: string
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/PlanResponseItem'
+        400:
+          description: bad input parameter
+        404:
+          description: plan_id was not found
+    put:
+      tags:
+        - Planos
+      summary: Alterar plano pelo identificador
+      description: Alterar detalhes de um plano existente pelo identificador
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: plan_id
+        required: true
+        type: string
+      - in: path
+        name: marketplace_id
+        required: true
+        type: string
+      - in: body
+        name: plan
+        description: plan to update
+        schema:
+          $ref: '#/definitions/PlanRequest'
+      responses:
+        200:
+          description: item updated
+        400:
+          description: invalid input, object invalid
+        404:
+          description: plan_id was not found
+    delete:
+      tags:
+        - Planos
+      summary: Deletar um plano pelo identificador
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: plan_id
+        required: true
+        type: string
+      - in: path
+        name: marketplace_id
+        required: true
+        type: string
+      responses:
+        200:
+          description: item deleted
+        400:
+          description: invalid input, object invalid
+        404:
+          description: plan_id was not found
+
+  /marketplaces/{marketplace_id}/subscriptions:
+    get:
+      tags:
+          - Assinaturas
+      summary: Recuperar todas as assinatura de um marketplace
+      produces:
+      - application/json
+      parameters:
+        - $ref: '#/parameters/limitParam'
+        - $ref: '#/parameters/sortParam'
+        - $ref: '#/parameters/offsetParam'
+        - $ref: '#/parameters/dateRangeParam'
+        - $ref: '#/parameters/dateRangeGTParam'
+        - $ref: '#/parameters/dateRangeGTEParam'
+        - $ref: '#/parameters/dateRangeLTParam'
+        - $ref: '#/parameters/dateRangeLTEParam'
+        - in: path
+          name: marketplace_id
+          required: true
+          type: string
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SubscriptionResponse'
+        400:
+          description: bad input parameter
+    post:
+      tags:
+          - Assinaturas
+      summary: Criar uma assinatura entre um comprador e um plano
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: marketplace_id
+        required: true
+        type: string
+      - in: body
+        name: plan
+        description: subscription to add
+        schema:
+          $ref: '#/definitions/SubscriptionRequest'
+      responses:
+        201:
+          description: item created
+        400:
+          description: invalid input, object invalid
+
+
+  /marketplaces/{marketplace_id}/subscriptions/{subscription_id}:
+    get:
+      tags:
+          - Assinaturas
+      summary: Recuperar os detalhes de uma assinatura pelo identificador
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: marketplace_id
+        required: true
+        type: string
+      - in: path
+        name: subscription_id
+        required: true
+        type: string
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/SubscriptionResponseItem'
+        400:
+          description: bad input parameter
+        404:
+          description: subscription_id not found
+    put:
+      tags:
+          - Assinaturas
+      summary: Alterar os detalhes de uma assinatura pelo identificador
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: subscription_id
+        required: true
+        type: string
+      - in: path
+        name: marketplace_id
+        required: true
+        type: string
+      - in: body
+        name: subscription
+        description: subscription to add
+        schema:
+          $ref: '#/definitions/SubscriptionRequest'
+      responses:
+        200:
+          description: item updated
+        400:
+          description: invalid input, object invalid
+        404:
+          description: subscription_id not found
+    delete:
+      tags:
+          - Assinaturas
+      summary: Remover uma assinatura pelo identificador
+      description: |
+        Assinatura é a relação entre um plano e um cliente. Possui uma data de início e representa um contrato de recorrência firmado entre o cliente e o parceiro.
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: subscription_id
+        required: true
+        type: string
+      - in: path
+        name: marketplace_id
+        required: true
+        type: string
+      responses:
+        200:
+          description: item deleted
+        400:
+          description: invalid input, object invalid
+        404:
+          description: subscription_id not found
+
+  /marketplaces/{marketplace_id}/subscriptions/{subscription_id}/invoices:
+    get:
+      tags:
+          - Faturas
+      summary: Recuperar faturas associadas a uma assinatura
+      description: |
+        Recuperar os detalhes de todas as faturas associadas a uma determinada assinatura
+      produces:
+      - application/json
+      parameters:
+        - $ref: '#/parameters/limitParam'
+        - $ref: '#/parameters/offsetParam'
+        - in: path
+          name: marketplace_id
+          required: true
+          type: string
+        - in: path
+          name: subscription_id
+          required: true
+          type: string
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/InvoiceResponse'
+        400:
+          description: bad input parameter
+
+
+  /marketplaces/{marketplace_id}/subscriptions/{subscription_id}/suspend:
+    post:
+      tags:
+          - Assinaturas
+      summary: Suspender uma assinatura pelo identificador
+      description: |
+        Ao suspender uma assinatura, não serão mais geradas faturas
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: subscription_id
+        required: true
+        type: string
+      - in: path
+        name: marketplace_id
+        required: true
+        type: string
+      responses:
+        200:
+          description: item suspended
+        400:
+          description: invalid input, object invalid
+        404:
+          description: subscription_id not found
+
+  /marketplaces/{marketplace_id}/subscriptions/{subscription_id}/reactivate:
+    post:
+      tags:
+          - Assinaturas
+      summary: Reativa uma assinatura pelo identificador
+      description: |
+        Ao reativar uma assinatura que estava suspensa ela volta a gerar faturas
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: subscription_id
+        required: true
+        type: string
+      - in: path
+        name: marketplace_id
+        required: true
+        type: string
+      responses:
+        200:
+          description: item reativado
+        400:
+          description: invalid input, object invalid
+        404:
+          description: subscription_id not found
+
+  /marketplaces/{marketplace_id}/invoices:
+    get:
+      tags:
+          - Faturas
+      summary: Recuperar todas as faturas de um marketplace
+      produces:
+      - application/json
+      parameters:
+        - $ref: '#/parameters/limitParam'
+        - $ref: '#/parameters/sortParam'
+        - $ref: '#/parameters/offsetParam'
+        - $ref: '#/parameters/dateRangeParam'
+        - $ref: '#/parameters/dateRangeGTParam'
+        - $ref: '#/parameters/dateRangeGTEParam'
+        - $ref: '#/parameters/dateRangeLTParam'
+        - $ref: '#/parameters/dateRangeLTEParam'
+        - in: path
+          name: marketplace_id
+          required: true
+          type: string
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/InvoiceResponse'
+        400:
+          description: bad input parameter
+    post:
+      tags:
+          - Faturas
+      summary: Criar uma fatura avulsa
+      description:  |
+        A fatura totaliza, em valores financeiros, mercadorias ou serviços que serão cobrados do cliente. Uma conta telefônica é um exemplo de fatura que você pode relacionar com seu cotidiano. Uma fatura pode conter vários itens: "Assinatura mensal", "Suporte técnico adicional", "Mensagens enviadas", etc.
+        Faturas podem existir independente de assinaturas e neste caso elas são chamadas de "faturas avulsas" e são ligadas diretamente ao cliente.
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: marketplace_id
+        required: true
+        type: string
+      - in: body
+        name: invoice
+        description: invoice to add
+        schema:
+          $ref: '#/definitions/InvoiceRequest'
+      responses:
+        201:
+          description: item created
+        400:
+          description: invalid input, object invalid
+        409:
+          description: item already exists
+  /marketplaces/{marketplace_id}/invoices/{invoice_id}:
+    get:
+      tags:
+          - Faturas
+      summary: Recuperar os detalhes de uma fatura pelo identificador
+      description: |
+        Você pode recuperar os detalhes de uma determinada fatura através do identificador
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: marketplace_id
+        required: true
+        type: string
+      - in: path
+        name: invoice_id
+        required: true
+        type: string
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/InvoiceResponseItem'
+        400:
+          description: bad input parameter
+    put:
+      tags:
+          - Faturas
+      summary: Alterar detalhes de uma fatura pelo identificador
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: invoice_id
+        required: true
+        type: string
+      - in: path
+        name: marketplace_id
+        required: true
+        type: string
+      - in: body
+        name: plan
+        description: plan to add
+        schema:
+          $ref: '#/definitions/InvoiceRequest'
+      responses:
+        200:
+          description: item updated
+        400:
+          description: invalid input, object invalid
+    delete:
+      tags:
+          - Faturas
+      summary: Remover uma fatura pelo identificador
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: invoice_id
+        required: true
+        type: string
+      - in: path
+        name: marketplace_id
+        required: true
+        type: string
+      responses:
+        200:
+          description: item deleted
+        400:
+          description: invalid input, object invalid
+  /marketplaces/{marketplace_id}/invoices/{invoice_id}/approve:
+    post:
+      tags:
+          - Faturas
+      summary: Aprovar fatura pendente
+      description: |
+        Aprovar manualmente uma fatura pendente, sem que seja feita a cobrança ao cobrador
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: invoice_id
+        required: true
+        type: string
+      - in: path
+        name: marketplace_id
+        required: true
+        type: string
+      responses:
+        200:
+          description: invoice approved
+        400:
+          description: invalid input, object invalid
+  /marketplaces/{marketplace_id}/invoices/{invoice_id}/void:
+    post:
+      tags:
+          - Faturas
+      summary: Estornar e reembolsar fatura
+      description: |
+        Estornar uma fatura paga, sendo feito o processamento do estorno da forma de cobrança associada ao pagamento da fatura;
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: invoice_id
+        required: true
+        type: string
+      - in: path
+        name: marketplace_id
+        required: true
+        type: string
+      responses:
+        200:
+          description: fatura estornado com sucesso
+        400:
+          description: invalid input, object invalid
+  /marketplaces/{marketplace_id}/sellers/{customer_id}/invoices:
+    get:
+      tags:
+          - Faturas
+      summary: Recuperar faturas associadas a um vendedor pelo identificador
+      description: |
+        Recuperar os detalhes de todas as faturas associadas a um determinado vendedor pelo identificador
+      produces:
+      - application/json
+      parameters:
+        - $ref: '#/parameters/limitParam'
+        - $ref: '#/parameters/sortParam'
+        - $ref: '#/parameters/offsetParam'
+        - $ref: '#/parameters/dateRangeParam'
+        - $ref: '#/parameters/dateRangeGTParam'
+        - $ref: '#/parameters/dateRangeGTEParam'
+        - $ref: '#/parameters/dateRangeLTParam'
+        - $ref: '#/parameters/dateRangeLTEParam'
+        - in: path
+          name: marketplace_id
+          required: true
+          type: string
+        - in: path
+          name: customer_id
+          required: true
+          type: string
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/InvoiceResponse'
+        400:
+          description: bad input parameter
+
+definitions:
+  PlanRequest:
+    type: object
+    required:
+    - name
+    - frequency
+    - interval
+    - payment_methods
+    - currency
+    properties:
+      frequency:
+        description: Frequencia que o plano será cobrado
+        type: string
+        enum:
+          - daily
+          - monthly
+          - weekly
+          - annually
+      interval:
+        description: intervalo entre frequencia de cobrança
+        type: integer
+        format: int32
+      payment_methods:
+        description: métodos de pagamento utilizados
+        type: array
+        items:
+          type: string
+          enum:
+            - boleto
+            - credit
+            - debit
+            - wallet
+      amount:
+        description: valor plano em centavos
+        type: integer
+        format: int32
+      setup_amount:
+        description: valor do setup do plano em centavos
+        type: integer
+        format: int32
+      currency:
+        description: moeda utilizada no formato ISO 4217
+        type: string
+        example: BRL
+      description:
+        description: descrição do plano
+        type: string
+      name:
+        description: nome do plano
+        type: string
+      grace_period:
+        description: perído (dias) de carência para a primeira cobrança do plano
+        type: integer
+        format: int32
+      tolerance_period:
+        description: perído de tolerancia caso haja falha de pagamento
+        type: integer
+        format: int32
+      duration:
+        description: tempo de duração do plano em relação à frequencia escolhida
+        type: integer
+        format: int32
+
+  PlanResponse:
+    type: object
+    properties:
+      resource:
+        type: string
+        example: "list"
+      uri:
+        type: string
+        example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/plan/"
+      limit:
+        type: number
+        example: 100
+      offset:
+        type: number
+        example: 0
+      has_more:
+        type: boolean
+        example: false
+      total:
+        type: number
+        example: 2
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/PlanResponseItem'
+  PlanResponseItem:
+    type: object
+    required:
+      - name
+      - frequency
+      - interval
+      - payment_methods
+    properties:
+      uuid:
+        type: string
+        format: uuid
+        readOnly: true
+        example: d290f1ee6c544b0190e6d701748f0851
+      frequency:
+        description: Frequencia que o plano será cobrado
+        type: string
+        enum:
+          - daily
+          - monthly
+          - weekly
+          - annually
+      interval:
+        description: intervalo entre frequencia de cobrança
+        type: integer
+        format: int32
+      payment_methods:
+        description: métodos de pagamento utilizados
+        type: array
+        items:
+          type: string
+          enum:
+            - boleto
+            - credit
+            - debit
+            - wallet
+      amount:
+        description: valor plano em centavos
+        type: integer
+        format: int32
+      setup_amount:
+        description: valor do setup do plano em centavos
+        type: integer
+        format: int32
+      currency:
+        description: moeda utilizada
+        type: string
+        example: BRL
+      description:
+        description: descrição do plano
+        type: string
+      name:
+        description: nome do plano
+        type: string
+      grace_period:
+        description: perído (dias) de carência para a primeira cobrança do plano
+        type: integer
+        format: int32
+      tolerance_period:
+        description: perído de tolerancia caso haja falha de pagamento
+        type: integer
+        format: int32
+      duration:
+        description: tempo de duração do plano em relação à frequencia escolhida
+        type: integer
+        format: int32
+      status:
+        description: status do plano
+        type: string
+        enum:
+          - active
+          - canceled
+      resource:
+        type: string
+        example: plan
+      created_at:
+        type: integer
+        format: datetime
+      updated_at:
+        type: integer
+        format: datetime
+      uri:
+        type: string
+        example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/plan/73c0789594c1470cb10cc957f2435c00"
+  SubscriptionRequest:
+    type: object
+    properties:
+      plan:
+        description: referência a um plano existente
+        type: string
+        format: uuid
+        example: d290f1ee6c544b0190e6d701748f0851
+      on_behalf_of:
+        description: referência a um vendedor existente
+        type: string
+        format: uuid
+        example: d290f1ee6c544b0190e6d701748f0851
+      customer:
+        description: referência a um comprador existente
+        type: string
+        format: uuid
+        example: d290f1ee6c544b0190e6d701748f0851
+      payment_method:
+        description: método de pagamento
+        type: string
+        enum:
+          - boleto
+          - credit
+          - debit
+          - wallet
+      due_date:
+        description: data da próxima cobrança
+        type: string
+        format: date
+        example: 2017-07-21
+      due_since_date:
+        description: data da primeira cobrança da assinatura
+        type: string
+        format: date
+        example: 2017-07-21
+      expiration_date:
+        description: data final da assinatura
+        type: string
+        format: date
+        example: 2017-07-25
+      amount:
+        description: valor em centavos
+        type: integer
+        format: int32
+      currency:
+        description: moeda utilizada, no formato ISO4217
+        type: string
+        example: BRL
+      grace_period:
+        description: perído (dias) de carência para a primeira cobrança da assinatura
+        type: integer
+        format: int32
+      tolerance_period:
+        description: perído de tolerancia caso haja falha de pagamento
+        type: integer
+        format: int32
+
+  SubscriptionResponse:
+    type: object
+    properties:
+      resource:
+        type: string
+        example: "list"
+      uri:
+        type: string
+        example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/subscription/"
+      limit:
+        type: number
+        example: 100
+      offset:
+        type: number
+        example: 0
+      has_more:
+        type: boolean
+        example: false
+      query_count:
+        type: number
+        example: 2
+      total:
+        type: number
+        example: 2
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/SubscriptionResponseItem'
+  SubscriptionResponseItem:
+    type: object
+    properties:
+      uuid:
+        type: string
+        format: uuid
+        example: d290f1ee6c544b0190e6d701748f0851
+      plan:
+        description: referência a um plano existente
+        type: string
+        format: uuid
+        example: d290f1ee6c544b0190e6d701748f0851
+      on_behalf_of:
+        description: referência a um vendedor existente
+        type: string
+        format: uuid
+        example: d290f1ee6c544b0190e6d701748f0851
+      customer:
+        description: referência a um comprador existente
+        type: string
+        format: uuid
+        example: d290f1ee6c544b0190e6d701748f0851
+      description:
+        description: descrição da assinatura
+        type: string
+        format: text
+      payment_method:
+        description: método de pagamento
+        type: string
+        enum:
+          - boleto
+          - credit
+          - debit
+          - wallet
+      due_date:
+        description: data da próxima cobrança
+        type: string
+        format: date
+        example: 2017-07-21
+      due_since_date:
+        description: data da primeira cobrança da assinatura
+        type: string
+        format: date
+        example: 2017-07-21
+      expiration_date:
+        description: data final da assinatura
+        type: string
+        format: date
+        example: 2017-07-25
+      amount:
+        description: valor em centavos
+        type: integer
+        format: int32
+      currency:
+        description: moeda utilizada no formato ISO4217
+        type: string
+        example: BRL
+      grace_period:
+        description: perído (dias) de carência para a primeira cobrança da assinatura
+        type: integer
+        format: int32
+      tolerance_period:
+        description: perído de tolerancia caso haja falha de pagamento
+        type: integer
+        format: int32
+      status:
+        description: status da assinatura
+        type: string
+        enum:
+          - active
+          - suspended
+          - canceled
+          - expired
+      resource:
+        type: string
+        example: subscription
+      created_at:
+        type: string
+        format: date-time
+        example: 2017-07-25
+      updated_at:
+        type: string
+        format: date-time
+        example: 2017-07-25
+      suspended_at:
+        type: string
+        format: date-time
+        example: 2017-07-25
+      uri:
+        type: string
+        example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/subscription/73c0789594c1470cb10cc957f2435c00"
+
+  InvoiceRequest:
+    type: object
+    properties:
+      subscription:
+        description: referência a uma assinatura existente
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      on_behalf_of:
+        description: referência a um vendedor existente
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      customer:
+        description: referência a um comprador existente
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      description:
+        description: descrição da assinatura
+        type: string
+        format: text
+      payment_method:
+        description: método de pagamento
+        type: string
+        enum:
+          - boleto
+          - credit
+          - debit
+          - wallet
+      due_date:
+        description: data da próxima cobrança
+        type: string
+        format: date
+        example: 2017-07-21
+      expiration_date:
+        description: data de vencimento cobrança
+        type: string
+        format: date
+        example: 2017-07-25
+      amount:
+        description: valor em centavos
+        type: integer
+        format: int32
+      currency:
+        description: moeda utilizada seguindo o padrão ISO4217
+        type: string
+        example: BRL
+      paid_at:
+        description: data do pagamento
+        readOnly: true
+        type: string
+        format: date-time
+      voided_at:
+        description: data do cancelamento
+        readOnly: true
+        type: integer
+        format: date-time
+      grace_period:
+        description: período de carência após cobrança gerada
+        type: integer
+        format: int32
+      tolerance_period:
+        description: período de tolerância caso haja falha no pagamento
+        type: integer
+        format: int32
+      retries:
+        description: quantidade de vezes que tentou efetuar o pagamento
+        type: integer
+        format: int32
+      max_retries:
+        description: quantidade máxima de vezes que se deve tentar efetuar o pagamento
+        type: integer
+        format: int32
+      status:
+        description: status da cobrança
+        readOnly: true
+        type: string
+        enum:
+          - pending
+          - paid
+          - canceled
+          - failed
+
+  InvoiceResponse:
+    type: object
+    properties:
+      resource:
+        type: string
+        example: "list"
+      uri:
+        type: string
+        example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/invoice/"
+      limit:
+        type: number
+        example: 100
+      offset:
+        type: number
+        example: 0
+      has_more:
+        type: boolean
+        example: false
+      query_count:
+        type: number
+        example: 2
+      total:
+        type: number
+        example: 2
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/InvoiceResponseItem'
+  InvoiceResponseItem:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee6c544b0190e6d701748f0851
+      subscription:
+        description: referência a uma assinatura existente
+        type: string
+        format: uuid
+        example: d290f1ee6c544b0190e6d701748f0851
+      on_behalf_of:
+        description: referência a um vendedor existente
+        type: string
+        format: uuid
+        example: d290f1ee6c544b0190e6d701748f0851
+      customer:
+        description: referência a um comprador existente
+        type: string
+        format: uuid
+        example: d290f1ee6c544b0190e6d701748f0851
+      invoice_customer:
+        description: dados do comprador associado a assinaturas
+        $ref: '#/definitions/InvoiceCustomer'
+      description:
+        description: descrição da assinatura
+        type: string
+        format: text
+      payment_methods:
+        description: métodos de pagamentos
+        type: string
+        enum:
+          - boleto
+          - credit
+          - debit
+          - wallet
+      due_date:
+        description: data da próxima cobrança
+        type: string
+        format: date
+        example: 2017-07-21
+      expiration_date:
+        description: data de vencimento cobrança
+        type: string
+        format: date
+        example: 2017-07-25
+      amount:
+        description: valor em centavos
+        type: integer
+        format: int32
+      currency:
+        description: moeda utilizada
+        type: string
+        example: BRL
+      paid_at:
+        readOnly: true
+        description: data do pagamento
+        type: string
+        format: date-time
+      voided_at:
+        readOnly: true
+        description: data do cancelamento
+        type: string
+        format: date-time
+      grace_period:
+        description: período de carência após cobrança gerada
+        type: integer
+        format: int32
+      tolerance_period:
+        description: período de tolerância caso haja falha no pagamento
+        type: integer
+        format: int32
+      retries:
+        description: quantidade de vezes que tentou efetuar o pagamento
+        type: integer
+        format: int32
+      max_retries:
+        description: quantidade máxima de vezes que se deve tentar efetuar o pagamento
+        type: integer
+        format: int32
+      status:
+        description: status da cobrança
+        type: string
+        enum:
+          - pending
+          - paid
+          - over-due
+          - canceled
+          - failed
+      resource:
+        type: string
+        example: invoice
+      metadata:
+        type: array
+        items:
+          - type: string
+      created_at:
+        readOnly: true
+        type: string
+        format: date-time
+      updated_at:
+        readOnly: true
+        type: string
+        format: date-time
+      uri:
+        type: string
+        example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/invoice/73c0789594c1470cb10cc957f2435c00"
+
+  InvoiceCustomer:
+    type: object
+    properties:
+      uuid:
+        readOnly: true
+        description: id do comprador na API de pagamento
+        type: string
+        format: uuid
+      first_name:
+        readOnly: true
+        description: nome do comprador
+        type: string
+      last_name:
+        readOnly: true
+        description: sobrenome do comprador
+        type: string
+      taxpayer_id:
+        readOnly: true
+        description: documento de identificação
+        type: string
+      email:
+        readOnly: true
+        description: endereço de email
+        type: string
+        format: email
+parameters:
+  limitParam:
+    name: limit
+    in: query
+    description: limit of returned objects between 1 and 100
+    required: false
+    type: number
+    format: int32
+    default: 20
+  sortParam:
+    name: sort
+    in: query
+    description: sort by the creation date
+    required: false
+    type: string
+    enum:
+      - time-descending
+      - time-ascending
+    default: time-descending
+  offsetParam:
+    name: offset
+    in: query
+    description: set the begin of returned objects
+    required: false
+    type: number
+    format: int32
+    default: 0
+  dateRangeParam:
+    name: date_range
+    in: query
+    description: filter based on the create date, value can be a string with a datetime utc timestamp
+    required: false
+    type: number
+  dateRangeGTParam:
+    name: date_range[gt]
+    in: query
+    description: return objects whit create date greater than an informed value
+    required: false
+    type: number
+  dateRangeGTEParam:
+    name: date_range[gte]
+    in: query
+    description: return objects whit create date greater or equal an informed value
+    required: false
+    type: number
+  dateRangeLTParam:
+    name: date_range[lt]
+    in: query
+    description: return objects whit create date lower than an informed value
+    required: false
+    type: number
+  dateRangeLTEParam:
+    name: date_range[lte]
+    in: query
+    description: return objects whit create date lower or equal an informed value
+    required: false
+    type: number
