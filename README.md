@@ -1,5 +1,5 @@
 # :orange_book: api-docs
-Repositório para centralizar documentações das APIs públicas da Zoop.
+Repositório para centralizar documentações em formato OpenAPI Specification das APIs Zoop.
 
 Caso você esteja realizando uma integração com a Zoop, acesse https://docs.zoop.co.
 
