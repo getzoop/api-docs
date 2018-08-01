@@ -100,7 +100,7 @@ paths:
       parameters:
         - name: marketplace_id
           in: path
-          description: identificador do marketplace
+          description: ID do marketplace
           required: true
           type: string
         - in: body
@@ -153,7 +153,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: transaction_id
@@ -185,7 +185,7 @@ paths:
       parameters:
         - name: marketplace_id
           in: path
-          description: identificador do marketplace
+          description: ID do marketplace
           required: true
           type: string
         - name: transaction_id
@@ -210,7 +210,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: transaction_id
@@ -246,7 +246,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: transaction_id
@@ -282,7 +282,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
     post:
@@ -312,7 +312,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: card_id
@@ -360,7 +360,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
     post:
@@ -392,7 +392,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: source_id
@@ -530,7 +530,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: seller_id
@@ -562,7 +562,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: seller_id
@@ -593,7 +593,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: transaction_id
@@ -624,7 +624,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: seller_id
@@ -650,7 +650,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: transaction_id
@@ -680,7 +680,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: transaction_id
@@ -711,7 +711,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: transaction_id
@@ -741,7 +741,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: transaction_id
@@ -772,7 +772,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: transaction_id
@@ -824,7 +824,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: seller_id
@@ -853,7 +853,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: receipt_id
@@ -878,7 +878,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: receipt_id
@@ -903,7 +903,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: receipt_id
@@ -928,7 +928,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: receipt_id
@@ -967,7 +967,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: receipt_id
@@ -993,7 +993,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: boleto_id
@@ -1020,7 +1020,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: boleto_id
@@ -1090,7 +1090,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: transaction_id

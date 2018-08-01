@@ -4,3 +4,18 @@ Repositório para centralizar documentações em formato OpenAPI Specification d
 Caso você esteja realizando uma integração com a Zoop, acesse https://docs.zoop.co.
 
 Se encontrar algum erro ou falta de documentação fique a vontade para abrir uma issue ou pull request no padrão [GitHub Flow](https://guides.github.com/introduction/flow/).
+
+
+- Transação
+Cartão Presente
+Cartão Não Presente
+Boleto
+- Estorno
+
+- Cartões
+
+- Contas bancárias
+
+- Regras de divisão / Split Rules
+
+- Assinaturas / Recorrência

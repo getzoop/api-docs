@@ -25,7 +25,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
     post:
@@ -61,7 +61,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: webhook_id
@@ -98,7 +98,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
       - name: event_id
@@ -123,7 +123,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do marketplace
+        description: ID do marketplace
         required: true
         type: string
     get:
