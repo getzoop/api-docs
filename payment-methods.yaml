@@ -1382,7 +1382,6 @@ definitions:
   SplitRuleRequest:
     type: object
     required:
-      - on_behalf_of
       - amount
     properties:
       recipient:
