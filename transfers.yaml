@@ -173,7 +173,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do markteplace
+        description: identificador do marketplace
         required: true
         type: string
       - name: owner
@@ -212,7 +212,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do markteplace
+        description: identificador do marketplace
         required: true
         type: string
       - name: owner
@@ -568,7 +568,7 @@ paths:
     parameters:
       - name: marketplace_id
         in: path
-        description: identificador do markteplace
+        description: identificador do marketplace
         required: true
         type: string
       - name: owner
