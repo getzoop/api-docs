@@ -103,8 +103,8 @@ paths:
           description: ID do marketplace
           required: true
           type: string
-        - in: body
-          name: body
+        - name: body
+          in: body
           description: Transacao
           schema:
             $ref: '#/definitions/TransactionCNPRequest'
@@ -989,9 +989,225 @@ paths:
         '404':
           description: Marketplace/Recibo não encontrada
 
-  /v1/marketplaces/{marketplace_id}/boletos/{boleto_id}/emails:
+
+
+  /v1/marketplaces/{marketplace_id_}/transactions:
     parameters:
-      - name: marketplace_id
+      - name: marketplace_id_
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+    get:
+      summary: Listar boletos do marketplace
+      tags:
+        - Boleto
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/limitParam'
+        - $ref: '#/parameters/sortParam'
+        - $ref: '#/parameters/offsetParam'
+        - $ref: '#/parameters/dateRangeParam'
+        - $ref: '#/parameters/dateRangeGTParam'
+        - $ref: '#/parameters/dateRangeGTEParam'
+        - $ref: '#/parameters/dateRangeLTParam'
+        - $ref: '#/parameters/dateRangeLTEParam'
+        - name: reference_id
+          in: query
+          type: string
+          description: "Retorna boletos onde o reference id for igual o informado"
+          required: false
+        - name: status
+          in: query
+          type: string
+          description: "Retorna boletos onde o status for igual o informado. Para busca múltipla basta concatenar com ,"
+          required: false
+          enum:
+            - succeeded
+            - failed
+            - canceled
+            - pre_authorized
+            - reversed
+            - refunded
+            - pending
+            - new
+            - partial_refunded
+            - dispute
+            - charged_back
+        - name: payment_type
+          in: query
+          type: string
+          description: "Retorna boletos onde o payment type for igual o informado. Para busca múltipla basta concatenar com ,"
+          required: false
+          enum:
+            - boleto
+      responses:
+        '200':
+          description: Boletos recuperadas com sucesso
+          schema:
+            $ref: '#/definitions/Transactions'
+        '404':
+          description: 'Marketplace não encontrado'
+    post:
+      summary: Criar boleto
+      tags:
+        - Boleto
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: marketplace_id_
+          in: path
+          description: ID do marketplace
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: Boleto
+          schema:
+            $ref: '#/definitions/TransactionCNPRequest'
+      responses:
+        '200':
+          description: Boleto criado com sucesso
+          schema:
+            $ref: '#/definitions/TransactionResponse'
+        '404':
+          description: 'Boleto não encontrada'
+  /v1/marketplaces/{marketplace_id_}/sellers/{seller_id}/transactions:
+    parameters:
+      - name: marketplace_id_
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador do seller
+        required: true
+        type: string
+    get:
+      summary: Listar boletos por vendedor
+      tags:
+        - Boleto
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/limitParam'
+        - $ref: '#/parameters/sortParam'
+        - $ref: '#/parameters/offsetParam'
+        - $ref: '#/parameters/dateRangeParam'
+        - $ref: '#/parameters/dateRangeGTParam'
+        - $ref: '#/parameters/dateRangeGTEParam'
+        - $ref: '#/parameters/dateRangeLTParam'
+        - $ref: '#/parameters/dateRangeLTEParam'
+      responses:
+        '200':
+          description: Boletos recuperados com sucesso
+          schema:
+            $ref: '#/definitions/Transactions'
+        '404':
+          description: 'Marketplace não encontrado'
+  /v1/marketplaces/{marketplace_id_}/transactions/{transaction_id}:
+    parameters:
+      - name: marketplace_id_
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: transaction_id
+        in: path
+        description: identificador do boleto
+        required: true
+        type: string
+    get:
+      summary: Recuperar detalhes de boleto pelo identificador
+      tags:
+        - Boleto
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Boleto recuperado com sucesso
+          schema:
+            $ref: '#/definitions/TransactionResponse'
+        '404':
+          description: 'Transação não encontrada'
+    put:
+      summary: Alterar detalhes de boleto pelo identificador
+      tags:
+        - Boleto
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: marketplace_id_
+          in: path
+          description: ID do marketplace
+          required: true
+          type: string
+        - name: transaction_id
+          in: path
+          description: identificador do boleto
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Boleto
+          required: true
+          schema:
+            $ref: '#/definitions/TransactionUpdateRequest'
+      responses:
+        '200':
+          description: Boleto alterado com sucesso
+          schema:
+            $ref: '#/definitions/TransactionResponse'
+        '404':
+          description: 'Transação não encontrada'
+  /v1/marketplaces/{marketplace_id_}/transactions/{transaction_id}/void:
+    parameters:
+      - name: marketplace_id_
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: transaction_id
+        in: path
+        description: identificador do boleto
+        required: true
+        type: string
+    post:
+      tags:
+        - Boleto
+      summary: 'Estornar boleto'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Boleto
+          schema:
+            $ref: '#/definitions/TransactionVoidRequest'
+      responses:
+        '200':
+          description: Boleto estornado com sucesso
+          schema:
+            $ref: '#/definitions/TransactionResponse'
+        '400':
+          description: Requisição/Parametros inválidos
+        '404':
+          description: Marketplace/Boleto não encontrado
+
+
+
+  /v1/marketplaces/{marketplace_id_}/boletos/{boleto_id}/emails:
+    parameters:
+      - name: marketplace_id_
         in: path
         description: ID do marketplace
         required: true
@@ -1016,9 +1232,9 @@ paths:
         '404':
           description: Marketplace/Boleto não encontrado
 
-  /v1/marketplaces/{marketplace_id}/boletos/{boleto_id}:
+  /v1/marketplaces/{marketplace_id_}/boletos/{boleto_id}:
     parameters:
-      - name: marketplace_id
+      - name: marketplace_id_
         in: path
         description: ID do marketplace
         required: true
