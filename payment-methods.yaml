@@ -366,7 +366,7 @@ paths:
     post:
       tags:
         - 'Source'
-      summary: 'Criar source para utilizacão transação'
+      summary: 'Criar source para utilização transação'
       description: 'Um objeto source permite você aceitar uma variedade de formas de pagamento'
       consumes:
         - application/json
@@ -403,7 +403,7 @@ paths:
     get:
       tags:
         - 'Source'
-      summary: 'Recuperar detalhes de source tão pelo identificador'
+      summary: 'Recuperar detalhes de source pelo identificador'
       description: ''
       produces:
         - application/json
