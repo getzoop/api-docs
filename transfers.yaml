@@ -17,6 +17,8 @@ schemes:
 tags:
   - name: 'Transferência'
     description: Depósitos para conta bancária e conta de cartão
+  - name: 'Ajuste de cobrança'
+    description: Ajuste de cobrança realizados entre contas
   - name: 'Conta Bancária'
     description: Conta bancária
   - name: 'Recebível'
@@ -66,7 +68,7 @@ paths:
     post:
       tags:
         - 'Transferência'
-      summary: 'Criar transferência para bancária'
+      summary: 'Criar transferência para conta bancária'
       parameters:
         - in: body
           name: body
@@ -92,7 +94,7 @@ paths:
     get:
       tags:
         - 'Transferência'
-      summary: 'Listar transferência por marketplace'
+      summary: 'Listar transferências por marketplace'
       description: ''
       produces:
         - application/json
@@ -110,7 +112,7 @@ paths:
         type: string
       - name: transfer_id
         in: path
-        description: identificador do transferênci
+        description: identificador da transferência
         required: true
         type: string
     get:
@@ -125,6 +127,22 @@ paths:
           description: Transferência recuperada com sucesso
         '404':
           description: Marketplace/Transferência não encontrada
+    delete:
+      tags:
+        - 'Transferência'
+      summary: 'Cancelar transferência agendada anteriormente à data prevista para efetivação'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transferência cancelada com sucesso
+        '400':
+          description: Transferência já efetuada
+        '404':
+          description: Marketplace/Transferência não encontrada
+          
+          
   /v1/marketplaces/{marketplace_id}/transfers/{transfer_id}/transactions:
     parameters:
       - name: marketplace_id
@@ -134,7 +152,7 @@ paths:
         type: string
       - name: transfer_id
         in: path
-        description: identificador do transferência
+        description: identificador da transferência
         required: true
         type: string
     get:
@@ -150,6 +168,139 @@ paths:
           description: Transferência recuperada com sucesso
         '404':
           description: Marketplace/Transferência não encontrada
+          
+  /v2/marketplaces/{marketplace_id}/adjustments/{owner}/to/{receiver}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do markteplace
+        required: true
+        type: string
+      - name: owner
+        in: path
+        description: identificador do customer pagador
+        required: true
+        type: string
+      - name: receiver
+        in: path
+        description: identificador do customer recebedor
+        required: true
+        type: string
+    post:
+      tags:
+        - "Ajuste de cobrança"
+      summary: 'Criar ajuste de cobrança informando pagador e recebedor'
+      description: 'Criação de um ajuste de cobrança do valor informado, a ser debitado da conta do pagador e creditado na conta do recebedor'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: CreateAdjustmentRequest
+          required: true
+          schema:
+            $ref: '#/definitions/CreateAdjustmentRequest'
+      responses:
+        '200':
+          description: Ajuste de cobrança criado com sucesso
+        '404':
+          description: Marketplace/Customer não encontrado
+          
+  /v2/marketplaces/{marketplace_id}/adjustments/{owner}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do markteplace
+        required: true
+        type: string
+      - name: owner
+        in: path
+        description: identificador do customer pagador
+        required: true
+        type: string
+    post:
+      tags:
+        - "Ajuste de cobrança"
+      summary: 'Criar ajuste de cobrança informando somente pagador'
+      description: 'Criação de um ajuste de cobrança do valor informado, a ser debitado da conta do pagador e creditado na conta Master do Marketplace'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: CreateAdjustmentRequest
+          required: true
+          schema:
+            $ref: '#/definitions/CreateAdjustmentRequest'
+      responses:
+        '200':
+          description: Ajuste de cobrança criado com sucesso
+        '404':
+          description: Marketplace/Customer não encontrado
+          
+  /v1/marketplaces/{marketplace_id}/adjustments:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Ajuste de cobrança'
+      summary: 'Listar ajustes de cobrança por marketplace'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transferências recuperadas com sucesso
+        '404':
+          description: Marketplace não encontrado
+          
+  /v1/marketplaces/{marketplace_id}/adjustments/{adjustment_id}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: adjustment_id
+        in: path
+        description: identificador do ajuste de cobrança
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Ajuste de cobrança'
+      summary: 'Recuperar detalhes de ajuste de cobrança'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Ajuste de cobrança recuperado com sucesso
+        '404':
+          description: Marketplace/Transferência não encontrada
+    delete:
+      tags:
+        - 'Ajuste de cobrança'
+      summary: 'Cancelar ajuste de cobrança agendado anteriormente à data prevista para efetivação'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Ajuste de cobrança cancelado com sucesso
+        '400':
+          description: Ajuste de cobrança já efetuado
+        '404':
+          description: Marketplace/Transferência não encontrada
+
   /v2/marketplaces/{marketplace_id}/sellers/{seller_id}/future-transfers:
     parameters:
       - name: marketplace_id
@@ -727,6 +878,25 @@ definitions:
       description:
         type: string
         example: Cobrança de mensalidade
+      transfer_date:
+        type: string
+        format: date
+        example: Data para agendamento da transferência
+
+  CreateAdjustmentRequest:
+    type: object
+    properties:
+      amount:
+        type: integer
+        example: 3500
+      description:
+        type: string
+        example: Cobrança de mensalidade
+      transfer_date:
+        type: string
+        format: date
+        example: Data para agendamento do ajuste
+        
   ReceivingPolicy:
     type: object
     properties:
