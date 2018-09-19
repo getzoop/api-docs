@@ -1192,7 +1192,7 @@ paths:
           name: body
           description: Boleto
           schema:
-            $ref: '#/definitions/TransactionVoidRequest'
+            $ref: '#/definitions/BoletoVoidRequest'
       responses:
         '200':
           description: Boleto estornado com sucesso
@@ -1582,6 +1582,15 @@ definitions:
       amount:
         type: integer
         description: valor da venda a ser estornado em centavos
+  BoletoVoidRequest:
+    allOf: 
+      - $ref: '#/definitions/TransactionVoidRequest'
+      - type: object
+        properties:
+          customer:
+            type: string
+            description: Identificador de customer alternativo beneficiário do estorno
+            example: 1e5ee2e290d040769806c79e6ef94ee1
   TransactionCaptureRequest:
     type: object
     required:
