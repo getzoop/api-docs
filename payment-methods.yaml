@@ -1454,7 +1454,6 @@ definitions:
           - card
           - card_and_wallet
           - token
-          - multiple_cards
           - customer
           - three_d_secure
           - debit_online
@@ -1533,71 +1532,6 @@ definitions:
             type: string
             format: dateTime
             example: "2015-04-17T06:39:52+00:00"
-      cards:
-        type: array
-        description: "objeto obrigatório no tipo multiple_cards"
-        items:
-          type: object
-          properties:
-            id:
-              type: string
-              example: "2f008ac254964e658be566241cc87c1a"
-            amount:
-              type: string
-              example: "1.00"
-              description: valor a ser cobrado na venda (opcional)
-            resource:
-              type: string
-              example: "card"
-            description:
-              type: string
-              example: null
-            card_brand:
-              type: string
-              example: "Visa"
-            first4_digits:
-              type: string
-              example: "4893"
-            last4_digits:
-              type: string
-              example: null
-            expiration_month:
-              type: string
-              example: "7"
-            expiration_year:
-              type: string
-              example: "2023"
-            holder_name:
-              type: string
-              example: "LEITE/ANDRE S DE M"
-            is_active:
-              type: boolean
-              example: false
-            is_valid:
-              type: boolean
-              example: true
-            is_verified:
-              type: boolean
-              example: false
-            customer:
-              type: string
-              example: "e4e8c5b569da48b28d896385f5481bcf"
-            fingerprint:
-              type: string
-              example: "9f2843f0c1b08d6018927b4e5e884a869ae49"
-            uri:
-              type: string
-              example: "/v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/2f008ac254964e658be566241cc87c1a"
-            metadata:
-              type: object
-            created_at:
-              type: string
-              format: dateTime
-              example: "2015-04-17T06:39:52+00:00"
-            updated_at:
-              type: string
-              format: dateTime
-              example: "2015-04-17T06:39:52+00:00"
       installment_plan:
         type: object
         properties:
@@ -1670,7 +1604,7 @@ definitions:
       currency:
         type: string
         example: "BRL"
-        description: moeda do valor a ser cobrado na venda (opcional)
+        description: moeda do valor a ser cobrado na venda
       description:
         type: string
         example: "BRL"
@@ -1682,7 +1616,6 @@ definitions:
           - card
           - card_and_wallet
           - token
-          - multiple_cards
           - customer
           - three_d_secure
           - debit_online
@@ -1724,35 +1657,6 @@ definitions:
           security_code:
             type: string
             description: Código de segurança do cartão (CVC)
-      cards:
-        type: array
-        description: "objeto obrigatório no tipo multiple_cards"
-        items:
-          type: object
-          properties:
-            id:
-              type: string
-              example: "8c795953db6342be9fc14a36d5308bed"
-              description: "identificador do cartão para source tipo card"
-            amount:
-              type: integer
-              example: 100
-              description: valor a ser cobrado neste cartao (opcional)
-            holder_name:
-              type: string
-              description: Nome do portador
-            expiration_month:
-              type: string
-              description: mês de expiração do cartão (MM)
-            expiration_year:
-              type: string
-              description: ano de expiração do cartão (AAAA)
-            card_number:
-              type: string
-              description: Número do cartão obrigatório caso não seja enviado card id
-            security_code:
-              type: string
-              description: Código de segurança do cartão (CVC)
       installment_plan:
         type: object
         properties:
