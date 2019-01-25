@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "API de Antecipação sob demanda da Zoop"
-  version: "1.0.0"
+  version: "2.0.0"
   title: "API de Antecipação sob demanda da Zoop"
 host: "api.zoop.ws"
 basePath: "/v1"
@@ -11,7 +11,7 @@ tags:
 schemes:
 - "https"
 paths:
-  /marketplaces/{marketplaceId}/anticipations:
+  /marketplaces/{marketplaceId}/prepayments:
     post:
       tags:
       - "Antecipação"
@@ -70,7 +70,7 @@ paths:
         404:
           description: "Marketplace não encontrado"
 
-  /marketplaces/{marketplaceId}/sellers/{sellerId}/anticipations:
+  /marketplaces/{marketplaceId}/sellers/{sellerId}/prepayments:
     get:
       tags:
       - "Antecipação"
@@ -103,7 +103,7 @@ paths:
         404:
           description: "Marketplace ou Seller não encontrado"
 
-  /marketplaces/{marketplaceId}/anticipations/{anticipationId}:
+  /marketplaces/{marketplaceId}/prepayments/{prepaymentId}:
     get:
       tags:
       - "Antecipação"
@@ -117,7 +117,7 @@ paths:
         description: "ID do Marketplace"
         required: true
         type: "string"
-      - name: "anticipationId"
+      - name: "prepaymentId"
         in: "path"
         description: "ID da Antecipação"
         required: true
@@ -138,13 +138,13 @@ definitions:
     type: "object"
     required:
     - "customer"
-    - "anticipation_date"
+    - "prepayment_date"
     properties:
       customer:
         description: "ID do Seller que terá seus recebíveis antecipáveis."
         type: "string"
         example: "28d4c96c451d93c2d2787e8caee4290f"
-      anticipation_date:
+      prepayment_date:
         description: "Data para a qual os recebíveis serão antecipados. Caso não seja preenchido, é considerado *D0*."
         type: "string"
         format: "date"
@@ -160,7 +160,7 @@ definitions:
         format: "date"
         example: "2018-01-19"
       min_expected_date:
-        description: "Apenas considerar recebíveis cuja agenda original de liquidação seja após esta data (inclusive). Caso não seja preenchida, é considerado *D+1* do campo anticipation_date. Este também é o valor mínimo para este campo."
+        description: "Apenas considerar recebíveis cuja agenda original de liquidação seja após esta data (inclusive). Caso não seja preenchida, é considerado *D+1* do campo prepayment_date. Este também é o valor mínimo para este campo."
         type: "string"
         format: "date"
         example: "2018-01-19"
@@ -202,13 +202,13 @@ definitions:
     type: "object"
     required:
     - "customer"
-    - "anticipation_date"
+    - "prepayment_date"
     properties:
       id:
         description: "ID da Antecipação."
         type: "string"
         example: "e8caee4290f28d4c96c451d93c2d2787"
-      anticipation_date:
+      prepayment_date:
         description: "Data para a qual os recebíveis serão antecipados."
         type: "string"
         format: "date"
@@ -229,11 +229,11 @@ definitions:
         description: "Detalhamento do status da antecipação. Em caso de antecipação rejeitada, aparecerá o informe do Financeiro que explica o motivo da rejeição. Em caso de antecipação inválida, provê detalhes para identificar o motivo da invalidação."
         type: "string"
         example: "Antecipação solicitada."
-      anticipation_gross_amount:
+      prepayment_gross_amount:
         description: "Valor total, em centavos de Reais, dos recebíveis selecionados na simulação (ou antecipados, caso a antecipação já tenha sido realizada), antes de aplicadas as taxas de antecipação."
         type: "integer"
         example: "500000"
-      anticipation_net_amount: 
+      prepayment_net_amount: 
         description: "Valor total, em centavos de Reais, dos recebíveis selecionados na simulação (ou antecipados, caso a antecipação já tenha sido realizada), após aplicadas as taxas de antecipação. É o valor que o Seller receberá de fato pela antecipação."
         type: "integer"
         example: "476534"
