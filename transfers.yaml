@@ -687,11 +687,19 @@ paths:
         - 'Plano de Vendas'
       summary: 'Criar assinatura de plano de venda'
       description: ''
+      parameters:
+        - in: body
+          name: body
+          description: Subscription object
+          required: true
+          schema:
+            $ref: '#/definitions/Subscription'
       deprecated: true
       consumes:
         - application/json
       produces:
         - application/json
+      
       responses:
         '200':
           description: Assinatura de plano de venda removido com sucesso
@@ -926,3 +934,17 @@ definitions:
       token:
         type: string
         example: 2d55be7859544074a7ae9ffe60fdf6d9
+  Subscription:
+    type: object
+    properties:
+      customer:
+        type: string
+        example: 064bf90479e34865afb90cc4a0efe2cc
+      pland_id:
+        type: string
+        example: PLAN_ID
+      auto_collection:
+        type: boolean
+      quantity:
+        type: integer
+        example: 1
