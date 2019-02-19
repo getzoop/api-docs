@@ -131,6 +131,34 @@ paths:
           description: "Requisição inválida"
         404:
           description: "Marketplace ou Antecipação não encontrada"
+  /marketplaces/{marketplaceId}/prepayments/{prepaymentId}/commit:
+    get:
+      tags:
+      - "Antecipação"
+      summary: "Atualização de status da antecipação"
+      description: "Atualiza uma antecipação simulada para pronta."
+      produces:
+      - "application/json"
+      parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: "prepaymentId"
+        in: "path"
+        description: "ID da Antecipação"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Sucesso na atualização do status da antecipação"
+          schema:
+            $ref: "#/definitions/Anticipation"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace ou Antecipação não encontrada"
 
 
 definitions:
