@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "API de Antecipação sob demanda da Zoop"
-  version: "2.0.0"
+  version: "2.1.0"
   title: "API de Antecipação sob demanda da Zoop"
 host: "api.zoop.ws"
 basePath: "/v1"
@@ -125,6 +125,34 @@ paths:
       responses:
         200:
           description: "Sucesso na recuperação da antecipação"
+          schema:
+            $ref: "#/definitions/Anticipation"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace ou Antecipação não encontrada"
+  /marketplaces/{marketplaceId}/prepayments/{prepaymentId}/commit:
+    post:
+      tags:
+      - "Antecipação"
+      summary: "Atualização de status da antecipação"
+      description: "Atualiza uma antecipação simulada para pronta."
+      produces:
+      - "application/json"
+      parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: "prepaymentId"
+        in: "path"
+        description: "ID da Antecipação"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Sucesso na atualização do status da antecipação"
           schema:
             $ref: "#/definitions/Anticipation"
         400:
