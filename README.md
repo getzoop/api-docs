@@ -19,3 +19,5 @@ Boleto
 - Regras de divisão / Split Rules
 
 - Assinaturas / Recorrência
+
+- Disputa
