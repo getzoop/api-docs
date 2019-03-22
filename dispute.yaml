@@ -1,0 +1,403 @@
+swagger: '2.0'
+host: api.zoop.ws
+info:
+  title: Métodos de Disputa
+  version: "1.1"
+
+securityDefinitions:
+  basicAuth:
+    type: basic
+security:
+  - basicAuth: []
+
+schemes:
+  - https
+
+tags:
+  - name: 'Disputa'
+    description: Operações para consulta de disputas
+  - name: 'Documento de Contestação'
+    description: Operações upload e consulta de documentos de contestação
+    
+paths:
+  '/v1/marketplaces/{marketplace_id}/disputes':
+    get:
+      tags:
+        - Disputa
+      summary: Listagem de disputas com paginação
+      description: Lista todas as disputas de um Marketplace
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: marketplace_id
+          in: path
+          description: marketplace_id
+          required: true
+          type: string
+        - name: status
+          in: query
+          required: false
+          type: array
+          items:
+            type: string
+          collectionFormat: multi
+          enum:
+            - Pending
+            - AuthorizedChargeback
+            - Waiting Contestation
+            - Finalized
+        - name: start_date
+          in: query
+          description: yyyy-mm-dd
+          required: false
+          type: string
+        - name: end_date
+          in: query
+          description: yyyy-mm-dd
+          required: false
+          type: string
+        - name: page
+          in: query
+          description: 'Page offset (Default: 0)'
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          description: 'Page limit (Default/Max: 100)'
+          required: false
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: Lista de disputas
+          schema:
+            $ref: '#/definitions/DisputeTO'
+        '401':
+          description: Sem autoriação para acessar o recurso
+        '403':
+          description: Não encontrado
+        '404':
+          description: Marketplace não encontrado
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Erro de operação interna
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/v1/marketplaces/{marketplace_id}/disputes/{dispute_id}':
+    get:
+      tags:
+        - Disputa
+      summary: Consulta Disputa
+      description: Lista apenas uma disputa pelo seu ID
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: marketplace_id
+          in: path
+          description: marketplace_id
+          required: true
+          type: string
+        - name: dispute_id
+          in: path
+          description: dispute_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Disputa encontrada
+          schema:
+            $ref: '#/definitions/DisputeTO'
+        '401':
+          description: Sem autoriação para acessar o recurso
+        '403':
+          description: Não encontrado
+        '404':
+          description: Marketplace não encontrado
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Erro de operação interna
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/v1/marketplaces/{marketplace_id}/disputes/{dispute_id}/document':
+    get:
+      tags:
+        - Documento de Contestação
+      summary: Download do documento de disputa
+      description: Realizar download de um documento já adicionada para disputa
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: marketplace_id
+          in: path
+          description: marketplace_id
+          required: true
+          type: string
+        - name: dispute_id
+          in: path
+          description: dispute_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Documento encontrado com sucesso
+          schema:
+            $ref: '#/definitions/DisputeTO'
+        '401':
+          description: Sem autoriação para acessar o recurso
+        '403':
+          description: Não encontrado
+        '404':
+          description: Marketplace não encontrado
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Erro de operação interna
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    post:
+      tags:
+        - Documento de Contestação
+      summary: Upload do documento de disputa durante o prazo permitido para dipustar (10 dias da criação da disputa)
+      description: 'Apenas um documento nos formatos válidos: PDF, JPEG e TIFF tamanho máximo 7MB e resolução 200 x 200.'
+      consumes:
+        - multipart/form-data
+      produces:
+        - '*/*'
+      parameters:
+        - name: marketplace_id
+          in: path
+          description: marketplace_id
+          required: true
+          type: string
+        - name: dispute_id
+          in: path
+          description: dispute_id
+          required: true
+          type: string
+        - name: uploadFile
+          in: formData
+          description: uploadFile
+          required: true
+          type: file
+      responses:
+        '200':
+          description: Upload realizado com sucesso
+          schema:
+            type: string
+        '401':
+          description: Sem autoriação para acessar o recurso
+        '403':
+          description: Não encontrado
+        '404':
+          description: Marketplace não encontrado
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Erro de operação interna
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    delete:
+      tags:
+        - Documento de Contestação
+      summary: Remover um arquivo de contestação
+      description: O arquivo só pode ser excluído durante o prazo de expiração da disputa que é de 10 dias
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: marketplace_id
+          in: path
+          description: marketplace_id
+          required: true
+          type: string
+        - name: dispute_id
+          in: path
+          description: dispute_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Documento removido com sucesso
+          schema:
+            $ref: '#/definitions/DisputeTO'
+        '204':
+          description: Sem conteúdo
+        '401':
+          description: Sem autoriação para acessar o recurso
+        '403':
+          description: Não encontrado
+        '404':
+          description: Marketplace não encontrado
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Erro de operação interna
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+definitions:
+  DisputeTO:
+    type: object
+    properties:
+      amount:
+        type: number
+        format: double
+      authorization:
+        type: string
+      cardHolder:
+        type: string
+      cardType:
+        type: string
+      descReason:
+        type: string
+      dflag:
+        type: integer
+        format: int32
+      disputeDate:
+        type: string
+        format: date-time
+      fileSent:
+        type: boolean
+      hasAssociateFile:
+        type: boolean
+      id:
+        type: string
+      marketPlaceId:
+        type: string
+      maskCreditNumber:
+        type: string
+      merchant:
+        type: string
+      nsu:
+        type: string
+      purchaseAmount:
+        type: number
+        format: double
+      purchaseDate:
+        type: string
+        format: date-time
+      reason:
+        type: string
+      status:
+        type: string
+      tid:
+        type: string
+      transactionId:
+        type: string
+      updatedAt:
+        type: string
+        example: 'yyyy-MM-dd HH:mm:ss.SSSZ'
+  DisputeTORequest:
+    type: object
+    required:
+      - acquirer
+      - amount
+      - cardType
+      - caseNumber
+      - disputeDate
+      - process
+      - purchaseDate
+      - reason
+      - result
+      - transactionId
+    properties:
+      acquirer:
+        type: string
+      amount:
+        type: number
+        format: double
+      authorization:
+        type: string
+      cardHolder:
+        type: string
+      cardType:
+        type: string
+      caseNumber:
+        type: string
+      descReason:
+        type: string
+      disputeDate:
+        type: string
+        description: yyyy-mm-dd
+      maskCreditNumber:
+        type: string
+      merchant:
+        type: string
+      nsu:
+        type: string
+      process:
+        type: string
+      purchaseAmount:
+        type: number
+        format: double
+      purchaseDate:
+        type: string
+        description: yyyy-mm-dd
+      reason:
+        type: string
+      result:
+        type: string
+      tid:
+        type: string
+      transactionId:
+        type: string
+  Error:
+    type: object
+    properties:
+      category:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+      status_code:
+        type: integer
+        format: int32
+      type:
+        type: string
+  ErrorResponse:
+    type: object
+    properties:
+      error:
+        $ref: '#/definitions/Error'
+  PagedResult:
+    type: object
+    properties:
+      elements:
+        type: array
+        items:
+          type: object
+      limit:
+        type: integer
+        format: int32
+      offset:
+        type: integer
+        format: int32
+      totalElements:
+        type: integer
+        format: int64
+  PagedResult«DisputeTO»:
+    type: object
+    properties:
+      elements:
+        type: array
+        items:
+          $ref: '#/definitions/DisputeTO'
+      limit:
+        type: integer
+        format: int32
+      offset:
+        type: integer
+        format: int32
+      totalElements:
+        type: integer
+        format: int64
