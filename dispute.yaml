@@ -1,9 +1,16 @@
 swagger: '2.0'
 host: api.zoop.ws
 info:
-  title: Métodos de Disputa
-  version: "1.1"
-
+  description: API que gerencia o processo de disputa das transações Zoop.
+  version: '1.0'
+  title: Zoop-Dispute-API
+  contact:
+    name: Zoop
+    url: 'http://www.zoop.co'
+    email: contato@zoop.co
+  license:
+    name: 'License '
+    url: 'http://www.zoop.co'
 securityDefinitions:
   basicAuth:
     type: basic
@@ -14,18 +21,18 @@ schemes:
   - https
 
 tags:
-  - name: 'Disputa'
+  - name: Metodos de Disputa
     description: Operações para consulta de disputas
-  - name: 'Documento de Contestação'
+  - name: Recurso de Documento de Contestação
     description: Operações upload e consulta de documentos de contestação
     
 paths:
   '/v1/marketplaces/{marketplace_id}/disputes':
     get:
       tags:
-        - Disputa
-      summary: Listagem de disputas com paginação
-      description: Lista todas as disputas de um Marketplace
+        - Metodos de Disputa
+      summary: Listagem de Disputas com paginação
+      description: Lista as disputas de um Marketplace com opção de filtros e paginação.
       consumes:
         - application/json
       produces:
@@ -76,9 +83,9 @@ paths:
           schema:
             $ref: '#/definitions/DisputeTO'
         '401':
-          description: Sem autoriação para acessar o recurso
+          description: Falha no processo de autenticação
         '403':
-          description: Não encontrado
+          description: Sem autorização para acessar o recurso
         '404':
           description: Marketplace não encontrado
           schema:
@@ -90,9 +97,9 @@ paths:
   '/v1/marketplaces/{marketplace_id}/disputes/{dispute_id}':
     get:
       tags:
-        - Disputa
+        - Metodos de Disputa
       summary: Consulta Disputa
-      description: Lista apenas uma disputa pelo seu ID
+      description: Consulta disputa de um Marketplace por seu ID.
       consumes:
         - application/json
       produces:
@@ -114,11 +121,11 @@ paths:
           schema:
             $ref: '#/definitions/DisputeTO'
         '401':
-          description: Sem autoriação para acessar o recurso
+          description: Falha no processo de autenticação
         '403':
-          description: Não encontrado
+          description: Sem autorização para acessar o recurso
         '404':
-          description: Marketplace não encontrado
+          description: Disputa não encontrada
           schema:
             $ref: '#/definitions/ErrorResponse'
         '500':
@@ -128,9 +135,9 @@ paths:
   '/v1/marketplaces/{marketplace_id}/disputes/{dispute_id}/document':
     get:
       tags:
-        - Documento de Contestação
-      summary: Download do documento de disputa
-      description: Realizar download de um documento já adicionada para disputa
+        - Recurso de Documento de Contestação
+      summary: Download do Arquivo de Disputa
+      description: Realiza o download do arquivo de disputa cadastrado.
       consumes:
         - application/json
       produces:
@@ -148,13 +155,13 @@ paths:
           type: string
       responses:
         '200':
-          description: Documento encontrado com sucesso
+          description: Download realizado com sucesso
           schema:
             $ref: '#/definitions/DisputeTO'
         '401':
-          description: Sem autoriação para acessar o recurso
+          description: Falha no processo de autenticação
         '403':
-          description: Não encontrado
+          description: Sem autorização para acessar o recurso
         '404':
           description: Marketplace não encontrado
           schema:
@@ -165,9 +172,13 @@ paths:
             $ref: '#/definitions/ErrorResponse'
     post:
       tags:
-        - Documento de Contestação
-      summary: Upload do documento de disputa durante o prazo permitido para dipustar (10 dias da criação da disputa)
-      description: 'Apenas um documento nos formatos válidos: PDF, JPEG e TIFF tamanho máximo 7MB e resolução 200 x 200.'
+        - Recurso de Documento de Contestação
+      summary: Inclusão de Documento
+      description: >-
+        Permite incluir documentos no prazo de até 10 dias após a data de
+        criação da disputa, ao incluir um novo documento este substitui
+        automaticamente o anterior. Os formatos válidos de documentos são PDF,
+        JPEG e TIFF, como tamanho máximo de 7MB e resolução de 200 x 200.
       consumes:
         - multipart/form-data
       produces:
@@ -190,13 +201,15 @@ paths:
           type: file
       responses:
         '200':
-          description: Upload realizado com sucesso
+          description: Documento incluso com sucesso
           schema:
             type: string
+        '201':
+          description: Created
         '401':
-          description: Sem autoriação para acessar o recurso
+          description: Falha no processo de autenticação
         '403':
-          description: Não encontrado
+          description: Sem autorização para acessar o recurso
         '404':
           description: Marketplace não encontrado
           schema:
@@ -207,9 +220,11 @@ paths:
             $ref: '#/definitions/ErrorResponse'
     delete:
       tags:
-        - Documento de Contestação
-      summary: Remover um arquivo de contestação
-      description: O arquivo só pode ser excluído durante o prazo de expiração da disputa que é de 10 dias
+        - Recurso de Documento de Contestação
+      summary: Remove documento de contestação
+      description: >-
+        Remove um documento de contestação da disputa somente se ainda não tiver
+        sido acatada pela Adquirente.
       consumes:
         - application/json
       produces:
@@ -231,11 +246,11 @@ paths:
           schema:
             $ref: '#/definitions/DisputeTO'
         '204':
-          description: Sem conteúdo
+          description: No Content
         '401':
-          description: Sem autoriação para acessar o recurso
+          description: Falha no processo de autenticação
         '403':
-          description: Não encontrado
+          description: Sem autorização para acessar o recurso
         '404':
           description: Marketplace não encontrado
           schema:
@@ -253,47 +268,46 @@ definitions:
         format: double
       authorization:
         type: string
-      cardHolder:
+      card_holder:
         type: string
-      cardType:
+      card_type:
         type: string
-      descReason:
+      desc_reason:
         type: string
-      dflag:
-        type: integer
-        format: int32
-      disputeDate:
+      dispute_date:
         type: string
         format: date-time
-      fileSent:
-        type: boolean
-      hasAssociateFile:
+      expiration_date:
+        type: string
+        example: 'yyyy-MM-dd HH:mm:ss.SSSZ'
+      has_associate_file:
         type: boolean
       id:
         type: string
-      marketPlaceId:
+      marketplace_id:
         type: string
-      maskCreditNumber:
+      marketplace_name:
+        type: string
+      mask_credit_number:
         type: string
       merchant:
         type: string
       nsu:
         type: string
-      purchaseAmount:
-        type: number
-        format: double
-      purchaseDate:
+      purchase_date:
         type: string
         format: date-time
       reason:
+        type: string
+      reference_id:
         type: string
       status:
         type: string
       tid:
         type: string
-      transactionId:
+      transaction_id:
         type: string
-      updatedAt:
+      updated_at:
         type: string
         example: 'yyyy-MM-dd HH:mm:ss.SSSZ'
   DisputeTORequest:
@@ -301,14 +315,14 @@ definitions:
     required:
       - acquirer
       - amount
-      - cardType
-      - caseNumber
-      - disputeDate
+      - card_type
+      - case_number
+      - dispute_date
+      - nsu
       - process
-      - purchaseDate
+      - purchase_date
       - reason
       - result
-      - transactionId
     properties:
       acquirer:
         type: string
@@ -317,18 +331,18 @@ definitions:
         format: double
       authorization:
         type: string
-      cardHolder:
+      card_holder:
         type: string
-      cardType:
+      card_type:
         type: string
-      caseNumber:
+      case_number:
         type: string
-      descReason:
+      desc_reason:
         type: string
-      disputeDate:
+      dispute_date:
         type: string
         description: yyyy-mm-dd
-      maskCreditNumber:
+      mask_credit_number:
         type: string
       merchant:
         type: string
@@ -336,10 +350,10 @@ definitions:
         type: string
       process:
         type: string
-      purchaseAmount:
+      purchase_amount:
         type: number
         format: double
-      purchaseDate:
+      purchase_date:
         type: string
         description: yyyy-mm-dd
       reason:
@@ -347,8 +361,6 @@ definitions:
       result:
         type: string
       tid:
-        type: string
-      transactionId:
         type: string
   Error:
     type: object
