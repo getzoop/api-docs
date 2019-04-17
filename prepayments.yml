@@ -226,7 +226,7 @@ definitions:
         - "expected_date_descending"
         - "transaction_date_ascending"
       partner_fee:
-        description: "Permite que o Marketplace cadastre uma taxa para ser aplicada em cima da antencipação requisitada pelo Estabelacimento."
+        description: "Permite que o Marketplace cadastre, ou altere, sua taxa para ser aplicada em cima da antecipação requisitada pelo Estabelacimento. Essa taxa não afeta a taxa da Zoop"
         type: "number"
         format: "float"
         example: "0.0094"
