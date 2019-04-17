@@ -225,7 +225,12 @@ definitions:
         - "expected_date_ascending"
         - "expected_date_descending"
         - "transaction_date_ascending"
-        
+      partner_fee:
+        description: "Permite que o Marketplace cadastre uma taxa para ser aplicada em cima da antencipação requisitada pelo Estabelacimento."
+        type: "number"
+        format: "float"
+        example: "0.0094"
+
   Anticipation:
     type: "object"
     required:
@@ -261,11 +266,11 @@ definitions:
         description: "Valor total, em centavos de Reais, dos recebíveis selecionados na simulação (ou antecipados, caso a antecipação já tenha sido realizada), antes de aplicadas as taxas de antecipação."
         type: "integer"
         example: "500000"
-      prepayment_net_amount: 
+      prepayment_net_amount:
         description: "Valor total, em centavos de Reais, dos recebíveis selecionados na simulação (ou antecipados, caso a antecipação já tenha sido realizada), após aplicadas as taxas de antecipação. É o valor que o Seller receberá de fato pela antecipação."
         type: "integer"
         example: "476534"
-      receivables_count: 
+      receivables_count:
         description: "Total de recebíveis selecionados na simulação (ou antecipados, caso a antecipação já tenha sido realizada)."
         type: "integer"
         example: "5"
