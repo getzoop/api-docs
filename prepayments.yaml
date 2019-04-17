@@ -1,0 +1,378 @@
+swagger: '2.0'
+info:
+  description: API de Antecipação sob demanda da Zoop
+  version: 2.2.0
+  title: API de Antecipação sob demanda da Zoop
+host: api.zoop.ws
+basePath: /v1
+tags:
+  - name: Antecipação
+    description: Pedidos de antecipação sob demanda
+schemes:
+  - https
+paths:
+  '/marketplaces/{marketplaceId}/prepayments':
+    post:
+      tags:
+        - Antecipação
+      summary: Criação de novo pedido de antecipação
+      description: >-
+        Cria um novo pedido de antecipação, que será posteriormente simulado e
+        terá aprovação financeira para realizar a antecipação de fato.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: marketplaceId
+          in: path
+          description: ID do Marketplace
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: 'Solicitação de antecipação, com filtros de escolha de recebíveis'
+          required: true
+          schema:
+            $ref: '#/definitions/AnticipationRequest'
+      responses:
+        '200':
+          description: Sucesso na criação da antecipação
+          schema:
+            $ref: '#/definitions/Anticipation'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Marketplace ou Seller não encontrado
+    get:
+      tags:
+        - Antecipação
+      summary: Listagem de antecipações do Marketplace
+      description: Lista as antecipações sob demanda solicitadas pelo Marketplace
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: marketplaceId
+          in: path
+          description: ID do Marketplace
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Sucesso na recuperação das antecipações
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Anticipation'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Marketplace não encontrado
+  '/marketplaces/{marketplaceId}/sellers/{sellerId}/prepayments':
+    get:
+      tags:
+        - Antecipação
+      summary: Listagem de antecipações do Seller
+      description: >-
+        Lista as antecipações sob demanda solicitadas pelo Marketplace, para o
+        Seller
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: marketplaceId
+          in: path
+          description: ID do Marketplace
+          required: true
+          type: string
+        - name: sellerId
+          in: path
+          description: ID do Seller
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Sucesso na recuperação das antecipações
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Anticipation'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Marketplace ou Seller não encontrado
+  '/marketplaces/{marketplaceId}/prepayments/{prepaymentId}':
+    get:
+      tags:
+        - Antecipação
+      summary: Detalhe de antecipação
+      description: Busca os detalhes de uma antecipação solicitada
+      produces:
+        - application/json
+      parameters:
+        - name: marketplaceId
+          in: path
+          description: ID do Marketplace
+          required: true
+          type: string
+        - name: prepaymentId
+          in: path
+          description: ID da Antecipação
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Sucesso na recuperação da antecipação
+          schema:
+            $ref: '#/definitions/Anticipation'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Marketplace ou Antecipação não encontrada
+  '/marketplaces/{marketplaceId}/prepayments/{prepaymentId}/commit':
+    post:
+      tags:
+        - Antecipação
+      summary: Atualização de status da antecipação
+      description: Atualiza uma antecipação simulada para pronta.
+      produces:
+        - application/json
+      parameters:
+        - name: marketplaceId
+          in: path
+          description: ID do Marketplace
+          required: true
+          type: string
+        - name: prepaymentId
+          in: path
+          description: ID da Antecipação
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Sucesso na atualização do status da antecipação
+          schema:
+            $ref: '#/definitions/Anticipation'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Marketplace ou Antecipação não encontrada
+definitions:
+  AnticipationRequest:
+    type: object
+    required:
+      - customer
+      - prepayment_date
+    properties:
+      customer:
+        description: ID do Seller que terá seus recebíveis antecipáveis.
+        type: string
+        example: 28d4c96c451d93c2d2787e8caee4290f
+      prepayment_date:
+        description: >-
+          Data para a qual os recebíveis serão antecipados. Caso não seja
+          preenchido, é considerado *D0*.
+        type: string
+        format: date
+        example: '2018-01-19'
+      min_transaction_date:
+        description: >-
+          Apenas considerar recebíveis de vendas realizadas após esta data
+          (inclusive). Caso não seja preenchida, é considerada a data da venda
+          mais antiga com recebíveis não liquidados.
+        type: string
+        format: date
+        example: '2018-01-19'
+      max_transaction_date:
+        description: >-
+          Apenas considerar recebíveis de vendas realizadas até esta data
+          (inclusive). Caso não seja preenchida, é considerado *D-1*. Este
+          também é o valor máximo para este campo.
+        type: string
+        format: date
+        example: '2018-01-19'
+      min_expected_date:
+        description: >-
+          Apenas considerar recebíveis cuja agenda original de liquidação seja
+          após esta data (inclusive). Caso não seja preenchida, é considerado
+          *D+1* do campo prepayment_date. Este também é o valor mínimo para este
+          campo.
+        type: string
+        format: date
+        example: '2018-01-19'
+      max_expected_date:
+        description: >-
+          Apenas considerar recebíveis cuja agenda original de liquidação seja
+          até esta data (inclusive). Caso não seja preenchida, é considerada a
+          data de liquidação do recebível mais tardio.
+        type: string
+        format: date
+        example: '2018-01-19'
+      receivables:
+        description: >-
+          Lista de IDs de recebíveis que deverão ser incluídos na solicitação de
+          antecipação
+        type: array
+        items:
+          type: string
+          example: 6c451d93c2d278728d4c9e8caee4290f
+      transactions:
+        description: >-
+          Lista de IDs de transações cujos recebíveis deverão ser incluídos na
+          solicitação de antecipação
+        type: array
+        items:
+          type: string
+          example: 4290f3c2d2787e8c28d4c96c451d9aee
+      target_amount:
+        description: >-
+          Valor alvo, em centavos de Reais, para escolha dos recebíveis a
+          antecipar mediante algoritmo de busca, que seleciona recebíveis
+          incrementalmente até atingir este valor alvo, até o limite percentual
+          da margem (campo *margin*). Recebíveis que façam o valor total de
+          antecipação ultrapassar o valor alvo com a margem incluída não são
+          incluídos na antecipação. Caso um recebível faça o valor da
+          antecipação atingir o intervalo entre o valor alvo e a margem, o
+          algoritmo é interrompido e a simulação é concluída com os recebíveis
+          selecionados.
+        type: integer
+        example: '500000'
+      margin:
+        description: >-
+          Margem para seleção de recebíveis caso seja solicitado o filtro de
+          valor alvo (*target_amount*). Caso não seja preenchido, é considerado
+          0.01 (1%). Isto significa que no caso de uma antecipação solicitada
+          com *target_amount* de 500000 (R$5.000,00) e sem margem definida, o
+          algoritmo selecionará recebíveis até atingir o valor de R$5.000,00,
+          porém nunca ultrapassando o valor de R$5.050,00 (recebíveis que
+          ultrapassariam este valor são descartados - pulados). Mesmo que o
+          valor final seja inferior ao valor alvo solicitado, a antecipação é
+          considerada simulada e fica apta à aprovação.
+        type: number
+        format: float
+        example: '0.01'
+      order:
+        description: >-
+          Indica a prioridade de seleção dos recebíveis na antecipação por valor
+          alvo. Como os recebíveis são selecionados um por um até atingir-se o
+          valor alvo, pode-se utilizar este campo para forçar uma seleção dos
+          recebíveis que estejam vencendo primeiro (*expected_date_ascending*),
+          vencendo por último (*expected_date_descending*) ou mesmo priorizar
+          recebíveis de vendas mais antigas (*transaction_date_ascending*), o
+          que na prática fará com que todos os recebíveis de uma venda sejam
+          antecipados em conjunto antes de partir para os recebíveis da próxima
+          venda (exceto se o somatório dos recebíveis de uma venda ultrapasse o
+          limite da margem do valor alvo). Caso não seja preenchido, é
+          considerada a ordenação *expected_date_ascending*
+        type: string
+        enum:
+          - expected_date_ascending
+          - expected_date_descending
+          - transaction_date_ascending
+      partner_fee:
+        description: >-
+          Permite que o Marketplace cadastre uma taxa para ser aplicada em cima
+          da antencipação requisitada pelo Estabelacimento.
+        type: number
+        format: float
+        example: 0.0094
+  Anticipation:
+    type: object
+    required:
+      - customer
+      - prepayment_date
+    properties:
+      id:
+        description: ID da Antecipação.
+        type: string
+        example: e8caee4290f28d4c96c451d93c2d2787
+      prepayment_date:
+        description: Data para a qual os recebíveis serão antecipados.
+        type: string
+        format: date
+        example: '2018-01-19'
+      status:
+        description: >-
+          Status da solicitação de antecipação. Após sua criação, entra no
+          status de solicitada (*requested*), onde fica passível de simulação
+          por rotina automática. Após a simulação, entra no status de simulada
+          (*simulated*), onde passam a ser preenchidos os campos de taxas
+          aplicadas, valor total aplicado à antecipação e recebíveis
+          selecionados. Fica então passível de aprovação do Financeiro da Zoop,
+          que pode torná-la aprovada (*approved*) ou rejeitada (*rejected*)
+          dependendo da análise. Uma vez aprovada, fica passível de realização
+          de fato da antecipação, após o qual fica com o status de realizada
+          (*succeeded*). É possível utilizar o endpoint de exclusão de
+          solicitação a qualquer momento até sua realização, momento em que não
+          será mais possível realizar o cancelamento. Caso seja utilizado este
+          endpoint, o status da solicitação vai para cancelada (*canceled*).
+          Caso a solicitação de antecipação não seja aprovada até a data
+          selecionada para sua realização, a solicitação vai para o status de
+          expirada (*expired*). Caso ocorra alguma situação no processo que
+          impeça a antecipação de ser realizada (por exemplo se algum de seus
+          recebíveis tiver sido cancelado por motivo de estorno/chargeback ou
+          mesmo se outra antecipação tiver sido realizada com recebíveis
+          utilizados nesta simulação), esta vai para o estado de inválida
+          (*invalid*).
+        type: string
+        enum:
+          - requested
+          - simulated
+          - approved
+          - succeeded
+          - canceled
+          - rejected
+          - invalid
+          - expired
+      status_detail:
+        description: >-
+          Detalhamento do status da antecipação. Em caso de antecipação
+          rejeitada, aparecerá o informe do Financeiro que explica o motivo da
+          rejeição. Em caso de antecipação inválida, provê detalhes para
+          identificar o motivo da invalidação.
+        type: string
+        example: Antecipação solicitada.
+      prepayment_gross_amount:
+        description: >-
+          Valor total, em centavos de Reais, dos recebíveis selecionados na
+          simulação (ou antecipados, caso a antecipação já tenha sido
+          realizada), antes de aplicadas as taxas de antecipação.
+        type: integer
+        example: '500000'
+      prepayment_net_amount:
+        description: >-
+          Valor total, em centavos de Reais, dos recebíveis selecionados na
+          simulação (ou antecipados, caso a antecipação já tenha sido
+          realizada), após aplicadas as taxas de antecipação. É o valor que o
+          Seller receberá de fato pela antecipação.
+        type: integer
+        example: '476534'
+      receivables_count:
+        description: >-
+          Total de recebíveis selecionados na simulação (ou antecipados, caso a
+          antecipação já tenha sido realizada).
+        type: integer
+        example: '5'
+      zoop_fee:
+        description: Taxa percentual de 30 dias da Zoop aplicada à antecipação.
+        type: number
+        format: float
+        example: '0.0169'
+      partner_fee:
+        description: Taxa percentual de 30 dias do Marketplace Zoop aplicada à antecipação.
+        type: number
+        format: float
+        example: '0.0081'
+      created_at:
+        description: Data e hora da criação da solicitação de antecipação.
+        type: string
+        format: date
+        example: '2018-01-19 19:47:07'
+      updated_at:
+        description: Data e hora da última atualização do status da antecipação.
+        type: string
+        format: date
+        example: '2018-01-19 19:47:07'
