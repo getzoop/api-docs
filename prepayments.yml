@@ -230,6 +230,11 @@ definitions:
         type: "number"
         format: "float"
         example: "0.0094"
+      auto_commit:
+        description: "Permite confirmar automaticamente após a simulação."
+        type: "number"
+        format: "integer"
+        example: "1"
 
   Anticipation:
     type: "object"
