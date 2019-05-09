@@ -290,7 +290,7 @@ definitions:
         format: "float"
         example: "0.0081"
       auto_commit:
-        description: "Informa o transito automático do status `simulated` para `ready` esta ativo ou inativo. O valor default é `true`"
+        description: "Informa se o transito automático do status `simulated` para `ready` esta ativo ou inativo. O valor default é `true`"
         type: "boolean"
         example: "true|false"
       created_at:
