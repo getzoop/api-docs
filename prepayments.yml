@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "API de Antecipação sob demanda da Zoop"
-  version: "2.2.0"
+  version: "2.3.0"
   title: "API de Antecipação sob demanda da Zoop"
 host: "api.zoop.ws"
 basePath: "/v1"
@@ -231,10 +231,10 @@ definitions:
         format: "float"
         example: "0.0094"
       auto_commit:
-        description: "Permite confirmar automaticamente após a simulação."
-        type: "number"
-        format: "integer"
-        example: "1"
+        description: "Permite desativar o transito automático do status `simulated` para `ready`. Se a requisição enviar em seu payload `auto_commit`=false|0, o status permanecerá `simulated` aguarndando a confirmação do usuário da API através da requisição `/commit`.
+          A operação `/commit` transita somente do status `simulated` para o status `ready`.  O valor default é `true|1`."
+        type: "boolean"
+        example: "true|false"
 
   Anticipation:
     type: "object"
@@ -289,6 +289,10 @@ definitions:
         type: "number"
         format: "float"
         example: "0.0081"
+      auto_commit:
+        description: "Informa o transito automático do status `simulated` para `ready` esta ativo ou inativo. O valor default é `true`"
+        type: "boolean"
+        example: "true|false"
       created_at:
         description: "Data e hora da criação da solicitação de antecipação."
         type: "string"
