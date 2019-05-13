@@ -231,8 +231,8 @@ definitions:
         format: "float"
         example: "0.0094"
       auto_commit:
-        description: "Permite desativar o transito automático do status `simulated` para `ready`. Se a requisição enviar em seu payload `auto_commit`=false|0, o status permanecerá `simulated` aguarndando a confirmação do usuário da API através da requisição `/commit`.
-          A operação `/commit` transita somente do status `simulated` para o status `ready`.  O valor default é `true|1`."
+        description: "Permite desativar o transito automático do status `simulated` para `ready`. Se a requisição enviar em seu payload `auto_commit`=false, o status permanecerá `simulated` aguardando a confirmação do usuário da API através da requisição `/commit`.
+          A operação `/commit` transita somente do status `simulated` para o status `ready`.  O valor default é `true`."
         type: "boolean"
         example: "true|false"
 
