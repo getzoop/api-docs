@@ -47,31 +47,38 @@ definitions:
         type: string
         format: date
         example: '2019-05-30'
-        description: "Filtro utilizado para recuperar os Recebíveis que podem ser antecipados, a partir data informada. Ao passar o valor, não é necessária a utilização das aspas, ex: `prepayable_for=2019-05-30`"
+        description: "Retorna os recebíveis que estão aptos ao participar de uma antecipação, a parir da data informada. Ao passar o valor da data, não é necessario a utilização das aspas. Ex.: `prepayable_for=2019-05-30`"
       expected_on_range:
         type: string
         format: date
         example: '2019-05-30'
+        description: "Filtra pela Data Prevista do Pagamento do objeto."
       created_at_range:
         type: string
         format: date
         example: '2019-05-30'
+        description: "Filtra pela Data de Criação do objeto."
       paid_at_range:
         type: string
         format: date
         example: '2019-05-30'
+        description: "Filtra pela Data do Pagamento do objeto."
       status:
         type: string
         example: "pending"
+        description: "Filtra pelo Status do objeto."
       prepaid:
         type: number
         example: 1
+        description: "Retorna os recebíveis que participam de um Plano PRO."
       id_original_receivable:
         type: string
         example: "e8caee4290f28d4c96c451d93c2d0000"
+        description: "Retorna o recebível de acordo com o id do recebível original."
       sort:
         type: string
         example: "DESC"
+        description: "Ordena pela data de criação dos recebíveis."
 
   ReceivableResponse:
     type: object
