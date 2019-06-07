@@ -11,16 +11,16 @@ tags:
 schemes:
 - "https"
 paths:
-  /marketplaces/{marketplaceId}/sellers/{sellerId}/receivables:
+  /marketplaces/{marketplaceId}/sellers/{customerId}/receivables:
     get:
-      summary: Retona uma listagem de recebíveis
+      summary: Retorna uma listagem de recebíveis
       parameters:
       - name: marketplaceId
         type: "string"
         in: path
         required: true
         description: ID do Marketplace.
-      - name: sellerId
+      - name: customerId
         type: "string"
         in: path
         required: true
@@ -31,7 +31,7 @@ paths:
           $ref: "#/definitions/ReceivableRequest"
       responses:
         200:
-          description: "Sucesso na recupareção da listagem de Recebíveis"
+          description: "Listagem de recebíveis obtida com sucesso"
           schema:
             $ref: "#/definitions/ReceivableResponse"
         400:
