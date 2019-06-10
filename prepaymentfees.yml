@@ -1,0 +1,232 @@
+swagger: '2.0'
+info:
+  description: API de Taxa de Antecipação sob demanda da Zoop
+  version: 1.0.0
+  title: API de Taxa de Antecipação
+host: api.zoop.ws
+basePath: /v1
+schemes:
+  - https
+paths:
+  '/marketplaces/{marketplaceId}/prepaymentfees':
+    post:
+      tags:
+        - Taxa de Antecipação
+      summary: Criação de taxa antecipação
+      description: >-
+        Cria uma taxa nova de antecipação sob demanda do Marketplace para o
+        Customer.
+      consumes:
+        - application/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: marketplaceId
+          in: path
+          description: ID do Marketplace
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Solicitação de taxa de antecipação
+          required: true
+          schema:
+            $ref: '#/definitions/PrepaymentFeeRequest'
+      responses:
+        '200':
+          description: Sucesso na criação da taxa de antecipação
+          schema:
+            $ref: '#/definitions/PrepaymentFee'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Marketplace não encontrado
+    get:
+      tags:
+        - Taxa de Antecipação
+      summary: Listagem de taxas de antecipação do Marketplace
+      description: Lista as taxas de antecipação solicitadas pelo Marketplace
+      consumes:
+        - application/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: marketplaceId
+          in: path
+          description: ID do Marketplace
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Sucesso na recuperação das taxas de antecipações
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PrepaymentFeesResponse'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Taxas de antecipação não encontrado(s)
+  '/marketplaces/{marketplaceId}/prepaymentfees/{prepaymentFeeId}':
+    get:
+      tags:
+        - Taxa de Antecipação
+      summary: >-
+        Recupera a taxa de antecipação pelo Marketplace e ID da Taxa de
+        Antecipação
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: marketplaceId
+          in: path
+          description: ID do Marketplace
+          required: true
+          type: string
+        - name: prepaymentFeeId
+          in: path
+          description: ID da Taxa de Antecipação
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Sucesso na recuperação das antecipações
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PrepaymentFee'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Taxa de antecipação não encontrado
+    delete:
+      tags:
+        - Taxa de Antecipação
+      summary: Deleta a taxa de antecipação do Marketplace
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: marketplaceId
+          in: path
+          description: ID do Marketplace
+          required: true
+          type: string
+        - name: prepaymentFeeId
+          in: path
+          description: ID da Taxa de Antecipação
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Sucesso na deleção da taxa de antecipação
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PrepaymentFeeDeleted'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Taxa de Antecipação não encontrado
+definitions:
+  PrepaymentFeeRequest:
+    type: object
+    properties:
+      type:
+        type: string
+        example: partner
+        description: Tipo de taxa de antecipação
+      percent_amount:
+        type: number
+        example: 0.01
+      id_marketplace:
+        type: string
+        example: 012345710a6495e86542eeff192baa1
+      id_customer:
+        type: string
+        example: 8a70ac5fba13472a8b23171c62e244b4
+  PrepaymentFeesResponse:
+    type: object
+    properties:
+      resource:
+        type: string
+      uri:
+        type: string
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/PrepaymentFee'
+      has_more:
+        type: boolean
+      limit:
+        type: integer
+      total_pages:
+        type: integer
+      page:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: string
+      query_count:
+        type: string
+  PrepaymentFee:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 32436387051142f885525fc51e019283
+      type:
+        type: string
+        example: partner
+      percent_amount:
+        type: number
+      id_marketplace:
+        type: string
+        example: 012345710a6495e86542eeff192baa1
+      id_customer:
+        type: string
+        example: 8a70ac5fba13472a8b23171c62e244b4
+      dflag:
+        type: integer
+        example: 1
+      created_at:
+        type: string
+        format: date
+        example: '2019-05-30'
+      updated_at:
+        type: string
+        format: date
+        example: '2019-05-30'
+  PrepaymentFeeDeleted:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 32436387051142f885525fc51e019283
+      type:
+        type: string
+        example: partner
+      percent_amount:
+        type: number
+      id_marketplace:
+        type: string
+        example: 012345710a6495e86542eeff192baa1
+      id_customer:
+        type: string
+        example: 8a70ac5fba13472a8b23171c62e244b4
+      dflag:
+        type: integer
+        example: 0
+      created_at:
+        type: string
+        format: date
+        example: '2019-05-30'
+      updated_at:
+        type: string
+        format: date
+        example: '2019-05-30'
