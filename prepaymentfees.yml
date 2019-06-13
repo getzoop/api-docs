@@ -1,8 +1,8 @@
 swagger: '2.0'
 info:
-  description: API de Taxa de Antecipação sob demanda da Zoop
+  description: API de Gestão de Taxas de Antecipação sob demanda da Zoop
   version: 1.0.0
-  title: API de Taxa de Antecipação
+  title: API de Gestão de Taxas de Antecipação
 host: api.zoop.ws
 basePath: /v1
 schemes:
@@ -140,14 +140,15 @@ definitions:
         type: string
         example: partner
         description: Tipo de taxa de antecipação
+        readOnly: true
       percent_amount:
         type: number
+        description: Valor percentual que será aplicado
         example: 0.01
-      id_marketplace:
-        type: string
-        example: 012345710a6495e86542eeff192baa1
+        default: 0
       id_customer:
         type: string
+        description: Seller para qual a taxa será aplicada
         example: 8a70ac5fba13472a8b23171c62e244b4
   PrepaymentFeesResponse:
     type: object
@@ -183,45 +184,25 @@ definitions:
       type:
         type: string
         example: partner
+        description: Tipo de taxa
+        enum:
+          - seller
+          - partner
+          - zoop
       percent_amount:
         type: number
+        description: Valor percentual que será aplicado
       id_marketplace:
         type: string
         example: 012345710a6495e86542eeff192baa1
       id_customer:
         type: string
         example: 8a70ac5fba13472a8b23171c62e244b4
-      dflag:
-        type: integer
-        example: 1
-      created_at:
+      status:
         type: string
-        format: date
-        example: '2019-05-30'
-      updated_at:
-        type: string
-        format: date
-        example: '2019-05-30'
-  PrepaymentFeeDeleted:
-    type: object
-    properties:
-      id:
-        type: string
-        example: 32436387051142f885525fc51e019283
-      type:
-        type: string
-        example: partner
-      percent_amount:
-        type: number
-      id_marketplace:
-        type: string
-        example: 012345710a6495e86542eeff192baa1
-      id_customer:
-        type: string
-        example: 8a70ac5fba13472a8b23171c62e244b4
-      dflag:
-        type: integer
-        example: 0
+        enum:
+          - active
+          - deleted
       created_at:
         type: string
         format: date
