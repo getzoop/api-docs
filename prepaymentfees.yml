@@ -8,14 +8,18 @@ basePath: /v1
 schemes:
   - https
 paths:
-  '/marketplaces/{marketplaceId}/prepaymentfees':
+  '/marketplaces/{marketplaceId}/prepaymentfee':
     post:
       tags:
         - Taxa de Antecipação
       summary: Criação de taxa antecipação
       description: >-
-        Cria uma taxa nova de antecipação sob demanda do Marketplace para o
-        Customer.
+        Cria uma taxa nova de antecipação sob demanda do `Marketplace` para o `Seller`, caso o `Seller` não possua nenhuma.
+        Caso já possua uma taxa de antecipação cadastrada, ele excluirá o mesmo --o original-- e criará a nova taxa.
+        O tipo da taxa de antecipação, vai depender se o campo `id_customer` está preenchido, ou não.
+        Se o campo `id_customer` estiver preenchido, a taxa da antecipação será do tipo `seller`, se não, será do tipo `partner`.
+        As taxas de antecipação criadas, recentemente, não serão aplicadas nas antecipações anteriores.
+        Somente para as novas antecipações.
       consumes:
         - application/json
         - application/x-www-form-urlencoded
@@ -127,29 +131,28 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/PrepaymentFeeDeleted'
+              $ref: '#/definitions/PrepaymentFee'
         '400':
           description: Requisição inválida
         '404':
           description: Taxa de Antecipação não encontrado
+
 definitions:
   PrepaymentFeeRequest:
     type: object
     properties:
-      type:
-        type: string
-        example: partner
-        description: Tipo de taxa de antecipação
-        readOnly: true
       percent_amount:
         type: number
-        description: Valor percentual que será aplicado
+        description: Valor percentual que será aplicado.
+          O valor mínimo é de 0(equivale a 0%), e o máximo de 0.99(equivale a 99%).
+          O percentual pode variar entre menor que 1 ou maior ou igual a 0.
         example: 0.01
         default: 0
       id_customer:
         type: string
-        description: Seller para qual a taxa será aplicada
+        description: Seller para qual a taxa da antecipação será aplicada
         example: 8a70ac5fba13472a8b23171c62e244b4
+
   PrepaymentFeesResponse:
     type: object
     properties:
@@ -175,39 +178,51 @@ definitions:
         type: string
       query_count:
         type: string
+
   PrepaymentFee:
     type: object
     properties:
       id:
         type: string
-        example: 32436387051142f885525fc51e019283
+        example: '32436387051142f885525fc51e019283'
       type:
         type: string
         example: partner
-        description: Tipo de taxa
+        description: Tipo da taxa de antecipação.
+          Tipo `zoop` é a taxa da Zoop aplicada na solicitação da antecipação do Marketplace.
+          Tipo `partner` é a taxa do Marketplace aplicada para todos os seus Sellers, é a taxa de antecipação padrão.
+          Tipo `seller` é a taxa do Marketplace aplicada, exlusivamente, para um Seller, sobrescrevendo a taxa de antecipação padrão.
         enum:
           - seller
           - partner
           - zoop
       percent_amount:
         type: number
-        description: Valor percentual que será aplicado
+        example: 0.25
+        description: Valor percentual que será aplicado.
+          O valor mínimo é de 0(equivale a 0%), e o máximo de 0.99(equivale a 99%).
+          O percentual pode variar entre menor que 1 ou maior ou igual a 0.
       id_marketplace:
         type: string
-        example: 012345710a6495e86542eeff192baa1
+        description: ID do Marketplace.
+        example: '012345710a6495e86542eeff192baa1'
       id_customer:
         type: string
-        example: 8a70ac5fba13472a8b23171c62e244b4
+        description: ID do Seller.
+        example: '8a70ac5fba13472a8b23171c62e244b4'
       status:
+        description: As taxas de antecipação com status `active` são utilizadas em novas antecippações. Já as com status `deleted` são as taxas aplicadas nas antecipações anteriores.
         type: string
         enum:
           - active
           - deleted
       created_at:
         type: string
+        description: Data de criação.
         format: date
         example: '2019-05-30'
       updated_at:
         type: string
+        description: Data de atualização.
         format: date
         example: '2019-05-30'
