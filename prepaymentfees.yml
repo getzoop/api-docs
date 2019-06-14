@@ -15,11 +15,11 @@ paths:
       summary: Criação de taxa antecipação
       description: >-
         Cria uma taxa nova de antecipação sob demanda do `Marketplace` para o `Seller`, caso o `Seller` não possua nenhuma.
-        Caso já possua uma taxa de antecipação cadastrada, ele excluirá o mesmo --o original-- e criará a nova taxa.
+        Caso já possua uma taxa de antecipação cadastrada, excluirá a taxa de antecipação original e criará a nova taxa.
         O tipo da taxa de antecipação, vai depender se o campo `id_customer` está preenchido, ou não.
-        Se o campo `id_customer` estiver preenchido, a taxa da antecipação será do tipo `seller`, se não, será do tipo `partner`.
-        As taxas de antecipação criadas, recentemente, não serão aplicadas nas antecipações anteriores.
-        Somente para as novas antecipações.
+        Se o campo `id_customer` estiver preenchido, a taxa da antecipação será do tipo `seller`, que é aplicada apenas ao Seller, criando ou substituindo sua taxa.
+        Se não, será do tipo `partner`, que substituirá, ou criará, a taxa de antecipação padrão do Marketplace.
+        As taxas de antecipação são aplicadas somente a novas antecipações, permanecendo as antecipações passadas com a taxa vigente na data da sua criação.
       consumes:
         - application/json
         - application/x-www-form-urlencoded
@@ -50,7 +50,7 @@ paths:
       tags:
         - Taxa de Antecipação
       summary: Listagem de taxas de antecipação do Marketplace
-      description: Lista as taxas de antecipação solicitadas pelo Marketplace
+      description: Lista as taxas de antecipação vigentes no pelo Marketplace
       consumes:
         - application/json
         - application/x-www-form-urlencoded
@@ -72,14 +72,13 @@ paths:
         '400':
           description: Requisição inválida
         '404':
-          description: Taxas de antecipação não encontrado(s)
+          description: Marketplace não encontrado
   '/marketplaces/{marketplaceId}/prepaymentfees/{prepaymentFeeId}':
     get:
       tags:
         - Taxa de Antecipação
       summary: >-
-        Recupera a taxa de antecipação pelo Marketplace e ID da Taxa de
-        Antecipação
+        Recupera a taxa de antecipação a partir do seu ID
       consumes:
         - application/json
       produces:
@@ -105,7 +104,7 @@ paths:
         '400':
           description: Requisição inválida
         '404':
-          description: Taxa de antecipação não encontrado
+          description: Taxa de antecipação não encontrada
     delete:
       tags:
         - Taxa de Antecipação
@@ -135,7 +134,7 @@ paths:
         '400':
           description: Requisição inválida
         '404':
-          description: Taxa de Antecipação não encontrado
+          description: Taxa de Antecipação não encontrada
 
 definitions:
   PrepaymentFeeRequest:
@@ -144,7 +143,7 @@ definitions:
       percent_amount:
         type: number
         description: Valor percentual que será aplicado.
-          O valor mínimo é de 0(equivale a 0%), e o máximo de 0.99(equivale a 99%).
+          O valor mínimo é de 0(equivale a 0%), e o máximo de 0.9999(equivale a 99.99%).
           O percentual pode variar entre menor que 1 ou maior ou igual a 0.
         example: 0.01
         default: 0
@@ -211,7 +210,7 @@ definitions:
         description: ID do Seller.
         example: '8a70ac5fba13472a8b23171c62e244b4'
       status:
-        description: As taxas de antecipação com status `active` são utilizadas em novas antecippações. Já as com status `deleted` são as taxas aplicadas nas antecipações anteriores.
+        description: As taxas de antecipação com status `active` são utilizadas em novas antecipações. Já as com status `deleted` são as taxas que não estão mais vigentes, mas podem ter sido aplicadas a antecipações anteriores.
         type: string
         enum:
           - active

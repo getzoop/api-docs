@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "API de Antecipação sob demanda da Zoop"
-  version: "2.3.1"
+  version: "2.4.0"
   title: "API de Antecipação sob demanda da Zoop"
 host: "api.zoop.ws"
 basePath: "/v1"
