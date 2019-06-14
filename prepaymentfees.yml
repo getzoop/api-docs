@@ -108,7 +108,10 @@ paths:
     delete:
       tags:
         - Taxa de Antecipação
-      summary: Deleta a taxa de antecipação do Marketplace
+      summary: Deleta a taxa de antecipação do Marketplace.
+        Caso a taxa de antecipação deletada seja do tipo `seller`, faz as novas antepcipações seguirem pela a taxa de antecipação padrão(do tipo `partner`) do Marketplace.
+        Caso não haja taxa de antecipação padrão, as novas antecipações não terão as taxas de antecipação do Marketplace, apenas da Zoop.
+        A deleção da taxa de antecipação NÃO afeta as antecipações já realizadas previamente.
       consumes:
         - application/json
       produces:
