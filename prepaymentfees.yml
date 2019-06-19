@@ -1,0 +1,264 @@
+swagger: '2.0'
+info:
+  description: API de Gestão de Taxas de Antecipação sob demanda da Zoop
+  version: 1.0.0
+  title: API de Gestão de Taxas de Antecipação
+host: api.zoop.ws
+basePath: /v1
+schemes:
+  - https
+paths:
+  '/marketplaces/{marketplaceId}/prepaymentfees':
+    post:
+      tags:
+        - Taxa de Antecipação
+      summary: Criação de taxa antecipação
+      description: >-
+        Cria uma taxa nova de antecipação sob demanda do `Marketplace` para o `Seller`, caso o `Seller` não possua nenhuma.
+        Caso já possua uma taxa de antecipação cadastrada, excluirá a taxa de antecipação original e criará a nova taxa.
+        O tipo da taxa de antecipação, vai depender se o campo `id_customer` está preenchido, ou não.
+        Se o campo `id_customer` estiver preenchido, a taxa da antecipação será do tipo `seller`, que é aplicada apenas ao Seller, criando ou substituindo sua taxa.
+        Se não, será do tipo `partner`, que substituirá, ou criará, a taxa de antecipação padrão do Marketplace.
+        As taxas de antecipação são aplicadas somente a novas antecipações, permanecendo as antecipações passadas com a taxa vigente na data da sua criação.
+      consumes:
+        - application/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: marketplaceId
+          in: path
+          description: ID do Marketplace
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Solicitação de taxa de antecipação
+          required: true
+          schema:
+            $ref: '#/definitions/PrepaymentFeeRequest'
+      responses:
+        '200':
+          description: Sucesso na criação da taxa de antecipação
+          schema:
+            $ref: '#/definitions/PrepaymentFee'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Marketplace não encontrado
+    get:
+      tags:
+        - Taxa de Antecipação
+      summary: Listagem de taxas de antecipação do Marketplace
+      description: Lista as taxas de antecipação vigentes no pelo Marketplace
+      consumes:
+        - application/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: marketplaceId
+          in: path
+          description: ID do Marketplace
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Sucesso na recuperação das taxas de antecipações
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PrepaymentFeesResponse'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Marketplace não encontrado
+
+  '/marketplaces/{marketplaceId}/prepaymentfees/{prepaymentFeeId}':
+    get:
+      tags:
+        - Taxa de Antecipação
+      summary: >-
+        Recupera a taxa de antecipação a partir do seu ID
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: marketplaceId
+          in: path
+          description: ID do Marketplace
+          required: true
+          type: string
+        - name: prepaymentFeeId
+          in: path
+          description: ID da Taxa de Antecipação
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Sucesso na recuperação das antecipações
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PrepaymentFee'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Taxa de antecipação não encontrada
+    delete:
+      tags:
+        - Taxa de Antecipação
+      summary: Deleta a taxa de antecipação do Marketplace.
+        Caso a taxa de antecipação deletada seja do tipo `seller`, faz as novas antepcipações seguirem pela a taxa de antecipação padrão(do tipo `partner`) do Marketplace.
+        Caso não haja taxa de antecipação padrão, as novas antecipações não terão as taxas de antecipação do Marketplace, apenas da Zoop.
+        A deleção da taxa de antecipação NÃO afeta as antecipações já realizadas previamente.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: marketplaceId
+          in: path
+          description: ID do Marketplace
+          required: true
+          type: string
+        - name: prepaymentFeeId
+          in: path
+          description: ID da Taxa de Antecipação
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Sucesso na deleção da taxa de antecipação
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PrepaymentFee'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Taxa de Antecipação não encontrada
+
+  '/marketplaces/{marketplaceId}/sellers/{sellerId}/prepaymentfees':
+    get:
+      tags:
+        - Taxa de Antecipação
+      summary: >-
+        Recupera a(s) taxa(s) de antecipação(ões) a partir do ID do Seller(Customer)
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: marketplaceId
+          in: path
+          description: ID do Marketplace
+          required: true
+          type: string
+        - name: sellerId
+          in: path
+          description: ID do Selle(Customer)
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Sucesso na recuperação das antecipações
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PrepaymentFee'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Taxa de antecipação não encontrada
+
+definitions:
+  PrepaymentFeeRequest:
+    type: object
+    properties:
+      percent_amount:
+        type: number
+        description: Valor percentual que será aplicado.
+          O valor mínimo é de 0(equivale a 0%), e o máximo de 0.9999(equivale a 99.99%).
+          O percentual pode variar entre menor que 1 ou maior ou igual a 0.
+        example: 0.01
+        default: 0
+      id_customer:
+        type: string
+        description: Seller para qual a taxa da antecipação será aplicada
+        example: 8a70ac5fba13472a8b23171c62e244b4
+
+  PrepaymentFeesResponse:
+    type: object
+    properties:
+      resource:
+        type: string
+      uri:
+        type: string
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/PrepaymentFee'
+      has_more:
+        type: boolean
+      limit:
+        type: integer
+      total_pages:
+        type: integer
+      page:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: string
+      query_count:
+        type: string
+
+  PrepaymentFee:
+    type: object
+    properties:
+      id:
+        type: string
+        example: '32436387051142f885525fc51e019283'
+      type:
+        type: string
+        example: partner
+        description: Tipo da taxa de antecipação.
+          Tipo `zoop` é a taxa da Zoop aplicada na solicitação da antecipação do Marketplace.
+          Tipo `partner` é a taxa do Marketplace aplicada para todos os seus Sellers, é a taxa de antecipação padrão.
+          Tipo `seller` é a taxa do Marketplace aplicada, exlusivamente, para um Seller, sobrescrevendo a taxa de antecipação padrão.
+        enum:
+          - seller
+          - partner
+          - zoop
+      percent_amount:
+        type: number
+        example: 0.25
+        description: Valor percentual que será aplicado.
+          O valor mínimo é de 0(equivale a 0%), e o máximo de 0.99(equivale a 99%).
+          O percentual pode variar entre menor que 1 ou maior ou igual a 0.
+      id_marketplace:
+        type: string
+        description: ID do Marketplace.
+        example: '012345710a6495e86542eeff192baa1'
+      id_customer:
+        type: string
+        description: ID do Seller.
+        example: '8a70ac5fba13472a8b23171c62e244b4'
+      status:
+        description: As taxas de antecipação com status `active` são utilizadas em novas antecipações. Já as com status `deleted` são as taxas que não estão mais vigentes, mas podem ter sido aplicadas a antecipações anteriores.
+        type: string
+        enum:
+          - active
+          - deleted
+      created_at:
+        type: string
+        description: Data de criação.
+        format: date
+        example: '2019-05-30'
+      updated_at:
+        type: string
+        description: Data de atualização.
+        format: date
+        example: '2019-05-30'
