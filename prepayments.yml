@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "API de Antecipação sob demanda da Zoop"
-  version: "2.3.0"
+  version: "2.4.0"
   title: "API de Antecipação sob demanda da Zoop"
 host: "api.zoop.ws"
 basePath: "/v1"
@@ -235,6 +235,11 @@ definitions:
           A operação `/commit` transita somente do status `simulated` para o status `ready`.  O valor default é `true`."
         type: "boolean"
         example: "true|false"
+      fail_on_receivable_invalid:
+        description: "Com o valor default *false* a solicitação retornará sucesso e adicionará a resposta a propriedade *rejected_transactions* que conterá uma lista detalhada dos erros que invalidam as transações e/ou seus recebíveis.  Com valor *true*, a requisição falhará e não sera criada a solicitação, a mensagem de error conterá os detalhes da invalidação para cada transação e/ou seus recebíveis."
+        type: "boolean"
+        example: "true|false"
+        default: "false"
 
   Anticipation:
     type: "object"
