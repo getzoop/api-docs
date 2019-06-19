@@ -1,0 +1,161 @@
+swagger: "2.0"
+info:
+  description: "API de Recebíveis da Zoop"
+  version: "1.0.0"
+  title: "API de Recebível da Zoop"
+host: "api.zoop.ws"
+basePath: "/v1"
+tags:
+- name: "Recebíveis"
+  description: "API de Recebível"
+schemes:
+- "https"
+paths:
+  /marketplaces/{marketplaceId}/sellers/{customerId}/receivables:
+    get:
+      summary: Retorna uma listagem de recebíveis
+      parameters:
+      - name: marketplaceId
+        type: "string"
+        in: path
+        required: true
+        description: ID do Marketplace.
+      - name: customerId
+        type: "string"
+        in: path
+        required: true
+        description: ID do Seller.
+      - in: "body"
+        name: "body"
+        schema:
+          $ref: "#/definitions/ReceivableRequest"
+      responses:
+        200:
+          description: "Listagem de recebíveis obtida com sucesso"
+          schema:
+            $ref: "#/definitions/ReceivableResponse"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace, Seller ou Recebíveis não encontrado(s)"
+
+definitions:
+  ReceivableRequest:
+    type: object
+    properties:
+      prepayable_for:
+        type: string
+        format: date
+        example: '2019-05-30'
+        description: "Retorna os recebíveis que estão aptos ao participar de uma antecipação, a parir da data informada. Ao passar o valor da data, não é necessario a utilização das aspas. Ex.: `prepayable_for=2019-05-30`"
+      expected_on_range:
+        type: string
+        format: date
+        example: '2019-05-30'
+        description: "Filtra pela Data Prevista do Pagamento do objeto."
+      created_at_range:
+        type: string
+        format: date
+        example: '2019-05-30'
+        description: "Filtra pela Data de Criação do objeto."
+      paid_at_range:
+        type: string
+        format: date
+        example: '2019-05-30'
+        description: "Filtra pela Data do Pagamento do objeto."
+      status:
+        type: string
+        example: "pending"
+        description: "Filtra pelo Status do objeto."
+      prepaid:
+        type: number
+        example: 1
+        description: "Retorna os recebíveis que participam de um Plano PRO."
+      id_original_receivable:
+        type: string
+        example: "e8caee4290f28d4c96c451d93c2d0000"
+        description: "Retorna o recebível de acordo com o id do recebível original."
+      sort:
+        type: string
+        example: "DESC"
+        description: "Ordena pela data de criação dos recebíveis."
+
+  ReceivableResponse:
+    type: object
+    properties:
+      resource:
+        type: string
+      uri:
+        type: string
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Receivable"
+      has_more:
+        type: boolean
+      limit:
+        type: integer
+      total_pages:
+        type: integer
+      page:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: string
+      query_count:
+        type: string
+
+  Receivable:
+    type: object
+    properties:
+      id:
+        type: string
+      resource:
+        type: string
+      status:
+        type: string
+      recipient:
+        type: string
+      transaction:
+        type: string
+      split_rule:
+        type: object
+      installment:
+        type: string
+        example: "3"
+      liable:
+        type: boolean
+      amount:
+        type: number
+      gross_amount:
+        type: number
+      anticipation_fee:
+        type: number
+      paid_at:
+        type: string
+        format: date
+        example: "2019-05-30"
+      created_at:
+        type: string
+        format: date
+        example: "2019-05-30"
+      transaction_created_at:
+        type: string
+        format: date
+        example: "2019-05-30"
+      canceled_at:
+        type: string
+        format: date
+        example: "2019-05-30"
+      expected_on:
+        type: string
+        format: date
+        example: "2019-05-30"
+      authorization_code:
+        type: string
+      id_original_receivable:
+        type: string
+      prepaid:
+        type: number
+        example: 1
