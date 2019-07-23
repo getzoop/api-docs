@@ -251,6 +251,10 @@ definitions:
         description: "ID da Antecipação."
         type: "string"
         example: "e8caee4290f28d4c96c451d93c2d2787"
+      customer:
+        description: "ID do Customer"
+        type: "string"
+        example: "e8caee4290f28d4c96c451d93c2d2787"
       prepayment_date:
         description: "Data para a qual os recebíveis serão antecipados."
         type: "string"
