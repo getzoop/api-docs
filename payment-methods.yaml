@@ -1540,7 +1540,7 @@ definitions:
             description: "modo de parcelamento, com juros no emissor (with_interest), ou sem juros (interest_free), com o custo já calculado no valor da transação. "
           number_installments:
             type: integer
-            description: número de parcelas (1-10)
+            description: número de parcelas (1-12)
       statement_descriptor:
         type: string
         example: "CORRENTISTA 03  3011"
@@ -1665,7 +1665,7 @@ definitions:
             description: "modo de parcelamento, com juros no emissor (with_interest), ou sem juros (interest_free), com o custo já calculado no valor da transação. "
           number_installments:
             type: integer
-            description: número de parcelas (1-10)
+            description: número de parcelas (1-12)
       statement_descriptor:
         type: string
         example: "CORRENTISTA 03  3011"
@@ -1757,7 +1757,7 @@ definitions:
             description: "modo de parcelamento, com juros no emissor (with_interest), ou sem juros (interest_free), com o custo já calculado no valor da transação. "
           number_installments:
             type: integer
-            description: número de parcelas (1-10)
+            description: número de parcelas (1-12)
       statement_descriptor:
         type: string
         example: "CORRENTISTA 03  3011"
