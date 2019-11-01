@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   title: Planos e Assinaturas
 basePath: /v2
-host: api.zoop.ws
+host: api-beta.zoop.ws
 securityDefinitions:
   basicAuth:
     type: basic
@@ -291,38 +291,7 @@ paths:
           description: invalid input, object invalid
         404:
           description: subscription_id not found
-
-  /marketplaces/{marketplace_id}/subscriptions/{subscription_id}/invoices:
-    get:
-      tags:
-          - Faturas
-      summary: Recuperar faturas associadas a uma assinatura
-      description: |
-        Recuperar os detalhes de todas as faturas associadas a uma determinada assinatura
-      produces:
-      - application/json
-      parameters:
-        - $ref: '#/parameters/limitParam'
-        - $ref: '#/parameters/offsetParam'
-        - in: path
-          name: marketplace_id
-          required: true
-          type: string
-        - in: path
-          name: subscription_id
-          required: true
-          type: string
-      responses:
-        200:
-          description: search results matching criteria
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/InvoiceResponse'
-        400:
-          description: bad input parameter
-
-
+          
   /marketplaces/{marketplace_id}/subscriptions/{subscription_id}/suspend:
     post:
       tags:
@@ -350,7 +319,7 @@ paths:
           description: invalid input, object invalid
         404:
           description: subscription_id not found
-
+          
   /marketplaces/{marketplace_id}/subscriptions/{subscription_id}/reactivate:
     post:
       tags:
