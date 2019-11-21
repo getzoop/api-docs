@@ -1,17 +1,17 @@
 swagger: "2.0"
 info:
   description: "API de Antecipação sob demanda da Zoop"
-  version: "2.5.0"
+  version: "3.0.0"
   title: "API de Antecipação sob demanda da Zoop"
 host: "api.zoop.ws"
-basePath: "/v1"
+basePath: "/"
 tags:
 - name: "Antecipação"
   description: "Pedidos de antecipação sob demanda"
 schemes:
 - "https"
 paths:
-  /marketplaces/{marketplaceId}/prepayments:
+  /v1/marketplaces/{marketplaceId}/prepayments:
     post:
       tags:
       - "Antecipação"
@@ -32,12 +32,12 @@ paths:
         description: "Solicitação de antecipação, com filtros de escolha de recebíveis"
         required: true
         schema:
-          $ref: "#/definitions/AnticipationRequest"
+          $ref: "#/definitions/PrepaymentRequest"
       responses:
         200:
           description: "Sucesso na criação da antecipação"
           schema:
-            $ref: "#/definitions/Anticipation"
+            $ref: "#/definitions/Prepayment"
         400:
           description: "Requisição inválida"
         404:
@@ -64,13 +64,13 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/Anticipation"
+              $ref: "#/definitions/Prepayment"
         400:
           description: "Requisição inválida"
         404:
           description: "Marketplace não encontrado"
 
-  /marketplaces/{marketplaceId}/sellers/{sellerId}/prepayments:
+  /v1/marketplaces/{marketplaceId}/sellers/{sellerId}/prepayments:
     get:
       tags:
       - "Antecipação"
@@ -97,13 +97,50 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/Anticipation"
+              $ref: "#/definitions/Prepayment"
         400:
           description: "Requisição inválida"
         404:
           description: "Marketplace ou Seller não encontrado"
 
-  /marketplaces/{marketplaceId}/prepayments/{prepaymentId}:
+  /v2/marketplaces/{marketplaceId}/sellers/{sellerId}/prepayments:
+    get:
+      tags:
+      - "Antecipação"
+      summary: "Listagem paginada de antecipações do Seller"
+      description: "Lista as antecipações sob demanda solicitadas pelo Marketplace, para o Seller. Aceita parâmetros de paginação."
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: "sellerId"
+        in: "path"
+        description: "ID do Seller"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        schema:
+          $ref: "#/definitions/PrepaymentListRequest"
+      responses:
+        200:
+          description: "Sucesso na recuperação das antecipações"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/PrepaymentResponse"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace ou Seller não encontrado"
+
+  /v1/marketplaces/{marketplaceId}/prepayments/{prepaymentId}:
     get:
       tags:
       - "Antecipação"
@@ -126,12 +163,12 @@ paths:
         200:
           description: "Sucesso na recuperação da antecipação"
           schema:
-            $ref: "#/definitions/Anticipation"
+            $ref: "#/definitions/Prepayment"
         400:
           description: "Requisição inválida"
         404:
           description: "Marketplace ou Antecipação não encontrada"
-  /marketplaces/{marketplaceId}/prepayments/{prepaymentId}/commit:
+  /v1/marketplaces/{marketplaceId}/prepayments/{prepaymentId}/commit:
     post:
       tags:
       - "Antecipação"
@@ -154,7 +191,7 @@ paths:
         200:
           description: "Sucesso na atualização do status da antecipação"
           schema:
-            $ref: "#/definitions/Anticipation"
+            $ref: "#/definitions/Prepayment"
         400:
           description: "Requisição inválida"
         404:
@@ -162,7 +199,55 @@ paths:
 
 
 definitions:
-  AnticipationRequest:
+  PrepaymentListRequest:
+    type: object
+    properties:
+      expected_on_range:
+        type: string
+        format: date
+        example: '2019-05-30'
+        description: "Filtra pela Data Prevista do Pagamento do objeto."
+      created_at_range:
+        type: string
+        format: date
+        example: '2019-05-30'
+        description: "Filtra pela Data de Criação do objeto."
+      status:
+        type: string
+        example: "pending"
+        description: "Filtra pelo Status do objeto."
+      sort:
+        type: string
+        example: "DESC"
+        description: "Ordena pela data de criação dos recebíveis."
+
+  PrepaymentResponse:
+    type: object
+    properties:
+      resource:
+        type: string
+      uri:
+        type: string
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Prepayment"
+      has_more:
+        type: boolean
+      limit:
+        type: integer
+      total_pages:
+        type: integer
+      page:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: string
+      query_count:
+        type: string
+
+  PrepaymentRequest:
     type: "object"
     required:
     - "customer"
@@ -241,7 +326,7 @@ definitions:
         example: "true|false"
         default: "false"
 
-  Anticipation:
+  Prepayment:
     type: "object"
     required:
     - "customer"
@@ -249,6 +334,10 @@ definitions:
     properties:
       id:
         description: "ID da Antecipação."
+        type: "string"
+        example: "e8caee4290f28d4c96c451d93c2d2787"
+      customer:
+        description: "ID do Customer"
         type: "string"
         example: "e8caee4290f28d4c96c451d93c2d2787"
       prepayment_date:
