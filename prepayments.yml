@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "API de Antecipação sob demanda da Zoop"
-  version: "2.4.0"
+  version: "2.5.0"
   title: "API de Antecipação sob demanda da Zoop"
 host: "api.zoop.ws"
 basePath: "/v1"
@@ -183,7 +183,7 @@ definitions:
         format: "date"
         example: "2018-01-19"
       max_transaction_date:
-        description: "Apenas considerar recebíveis de vendas realizadas até esta data (inclusive). Caso não seja preenchida, é considerado *D-1*. Este também é o valor máximo para este campo."
+        description: "Apenas considerar recebíveis de vendas realizadas até esta data (inclusive). Caso não seja preenchida, é considerado *D-1*."
         type: "string"
         format: "date"
         example: "2018-01-19"
