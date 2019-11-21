@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "API de Antecipação sob demanda da Zoop"
-  version: "2.5.1"
+  version: "3.0.0"
   title: "API de Antecipação sob demanda da Zoop"
 host: "api.zoop.ws"
 basePath: "/"
@@ -107,7 +107,7 @@ paths:
     get:
       tags:
       - "Antecipação"
-      summary: "Listagem de antecipações do Seller"
+      summary: "Listagem paginada de antecipações do Seller"
       description: "Lista as antecipações sob demanda solicitadas pelo Marketplace, para o Seller. Aceita parâmetros de paginação."
       consumes:
       - "application/json"
