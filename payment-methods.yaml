@@ -1217,7 +1217,7 @@ definitions:
         example: "1e5ee2e290d040769806c79e6ef94ee1"
       statement_descriptor:
         type: string
-        example: "CORRENTISTA 03  3011"
+        example: "SuaMarcaAqui"
       payment_method:
         type: object
         properties:
@@ -1713,7 +1713,7 @@ definitions:
         example: "BRL"
       description:
         type: string
-        example: "BRL"
+        example: "Venda pelo site"
       payment_type:
         type: string
         enum:
@@ -1760,7 +1760,8 @@ definitions:
             description: número de parcelas (1-12)
       statement_descriptor:
         type: string
-        example: "CORRENTISTA 03  3011"
+        example: "SuaMarcaAqui"
+        description: 'Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor.'
       customer:
         type: string
         description: identificador do comprador que será cobrado
