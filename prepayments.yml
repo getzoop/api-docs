@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "API de Antecipação sob demanda da Zoop"
-  version: "3.0.0"
+  version: "3.1.0"
   title: "API de Antecipação sob demanda da Zoop"
 host: "api.zoop.ws"
 basePath: "/"
@@ -103,6 +103,62 @@ paths:
         404:
           description: "Marketplace ou Seller não encontrado"
 
+  /v1/marketplaces/{marketplaceId}/sellers/{sellerId}/prepayments/info:
+    get:
+      tags:
+      - "Antecipação"
+      summary: "Recupera informações da agenda futura do Seller"
+      description: "Recupera informações da agenda futura do Seller"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: "sellerId"
+        in: "path"
+        description: "ID do Seller"
+        required: true
+        type: "string"
+      - name: "prepayment_date"
+        in: "query"
+        required: false
+        description: "Data para a qual os recebíveis serão antecipados. Caso não seja preenchido, é considerado *D0*."
+        type: "string"
+      - name: "min_transaction_date"
+        in: "query"
+        required: false
+        description: "Apenas considerar recebíveis de vendas realizadas após esta data (inclusive). Caso não seja preenchida, é considerada a data da venda mais antiga com recebíveis não liquidados."
+        type: "string"
+      - name: "max_transaction_date"
+        in: "query"
+        required: false
+        description: "Apenas considerar recebíveis de vendas realizadas até esta data (inclusive). Caso não seja preenchida, é considerado *D-1*. Este também é o valor máximo para este campo."
+        type: "string"
+      - name: "min_expected_date"
+        in: "query"
+        required: false
+        description: "Apenas considerar recebíveis cuja agenda original de liquidação seja após esta data (inclusive). Caso não seja preenchida, é considerado *D+1* do campo prepayment_date. Este também é o valor mínimo para este campo."
+        type: "string"
+      - name: "max_expected_date"
+        in: "query"
+        required: false
+        description: "Apenas considerar recebíveis cuja agenda original de liquidação seja até esta data (inclusive). Caso não seja preenchida, é considerada a data de liquidação do recebível mais tardio."
+        type: "string"
+      responses:
+        200:
+          description: "Sucesso na recuperação das informações de antecipação"
+          schema:
+            $ref: "#/definitions/PrepaymentInfoResponse"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace ou Seller não encontrado"
+
   /v2/marketplaces/{marketplaceId}/sellers/{sellerId}/prepayments:
     get:
       tags:
@@ -196,8 +252,6 @@ paths:
           description: "Requisição inválida"
         404:
           description: "Marketplace ou Antecipação não encontrada"
-
-
 definitions:
   PrepaymentListRequest:
     type: object
@@ -221,6 +275,33 @@ definitions:
         example: "DESC"
         description: "Ordena pela data de criação dos recebíveis."
 
+  PrepaymentInfoResponse:
+    type: "object"
+    properties:
+      total_future_amount:
+        description: "Valor total bruto, em centavos de Reais, da agenda futura (antes de aplicados os filtros e as taxas de antecipação)"
+        type: "integer"
+        example: "500000"
+      total_filtered_future_amount:
+        description: "Valor total bruto, em centavos de Reais, da agenda futura, considerando os filtros passados"
+        type: "integer"
+        example: "450000"
+      total_gross_amount:
+        description: "Valor total bruto, em centavos de Reais, da agenda futura antecipável, considerando os filtros passados"
+        type: "integer"
+        example: "400000"
+      total_future_not_credit_amount:
+        description: "Valor total bruto, em centavos de Reais, de vendas não-crédito (portanto, não antecipável)"
+        type: "integer"
+        example: "350000"
+      total_future_in_dispute_amount:
+        description: "Valor total bruto, da agenda futura, de vendas crédito em disputa (portanto, não antecipável)"
+        type: "integer"
+        example: "300000"
+      total_net_amount:
+        description: "Valor total líquido, em centavos de Reais, da agenda futura antecipável, após aplicadas as taxas de antecipação. É o valor que o Seller receberá de fato pela antecipação."
+        type: "integer"
+        example: "290000"
   PrepaymentResponse:
     type: object
     properties:
