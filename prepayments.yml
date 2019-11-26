@@ -124,10 +124,28 @@ paths:
         description: "ID do Seller"
         required: true
         type: "string"
-      - in: "body"
-        name: "body"
-        schema:
-          $ref: "#/definitions/PrepaymentListRequest"
+      - name: "expected_on_range"
+        in: "query"
+        description: "Filtra pela Data Prevista do Pagamento do objeto."
+        type: string
+        format: date
+        example: '2019-05-30'
+      - name: "created_at_range"
+        in: "query"
+        description: "Filtra pela Data de Criação do objeto."
+        type: string
+        format: date
+        example: '2019-05-30'
+      - name: "status"
+        in: "query"
+        description: "Filtra pelo Status do objeto."
+        type: string
+        example: "pending"
+      - name: "sort"
+        in: "query"
+        description: "Ordena pela data de criação dos recebíveis."
+        type: string
+        example: "DESC"
       responses:
         200:
           description: "Sucesso na recuperação das antecipações"
@@ -199,28 +217,6 @@ paths:
 
 
 definitions:
-  PrepaymentListRequest:
-    type: object
-    properties:
-      expected_on_range:
-        type: string
-        format: date
-        example: '2019-05-30'
-        description: "Filtra pela Data Prevista do Pagamento do objeto."
-      created_at_range:
-        type: string
-        format: date
-        example: '2019-05-30'
-        description: "Filtra pela Data de Criação do objeto."
-      status:
-        type: string
-        example: "pending"
-        description: "Filtra pelo Status do objeto."
-      sort:
-        type: string
-        example: "DESC"
-        description: "Ordena pela data de criação dos recebíveis."
-
   PrepaymentResponse:
     type: object
     properties:
