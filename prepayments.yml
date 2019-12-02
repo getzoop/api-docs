@@ -278,30 +278,26 @@ definitions:
   PrepaymentInfoResponse:
     type: "object"
     properties:
-      total_future_amount:
-        description: "Valor total bruto, em centavos de Reais, da agenda futura (antes de aplicados os filtros e as taxas de antecipação)"
+      customer:
+        description: "ID do cliente"
+        type: "string"
+        example: "66c20f661f7945b5adb4ce8fc01a3879"
+      receivables_count:
+        description: "Quantidade de recebíveis antecipáveis segundo os filtros"
+        type: "integer"
+        example: "1000"
+      total_gross_amount:
+        description: "Valor bruto a ser antecipado"
         type: "integer"
         example: "500000"
-      total_filtered_future_amount:
-        description: "Valor total bruto, em centavos de Reais, da agenda futura, considerando os filtros passados"
+      total_net_amount_before_prepayment_fees:
+        description: "Valor líquido a ser antecipado antes da aplicação das taxas de antecipação"
         type: "integer"
-        example: "450000"
-      total_gross_amount:
-        description: "Valor total bruto, em centavos de Reais, da agenda futura antecipável, considerando os filtros passados"
+        example: "480000"
+      total_net_amount_after_prepayment_fees:
+        description: "Valor líquido a ser antecipado depois de aplicadas as taxas de antecipação"
         type: "integer"
-        example: "400000"
-      total_future_not_credit_amount:
-        description: "Valor total bruto, em centavos de Reais, de vendas não-crédito (portanto, não antecipável)"
-        type: "integer"
-        example: "350000"
-      total_future_in_dispute_amount:
-        description: "Valor total bruto, da agenda futura, de vendas crédito em disputa (portanto, não antecipável)"
-        type: "integer"
-        example: "300000"
-      total_net_amount:
-        description: "Valor total líquido, em centavos de Reais, da agenda futura antecipável, após aplicadas as taxas de antecipação. É o valor que o Seller receberá de fato pela antecipação."
-        type: "integer"
-        example: "290000"
+        example: "470000"
   PrepaymentResponse:
     type: object
     properties:
