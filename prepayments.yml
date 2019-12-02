@@ -129,6 +129,11 @@ paths:
         required: false
         description: "Data para a qual os recebíveis serão antecipados. Caso não seja preenchido, é considerado *D0*."
         type: "string"
+      - name: "partner_fee"
+        in: "query"
+        required: false
+        description: "Taxa de antecipação do parceiro"
+        type: "float"
       - name: "min_transaction_date"
         in: "query"
         required: false
