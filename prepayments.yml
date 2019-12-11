@@ -155,7 +155,7 @@ paths:
         required: false
         description: "Apenas considerar recebíveis cuja agenda original de liquidação seja até esta data (inclusive). Caso não seja preenchida, é considerada a data de liquidação do recebível mais tardio."
         type: "string"
-      - name: "entry_mode"
+      - name: "entry_modes"
         in: "query"
         required: false
         description: "Lista de métodos de captura de transação que poderão ter seus recebíveis antecipados"
@@ -410,7 +410,7 @@ definitions:
         type: "number"
         format: "float"
         example: "0.0094"
-      entry_mode:
+      entry_modes:
         description: "Lista de métodos de captura de transação que poderão ter seus recebíveis antecipados"
         type: "array"
         items:
