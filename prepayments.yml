@@ -133,7 +133,8 @@ paths:
         in: "query"
         required: false
         description: "Taxa de antecipação do parceiro"
-        type: "float"
+        type: "number"
+        format: "float"
       - name: "min_transaction_date"
         in: "query"
         required: false
