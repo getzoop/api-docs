@@ -26,16 +26,8 @@ schemes:
 paths:
   '/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/documents':
     parameters:
-      - name: marketplace_id
-        in: path
-        description: ID do marketplace
-        required: true
-        type: string
-      - name: seller_id
-        in: path
-        description: ID do vendedor
-        required: true
-        type: string
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/sellerId'
     post:
       tags:
         - 'Vendedor'
@@ -51,6 +43,7 @@ paths:
           type: file
           in: formData
           required: true
+          format: binary
           description: Documento que será cadastrado
         - name: category
           in: formData
@@ -81,6 +74,8 @@ paths:
       produces:
         - application/json
       parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - $ref: '#/parameters/sellerId'
         - $ref: '#/parameters/limitParam'
         - $ref: '#/parameters/sortParam'
         - $ref: '#/parameters/offsetParam'
@@ -97,17 +92,6 @@ paths:
         '404':
           description: 'Marketplace/Vendedor não encontrado'
   '/v1/marketplaces/{marketplace_id}/sellers/documents/{id}':
-    parameters:
-      - name: marketplace_id
-        in: path
-        description: ID do marketplace
-        required: true
-        type: string
-      - name: id
-        in: path
-        description: ID do documento
-        required: true
-        type: string
     put:
       tags:
         - 'Vendedor'
@@ -119,6 +103,12 @@ paths:
       produces:
         - application/json
       parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - name: id
+          in: path
+          description: ID do documento
+          required: true
+          type: string
         - in: body
           name: body
           description: Document object
@@ -170,11 +160,7 @@ paths:
         - 'Vendedor'
       summary: Criar novo vendedor do tipo indivíduo
       parameters:
-        - name: marketplace_id
-          in: path
-          description: ID do marketplace
-          required: true
-          type: string
+        - $ref: '#/parameters/marketplaceId'
         - in: body
           name: body
           description: Individual object
@@ -194,7 +180,7 @@ paths:
           description: 'Marketplace não encontrado'
         '400':
           description: 'Missing required param'
-  '/v1/marketplaces/{marketplace_id}/sellers/individuals/{id}':
+  '/v1/marketplaces/{marketplace_id}/sellers/individuals/{seller_id}':
     put:
       tags:
         - 'Vendedor'
@@ -247,7 +233,7 @@ paths:
           description: 'Marketplace não encontrado'
         '400':
           description: 'Missing required param'
-  '/v1/marketplaces/{marketplace_id}/sellers/businesses/{id}':
+  '/v1/marketplaces/{marketplace_id}/sellers/businesses/{seller_id}':
     put:
       tags:
         - 'Vendedor'
@@ -274,21 +260,21 @@ paths:
           description: 'Marketplace/Vendedor não encontrado'
         '400':
           description: 'Missing required param'
-  '/v1/marketplaces/{marketplace_id}/sellers/{id}':
+  '/v1/marketplaces/{marketplace_id}/sellers/{seller_id}':
     parameters:
       - $ref: '#/parameters/marketplaceId'
       - $ref: '#/parameters/sellerId'
     get:
       tags:
         - 'Vendedor'
-      summary: Recupera detalhes de vendedor pelo id
+      summary: Recupera detalhes de vendedor pelo id, os campos começando por "business_" são específicos para empresas.
       produces:
         - application/json
       responses:
         '200':
           description: Vendedor recuperado com sucesso
           schema:
-            $ref: '#/definitions/Individual'
+            $ref: '#/responses/Business'
         '404':
           description: 'Marketplace/Vendedor não encontrado'
     delete:
@@ -313,56 +299,51 @@ paths:
   '/v1/marketplaces/{marketplace_id}/sellers':
     parameters:
       - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/limitParam'
+      - $ref: '#/parameters/sortParam'
+      - $ref: '#/parameters/offsetParam'
+      - $ref: '#/parameters/dateRangeParam'
+      - $ref: '#/parameters/dateRangeGTParam'
+      - $ref: '#/parameters/dateRangeGTEParam'
+      - $ref: '#/parameters/dateRangeLTParam'
+      - $ref: '#/parameters/dateRangeLTEParam'
     get:
       tags:
         - 'Vendedor'
       summary: Listando vendedores
       produces:
         - application/json
-      parameters:
-        - $ref: '#/parameters/limitParam'
-        - $ref: '#/parameters/sortParam'
-        - $ref: '#/parameters/offsetParam'
-        - $ref: '#/parameters/dateRangeParam'
-        - $ref: '#/parameters/dateRangeGTParam'
-        - $ref: '#/parameters/dateRangeGTEParam'
-        - $ref: '#/parameters/dateRangeLTParam'
-        - $ref: '#/parameters/dateRangeLTEParam'
       responses:
         '200':
           description: Vendedor recuperado com sucesso
           schema:
-            $ref: '#/definitions/Individuals'
+            $ref: '#/responses/Businesses'
         '404':
           description: 'Marketplace/Vendedor não encontrado'
   '/v1/marketplaces/{marketplace_id}/sellers/search':
     parameters:
       - $ref: '#/parameters/marketplaceId'
+      - in: query
+        name: taxpayer_id
+        type: string    
+        description: CPF do vendedor
+      - in: query
+        name: ein
+        type: string
+        description: CNPJ do vendedor
     get:
       tags:
         - 'Vendedor'
       summary: Buscando de vendedor por CPF/CNPJ
       consumes:
-         - application/json
+        - application/json
       produces:
         - application/json
-      parameters:
-        - in: body
-          name: search
-          schema:
-            type: object
-            properties:
-              taxpayer_id:
-                type: string
-                description: CPF do vendedor
-              ein:
-                type: string
-                description: CNPJ do vendedor
       responses:
         '200':
           description: Vendedor encontrado com sucesso
           schema:
-            $ref: '#/definitions/Individual'
+            $ref: '#/responses/Businesses'
         '404':
           description: 'Vendedor não encontrado'
         '400':
@@ -409,11 +390,7 @@ paths:
   '/v1/marketplaces/{marketplace_id}/buyers/{buyer_id}':
     parameters:
       - $ref: '#/parameters/marketplaceId'
-      - name: buyer_id
-        in: path
-        description: identificador do buyer
-        required: true
-        type: string
+      - $ref: '#/parameters/buyerId'
     put:
       tags:
         - 'Comprador'
@@ -518,11 +495,7 @@ paths:
   '/v1/marketplaces/{marketplace_id}/buyers/{buyer_id}/balances':
     parameters:
       - $ref: '#/parameters/marketplaceId'
-      - name: buyer_id
-        in: path
-        description: identificador do comprador
-        required: true
-        type: string
+      - $ref: '#/parameters/buyerId'
     get:
       tags:
         - 'Saldo de Conta'
@@ -579,16 +552,8 @@ paths:
 
   '/v1/marketplaces/{marketplace_id}/buyers/{buyer_id}/balances/history':
     parameters:
-      - name: marketplace_id
-        in: path
-        description: ID do marketplace
-        required: true
-        type: string
-      - name: buyer_id
-        in: path
-        description: identificador do comprador
-        required: true
-        type: string
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/buyerId'
     get:
       tags:
         - 'Saldo de Conta'
@@ -1192,6 +1157,34 @@ definitions:
           - checking
           - savings
 responses:
+  Businesses:
+    type: object
+    properties:
+      resource:
+        type: string
+        example: "list"
+      uri:
+        type: string
+        example: "/v1/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/sellers"
+      limit:
+        type: number
+        example: 100
+      offset:
+        type: number
+        example: 0
+      has_more:
+        type: boolean
+        example: false
+      query_count:
+        type: number
+        example: 2
+      total:
+        type: number
+        example: 2
+      items:
+        type: array
+        items:
+          $ref: '#/responses/Business'
   Business:
     type: object
     properties:
@@ -1394,7 +1387,6 @@ responses:
         type: array
         items:
           $ref: '#/responses/Individual'
-
   Individual:
     type: object
     description: Estrutura padrão de um seller pessoa física
@@ -1517,9 +1509,15 @@ parameters:
     required: true
     type: string
   sellerId:
-    name: id
+    name: seller_id
     in: path
     description: ID do Seller
+    required: true
+    type: string
+  buyerId:
+    name: buyer_id
+    in: path
+    description: identificador do comprador
     required: true
     type: string
   limitParam:

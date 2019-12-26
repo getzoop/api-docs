@@ -188,6 +188,7 @@ paths:
           description: uploadFile
           required: true
           type: file
+          format: binary
       responses:
         '200':
           description: Upload realizado com sucesso
