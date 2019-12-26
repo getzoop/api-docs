@@ -1,5 +1,5 @@
 swagger: '2.0'
-basePath: /v1/
+basePath: /v1
 host: api.zoop.ws
 info:
   title: Objetos Base
@@ -31,8 +31,9 @@ schemes:
 paths:
   '/marketplaces/{marketplace_id}/sellers/{seller_id}/documents':
     parameters:
-      - $ref: '#/parameters/marketplaceParam'
-      - $ref: '#/parameters/sellerParam'
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/sellerId'
+
     post:
       tags:
         - 'Vendedor'
@@ -48,6 +49,7 @@ paths:
           type: file
           in: formData
           required: true
+          format: binary
           description: Documento que será cadastrado
         - name: category
           in: formData
@@ -78,6 +80,8 @@ paths:
       produces:
         - application/json
       parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - $ref: '#/parameters/sellerId'
         - $ref: '#/parameters/limitParam'
         - $ref: '#/parameters/sortParam'
         - $ref: '#/parameters/offsetParam'
@@ -94,13 +98,7 @@ paths:
         '404':
           description: 'Marketplace/Vendedor não encontrado'
   '/marketplaces/{marketplace_id}/sellers/documents/{id}':
-    parameters:
-      - $ref: '#/parameters/marketplaceParam'
-      - name: id
-        in: path
-        description: ID do documento
-        required: true
-        type: string
+
     put:
       tags:
         - 'Vendedor'
@@ -112,6 +110,12 @@ paths:
       produces:
         - application/json
       parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - name: id
+          in: path
+          description: ID do documento
+          required: true
+          type: string
         - in: body
           name: body
           description: Document object
@@ -163,7 +167,7 @@ paths:
         - 'Vendedor'
       summary: Criar novo vendedor do tipo indivíduo
       parameters:
-        - $ref: '#/parameters/marketplaceParam'
+        - $ref: '#/parameters/marketplaceId'
         - in: body
           name: body
           description: Individual object
@@ -178,12 +182,12 @@ paths:
         '200':
           description: Vendedor cadastrado com sucesso
           schema:
-            $ref: '#/definitions/Individual'
+            $ref: '#/responses/Individual'
         '404':
           description: 'Marketplace não encontrado'
         '400':
           description: 'Missing required param'
-  '/marketplaces/{marketplace_id}/sellers/individuals/{id}':
+  '/marketplaces/{marketplace_id}/sellers/individuals/{seller_id}':
     put:
       tags:
         - 'Vendedor'
@@ -193,13 +197,8 @@ paths:
       produces:
         - application/json
       parameters:
-        - $ref: '#/parameters/marketplaceParam'
-        - name: id
-          in: path
-          description: ID do documento
-          required: true
-          type: string
-
+        - $ref: '#/parameters/marketplaceId'
+        - $ref: '#/parameters/sellerId'
         - in: body
           name: body
           description: Individual object
@@ -210,7 +209,7 @@ paths:
         '200':
           description: Vendedor alterado com sucesso
           schema:
-            $ref: '#/definitions/Individual'
+            $ref: '#/responses/Individual'
         '404':
           description: 'Marketplace não encontrado'
         '400':
@@ -221,7 +220,7 @@ paths:
         - 'Vendedor'
       summary: Criar novo vendedor do tipo empresa
       parameters:
-        - $ref: '#/parameters/marketplaceParam'
+        - $ref: '#/parameters/marketplaceId'
         - in: body
           name: body
           description: Individual object
@@ -236,12 +235,12 @@ paths:
         '201':
           description: Vendedor cadastrado com sucesso
           schema:
-            $ref: '#/definitions/Business'
+            $ref: '#/responses/Business'
         '404':
           description: 'Marketplace não encontrado'
         '400':
           description: 'Missing required param'
-  '/marketplaces/{marketplace_id}/sellers/businesses/{id}':
+  '/marketplaces/{marketplace_id}/sellers/businesses/{seller_id}':
     put:
       tags:
         - 'Vendedor'
@@ -251,15 +250,11 @@ paths:
       produces:
         - application/json
       parameters:
-        - $ref: '#/parameters/marketplaceParam'
-        - name: id
-          in: path
-          description: ID do documento
-          required: true
-          type: string
+        - $ref: '#/parameters/marketplaceId'
+        - $ref: '#/parameters/sellerId'
         - in: body
           name: body
-          description: Individual object
+          description: Business object
           required: true
           schema:
             $ref: '#/definitions/Business'
@@ -267,30 +262,26 @@ paths:
         '200':
           description: Vendedor alterado com sucesso
           schema:
-            $ref: '#/definitions/Business'
+            $ref: '#/responses/Business'
         '404':
           description: 'Marketplace/Vendedor não encontrado'
         '400':
           description: 'Missing required param'
-  '/marketplaces/{marketplace_id}/sellers/{id}':
+  '/v1/marketplaces/{marketplace_id}/sellers/{seller_id}':
     parameters:
-      - $ref: '#/parameters/marketplaceParam'
-      - name: id
-        in: path
-        description: ID do vendedor do tipo individuo ou empresa
-        required: true
-        type: string
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/sellerId'
     get:
       tags:
         - 'Vendedor'
-      summary: Recupera detalhes de vendedor pelo id
+      summary: Recupera detalhes de vendedor pelo id, os campos começando por "business_" são específicos para empresas.
       produces:
         - application/json
       responses:
         '200':
           description: Vendedor recuperado com sucesso
           schema:
-            $ref: '#/definitions/Individual'
+            $ref: '#/responses/Business'
         '404':
           description: 'Marketplace/Vendedor não encontrado'
     delete:
@@ -314,64 +305,59 @@ paths:
           description: 'Marketplace/Vendedor não encontrado'
   '/marketplaces/{marketplace_id}/sellers':
     parameters:
-      - $ref: '#/parameters/marketplaceParam'
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/limitParam'
+      - $ref: '#/parameters/sortParam'
+      - $ref: '#/parameters/offsetParam'
+      - $ref: '#/parameters/dateRangeParam'
+      - $ref: '#/parameters/dateRangeGTParam'
+      - $ref: '#/parameters/dateRangeGTEParam'
+      - $ref: '#/parameters/dateRangeLTParam'
+      - $ref: '#/parameters/dateRangeLTEParam'
     get:
       tags:
         - 'Vendedor'
       summary: Listando vendedores
       produces:
         - application/json
-      parameters:
-        - $ref: '#/parameters/limitParam'
-        - $ref: '#/parameters/sortParam'
-        - $ref: '#/parameters/offsetParam'
-        - $ref: '#/parameters/dateRangeParam'
-        - $ref: '#/parameters/dateRangeGTParam'
-        - $ref: '#/parameters/dateRangeGTEParam'
-        - $ref: '#/parameters/dateRangeLTParam'
-        - $ref: '#/parameters/dateRangeLTEParam'
       responses:
         '200':
           description: Vendedor recuperado com sucesso
           schema:
-            $ref: '#/definitions/Individuals'
+            $ref: '#/responses/Businesses'
         '404':
           description: 'Marketplace/Vendedor não encontrado'
   '/marketplaces/{marketplace_id}/sellers/search':
     parameters:
-      - $ref: '#/parameters/marketplaceParam'
+      - $ref: '#/parameters/marketplaceId'
+      - in: query
+        name: taxpayer_id
+        type: string    
+        description: CPF do vendedor
+      - in: query
+        name: ein
+        type: string
+        description: CNPJ do vendedor
     get:
       tags:
         - 'Vendedor'
       summary: Buscando de vendedor por CPF/CNPJ
       consumes:
-         - application/json
+        - application/json
       produces:
         - application/json
-      parameters:
-        - in: body
-          name: search
-          schema:
-            type: object
-            properties:
-              taxpayer_id:
-                type: string
-                description: CPF do vendedor
-              ein:
-                type: string
-                description: CNPJ do vendedor
       responses:
         '200':
           description: Vendedor encontrado com sucesso
           schema:
-            $ref: '#/definitions/Individual'
+            $ref: '#/responses/Businesses'
         '404':
           description: 'Vendedor não encontrado'
         '400':
           description: 'Missing required parameter'
   '/marketplaces/{marketplace_id}/buyers':
     parameters:
-      - $ref: '#/parameters/marketplaceParam'
+      - $ref: '#/parameters/marketplaceId'
     post:
       tags:
         - 'Comprador'
@@ -410,8 +396,8 @@ paths:
           description: Marketplace não encontrado
   '/marketplaces/{marketplace_id}/buyers/{buyer_id}':
     parameters:
-      - $ref: '#/parameters/marketplaceParam'
-      - $ref: '#/parameters/buyerParam'
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/buyerId'
     put:
       tags:
         - 'Comprador'
@@ -458,7 +444,7 @@ paths:
           description: Marketplace/Buyer não encontrado
   '/marketplaces/{marketplace_id}/buyers/search':
     parameters:
-      - $ref: '#/parameters/marketplaceParam'
+      - $ref: '#/parameters/marketplaceId'
     get:
       tags:
         - 'Comprador'
@@ -475,7 +461,7 @@ paths:
           description: Marketplace não encontrado
   '/marketplaces/{marketplace_id}/sellers/{seller_id}/balances':
     parameters:
-      - $ref: '#/parameters/marketplaceParam'
+      - $ref: '#/parameters/marketplaceId'
       - name: seller_id
         in: path
         description: identificador do seller
@@ -495,7 +481,7 @@ paths:
           description: Marketplace/Seller não encontrado
   '/marketplaces/{marketplace_id}/sellers/{seller_id}/balances/all':
     parameters:
-      - $ref: '#/parameters/marketplaceParam'
+      - $ref: '#/parameters/marketplaceId'
       - name: seller_id
         in: path
         description: identificador do seller
@@ -515,8 +501,8 @@ paths:
           description: Marketplace/Seller não encontrado
   '/marketplaces/{marketplace_id}/buyers/{buyer_id}/balances':
     parameters:
-      - $ref: '#/parameters/marketplaceParam'
-      - $ref: '#/parameters/buyerParam'
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/buyerId'
     get:
       tags:
         - 'Saldo de Conta'
@@ -531,7 +517,7 @@ paths:
           description: Marketplace/Buyer não encontrado
   '/marketplaces/{marketplace_id}/balances/{balance_id}/history':
     parameters:
-      - $ref: '#/parameters/marketplaceParam'
+      - $ref: '#/parameters/marketplaceId'
       - name: balance_id
         in: path
         description: identificador da conta
@@ -552,7 +538,7 @@ paths:
 
   '/marketplaces/{marketplace_id}/sellers/{seller_id}/balances/history':
     parameters:
-      - $ref: '#/parameters/marketplaceParam'
+      - $ref: '#/parameters/marketplaceId'
       - name: seller_id
         in: path
         description: identificador do seller
@@ -573,8 +559,8 @@ paths:
 
   '/marketplaces/{marketplace_id}/buyers/{buyer_id}/balances/history':
     parameters:
-      - $ref: '#/parameters/marketplaceParam'
-      - $ref: '#/parameters/buyerParam'
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/buyerId'
     get:
       tags:
         - 'Saldo de Conta'
@@ -639,7 +625,7 @@ paths:
             $ref: '#/definitions/BankAccountRequest'
   '/marketplaces/{marketplace_id}/tokens/{token_id}':
     parameters:
-      - $ref: '#/parameters/marketplaceParam'
+      - $ref: '#/parameters/marketplaceId'
       - name: token_id
         in: path
         description: identificador do token
