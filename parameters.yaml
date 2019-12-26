@@ -1,0 +1,74 @@
+marketplaceParam:
+  name: marketplace_id
+  in: path
+  description: ID marketplace
+  required: true
+  type: string
+sellerParam:
+  name: seller_id
+  in: path
+  description: ID do vendedor
+  required: true
+  type: string
+buyerParam:
+  name: buyer_id
+  in: path
+  description: identificador do buyer
+  required: true
+  type: string
+limitParam:
+  name: limit
+  in: query
+  description: Limita o número de objetos retornados, podendo ser entre 1 e 100
+  required: false
+  type: number
+  format: int32
+  default: 20
+sortParam:
+  name: sort
+  in: query
+  description: Determinar como ordenar a lista em relação a data de criação do objeto
+  required: false
+  type: string
+  enum:
+    - time-descending
+    - time-ascending
+  default: time-descending
+offsetParam:
+  name: offset
+  in: query
+  description: Determina o ponto de inicio dos registros retornados
+  required: false
+  type: number
+  format: int32
+  default: 0
+dateRangeParam:
+  name: date_range
+  in: query
+  description: Filtro na lista base de objetos pela data de criação. O valor pode ser uma string com um horário em UTC timestamp, ou pode ser uma lista com os parametros abaixo
+  required: false
+  type: number
+dateRangeGTParam:
+  name: date_range[gt]
+  in: query
+  description: Retorna valores onde a data maior que o timestamp informado
+  required: false
+  type: number
+dateRangeGTEParam:
+  name: date_range[gte]
+  in: query
+  description: Retorna valores onde a data for maior ou igual que o timestamp informado
+  required: false
+  type: number
+dateRangeLTParam:
+  name: date_range[lt]
+  in: query
+  description: Retorna valores onde a data for menor que o timestamp informado
+  required: false
+  type: number
+dateRangeLTEParam:
+  name: date_range[lte]
+  in: query
+  description: Retorna valores onde a data for menor ou igual que o timestamp informado
+  required: false
+  type: number

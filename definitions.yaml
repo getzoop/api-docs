@@ -1,0 +1,1356 @@
+Documents:
+  type: object
+  properties:
+    resource:
+      type: string
+      example: "list"
+    uri:
+      type: string
+      example: "/v1/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/sellers/582dcc754cef4e6e8ed3134067c2f76b/documents"
+    limit:
+      type: number
+      example: 100
+    offset:
+      type: number
+      example: 0
+    has_more:
+      type: boolean
+      example: false
+    query_count:
+      type: number
+      example: 2
+    total:
+      type: number
+      example: 2
+    items:
+      type: array
+      items:
+        $ref: "#/Document"
+Document:
+  type: object
+  properties:
+    id:
+      type: string
+      example: 00dad23fae8b49638f6b897f6b7df5c2
+    name:
+      type: string
+      example: 59d7d71a9b617.pdf
+    status:
+      type: string
+      enum:
+        - pending
+        - uploaded
+        - reviewving
+        - action_required
+        - approved
+        - published
+        - rejected
+        - archived
+        - deleted
+      example: pending
+    path:
+      type: string
+      example: https://static-assetss.s3.amazonaws.com/59d7d71a9b617.pdf
+    extension:
+      type: string
+      example: pdf
+    mime_type:
+      type: string
+      example: application/pdf
+    size:
+      type: integer
+      example: 11401
+    md5:
+      type: string
+      example: 02136adef2c29815d97902147069b23c
+    description:
+      type: string
+      example: "documento de identificacao"
+    category:
+      type: string
+      enum:
+        - identification
+        - address
+        - activity
+        - ein
+      example: identification
+    uploaded_by:
+      type: object
+      properties:
+        id:
+          type: string
+          example: ab22b0c077e04099afa144d375cbf293
+        resource:
+          type: string
+          enum:
+            - seller
+            - buyer
+            - marketplace
+          example: seller
+        type:
+          type: string
+          enum:
+            - individual
+            - business
+          example: individual
+    uploaded_ip:
+      type: string
+    metadata:
+      type: object
+Business:
+  type: object
+  properties:
+    fiscal_responsibility:
+      type: string
+      description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+    owner:
+      type: object
+      properties:
+        first_name:
+          type: string
+          example: José
+        last_name:
+          type: string
+          example: Da Silva
+        email:
+          type: string
+          example: teeste@teste.com
+        phone_number:
+          type: string
+          example: " 12029579543"
+        taxpayer_id:
+          type: string
+          example: "76537741807"
+        birthdate:
+          type: string
+          example: "1982-12-15"
+    owner_address:
+      type: object
+      properties:
+        line1:
+          type: string
+          example: "167 West 74th Street"
+        line2:
+          type: string
+          example: "543"
+        line3:
+          type: string
+          example: "APT 601"
+        neighborhood:
+          type: string
+          example: "Downtown"
+        city:
+          type: string
+          example: "Washington"
+        state:
+          type: string
+          example: "DC"
+          description: 'Sigla do estado, com duas letras. Utilizando as duas letras finais no formato Código ISO 3166-2 para o estado.'
+        postal_code:
+          type: string
+          example: "10023"
+        country_code:
+          type: string
+          example: "US"
+          description: 'ISO 3166-1 alpha-2 - códigos de país de duas letras.'
+    description:
+      type: string
+      example:
+    business_name:
+      type: string
+      example: "Zoop Inc"
+    business_phone:
+      type: string
+      example: "12026256754"
+    business_email:
+      type: string
+      example: "hello@pagzoop.com"
+    business_website:
+      type: string
+      example: "http://getzoop.com"
+    business_description:
+      type: string
+      example: "The open mobile payment platform"
+    business_facebook:
+      type: string
+      example: "http://fb.com/getzoop"
+    business_twitter:
+      type: string
+      example: "http://twitter.com/getzoop"
+    ein:
+      type: string
+      example: "24742492000159"
+      description: 'CNPJ da empresa'
+    statement_descriptor:
+      type: string
+      example: "NOME FANTASIA"
+      description: "Esse é o nome que aparecerá na fatura do seu cliente"
+    business_address:
+      type: object
+      properties:
+        line1:
+          type: string
+          example: "167 West 74th Street"
+        line2:
+          type: string
+          example: "543"
+        line3:
+          type: string
+          example: "APT 601"
+        neighborhood:
+          type: string
+          example: "Downtown"
+        city:
+          type: string
+          example: "Washington"
+        state:
+          type: string
+          example: "DC"
+          description: 'Sigla do estado, com duas letras. Utilizando as duas letras finais no formato Código ISO 3166-2 para o estado.'
+        postal_code:
+          type: string
+          example: "10023"
+        country_code:
+          type: string
+          example: "BR"
+          description: 'ISO 3166-1 alpha-2 - códigos de país de duas letras.'
+    business_opening_date:
+      type: string
+      format: date
+      example: "2015-04-17"
+    delinquent:
+      type: boolean
+    default_debit:
+      type: string
+      description: 'O método de pagamento padrão (cartão ou conta bancária) associado a um vendedor que será usado, por exemplo, para debitar a conta bancária ou cartão de crédito'
+    default_credit:
+      type: string
+      description: 'O banco bancário padrão associado a um vendedor que será usado para enviar dinheiro (crédito) a conta bancária'
+    mcc:
+      type: string
+      example: "1"
+      description: MCC ID
+    metadata:
+      type: object
+      properties:
+        chave:
+          type: string
+          example: "valor"
+      description: 'Você pode enviar quaisquer pares de chave e valor. {"chave":"valor"}'
+Individuals:
+  type: object
+  properties:
+    resource:
+      type: string
+      example: "list"
+    uri:
+      type: string
+      example: "/v1/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/sellers"
+    limit:
+      type: number
+      example: 100
+    offset:
+      type: number
+      example: 0
+    has_more:
+      type: boolean
+      example: false
+    query_count:
+      type: number
+      example: 2
+    total:
+      type: number
+      example: 2
+    items:
+      type: array
+      items:
+        $ref: "#/Individual"
+Individual:
+  type: object
+  properties:
+    id:
+      type: string
+      example: 17d9e827664b47509f12a082b6047e7a
+    status:
+      type: string
+      enum:
+        - new
+        - expired
+        - action_required
+        - pending
+        - enabled
+        - active
+        - disabled
+        - deleted
+      example: pending
+    resource:
+      type: string
+      example: seller
+    type:
+      type: string
+      enum:
+        - individual
+        - business
+      example: individual
+    account_balance:
+      type: number
+      example: 0.00
+    current_balance:
+      type: number
+      example: 0.00
+    fiscal_responsibility:
+      type: string
+      description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+    first_name:
+      type: string
+      example: José
+    last_name:
+      type: string
+      example: Da Silva
+    email:
+      type: string
+      example: teeste@teste.com
+    phone_number:
+      type: string
+      example: " 12029579543"
+    taxpayer_id:
+      type: string
+      example: "76537741807"
+    birthdate:
+      type: string
+      example: "1982-12-15"
+    statement_descriptor:
+      type: string
+      example: "NOME FANTASIA"
+    description:
+      type: string
+      example:
+    address:
+      type: object
+      properties:
+        line1:
+          type: string
+          example: "167 West 74th Street"
+        line2:
+          type: string
+          example: "543"
+        line3:
+          type: string
+          example: "APT 601"
+        neighborhood:
+          type: string
+          example: "Downtown"
+        city:
+          type: string
+          example: "Washington"
+        state:
+          type: string
+          example: "DC"
+        postal_code:
+          type: string
+          example: "10023"
+        country_code:
+          type: string
+          example: "US"
+    delinquent:
+      type: boolean
+    default_debit:
+      type: string
+      description: 'cartão default para compras'
+    default_credit:
+      type: string
+      description: 'conta bancaria default para depositios'
+    mcc:
+      type: string
+      example: "1"
+      description: MCC ID
+    metadata:
+      type: object
+    created_at:
+      type: string
+      format: dateTime
+      example: "2015-04-17T06:39:52+00:00"
+    updated_at:
+      type: string
+      format: dateTime
+      example: "2015-04-17T06:39:52+00:00"
+TokenCardRequest:
+  type: object
+  properties:
+    holder_name:
+      type: string
+      description: Nome do portador
+    expiration_month:
+      type: string
+      description: mês de expiração do cartão (MM)
+    expiration_year:
+      type: string
+      description: ano de expiração do cartão (AAAA)
+    card_number:
+      type: string
+      description: Número do cartão
+    security_code:
+      type: string
+      description: Código de segurança do cartão (CVC)
+BuyerRequest:
+  type: object
+  properties:
+    first_name:
+      type: string
+      example: José
+    last_name:
+      type: string
+      example: Da Silva
+    email:
+      type: string
+      example: teeste@teste.com
+    phone_number:
+      type: string
+      example: " 12029579543"
+    taxpayer_id:
+      type: string
+      example: "76537741807"
+    birthdate:
+      type: string
+      example: "1982-12-15"
+    description:
+      type: string
+      example:
+    address:
+      type: object
+      properties:
+        line1:
+          type: string
+          example: "167 West 74th Street"
+        line2:
+          type: string
+          example: "543"
+        line3:
+          type: string
+          example: "APT 601"
+        neighborhood:
+          type: string
+          example: "Downtown"
+        city:
+          type: string
+          example: "Washington"
+        state:
+          type: string
+          example: "DC"
+        postal_code:
+          type: string
+          example: "10023"
+        country_code:
+          type: string
+          example: "US"
+Buyer:
+  type: object
+  properties:
+    id:
+      type: string
+      example: d2385e3c49164e6195f072763c0a1eaa
+    status:
+      type: string
+      enum:
+        - new
+        - expired
+        - action_required
+        - pending
+        - enabled
+        - active
+        - disabled
+        - deleted
+      example: pending
+    resource:
+      type: string
+      example: buyer
+    account_balance:
+      type: number
+      example: 0.00
+    current_balance:
+      type: number
+      example: 0.00
+    first_name:
+      type: string
+      example: José
+    last_name:
+      type: string
+      example: Da Silva
+    email:
+      type: string
+      example: teeste@teste.com
+    phone_number:
+      type: string
+      example: " 12029579543"
+    taxpayer_id:
+      type: string
+      example: "76537741807"
+    birthdate:
+      type: string
+      example: "1982-12-15"
+    description:
+      type: string
+      example:
+    address:
+      type: object
+      properties:
+        line1:
+          type: string
+          example: "167 West 74th Street"
+        line2:
+          type: string
+          example: "543"
+        line3:
+          type: string
+          example: "APT 601"
+        neighborhood:
+          type: string
+          example: "Downtown"
+        city:
+          type: string
+          example: "Washington"
+        state:
+          type: string
+          example: "DC"
+        postal_code:
+          type: string
+          example: "10023"
+        country_code:
+          type: string
+          example: "US"
+    delinquent:
+      type: boolean
+    default_debit:
+      type: string
+      description: 'cartão default para compras'
+    default_credit:
+      type: string
+      description: 'conta bancaria default para depositios'
+    metadata:
+      type: object
+    created_at:
+      type: string
+      format: dateTime
+      example: "2015-04-17T06:39:52+00:00"
+    updated_at:
+      type: string
+      format: dateTime
+      example: "2015-04-17T06:39:52+00:00"
+BankAccountRequest:
+  type: object
+  properties:
+    holder_name:
+      type: string
+      description: Nome do portador
+    bank_code:
+      type: number
+      description: Bank Account
+    routing_number:
+      type: number
+      description: Agencia sem DV (4 digitos)
+    account_number:
+      type: number
+      description: Conta Bancaria com DV
+    taxpayer_id:
+      type: string
+      description: CPF, caso seller seja PF
+    ein:
+      type: string
+      description: CNPJ, caso seller seja PJ
+    type:
+      type: string
+      description: Conta corrente ou poupança
+      enum:
+        - checking
+        - savings
+
+#Dispute Objects
+DisputeTO:
+  type: object
+  properties:
+    amount:
+      type: number
+      format: double
+    authorization:
+      type: string
+    cardHolder:
+      type: string
+    cardType:
+      type: string
+    descReason:
+      type: string
+    dflag:
+      type: integer
+      format: int32
+    disputeDate:
+      type: string
+      format: date-time
+    fileSent:
+      type: boolean
+    hasAssociateFile:
+      type: boolean
+    id:
+      type: string
+    marketPlaceId:
+      type: string
+    maskCreditNumber:
+      type: string
+    merchant:
+      type: string
+    nsu:
+      type: string
+    purchaseAmount:
+      type: number
+      format: double
+    purchaseDate:
+      type: string
+      format: date-time
+    reason:
+      type: string
+    status:
+      type: string
+    tid:
+      type: string
+    transactionId:
+      type: string
+    updatedAt:
+      type: string
+      example: 'yyyy-MM-dd HH:mm:ss.SSSZ'
+DisputeTORequest:
+  type: object
+  required:
+    - acquirer
+    - amount
+    - cardType
+    - caseNumber
+    - disputeDate
+    - process
+    - purchaseDate
+    - reason
+    - result
+    - transactionId
+  properties:
+    acquirer:
+      type: string
+    amount:
+      type: number
+      format: double
+    authorization:
+      type: string
+    cardHolder:
+      type: string
+    cardType:
+      type: string
+    caseNumber:
+      type: string
+    descReason:
+      type: string
+    disputeDate:
+      type: string
+      description: yyyy-mm-dd
+    maskCreditNumber:
+      type: string
+    merchant:
+      type: string
+    nsu:
+      type: string
+    process:
+      type: string
+    purchaseAmount:
+      type: number
+      format: double
+    purchaseDate:
+      type: string
+      description: yyyy-mm-dd
+    reason:
+      type: string
+    result:
+      type: string
+    tid:
+      type: string
+    transactionId:
+      type: string
+Error:
+  type: object
+  properties:
+    category:
+      type: string
+    message:
+      type: string
+    status:
+      type: string
+    status_code:
+      type: integer
+      format: int32
+    type:
+      type: string
+ErrorResponse:
+  type: object
+  properties:
+    error:
+      $ref: "#/Error"
+PagedResult:
+  type: object
+  properties:
+    elements:
+      type: array
+      items:
+        type: object
+    limit:
+      type: integer
+      format: int32
+    offset:
+      type: integer
+      format: int32
+    totalElements:
+      type: integer
+      format: int64
+PagedResult«DisputeTO»:
+  type: object
+  properties:
+    elements:
+      type: array
+      items:
+        $ref: "#/DisputeTO"
+    limit:
+      type: integer
+      format: int32
+    offset:
+      type: integer
+      format: int32
+    totalElements:
+      type: integer
+      format: int64
+
+
+
+### Payment Methods
+Transactions:
+  type: object
+  properties:
+    resource:
+      type: string
+      example: "list"
+    uri:
+      type: string
+      example: "/v1/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/transactions"
+    limit:
+      type: number
+      example: 100
+    offset:
+      type: number
+      example: 0
+    has_more:
+      type: boolean
+      example: false
+    query_count:
+      type: number
+      example: 2
+    total:
+      type: number
+      example: 2
+    items:
+        $ref: '#/TransactionResponse'
+TransactionResponse:
+  type: object
+  properties:
+    id:
+      type: string
+      example: 0009462369b14ee596aabfd27faa97f7
+    status:
+      type: string
+      enum:
+        - new
+        - pending
+        - succeeded
+        - canceled
+        - reversed
+        - failed
+        - pre_authorized
+      example: succeeded
+    resource:
+      type: string
+      example: transaction
+    amount:
+      type: string
+      example: "1.00"
+    original_amount:
+      type: string
+      example: "1.00"
+    currency:
+      type: string
+      example: "BRL"
+    description:
+      type: string
+      example: "BRL"
+    payment_type:
+      enum:
+        - credit
+        - wallet
+        - boleto
+      example: credit
+    transaction_number:
+      type: string
+      example: "W-12343124"
+    sales_receipt:
+      type: string
+      example: "00d5ce5086c84c0f824cf660b020881a"
+    on_behalf_of:
+      type: string
+      example: "1e5ee2e290d040769806c79e6ef94ee1"
+    statement_descriptor:
+      type: string
+      example: "CORRENTISTA 03  3011"
+    payment_method:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "2f008ac254964e658be566241cc87c1a"
+        resource:
+          type: string
+          example: "card"
+        description:
+          type: string
+          example: null
+        card_brand:
+          type: string
+          example: "Visa"
+        first4_digits:
+          type: string
+          example: "4893"
+        last4_digits:
+          type: string
+          example: null
+        expiration_month:
+          type: string
+          example: "7"
+        expiration_year:
+          type: string
+          example: "2023"
+        holder_name:
+          type: string
+          example: "LEITE/ANDRE S DE M"
+        is_active:
+          type: boolean
+          example: false
+        is_valid:
+          type: boolean
+          example: true
+        is_verified:
+          type: boolean
+          example: false
+        customer:
+          type: string
+          example: "e4e8c5b569da48b28d896385f5481bcf"
+        fingerprint:
+          type: string
+          example: "9f2843f0c1b08d6018927b4e5e884a869ae49"
+        uri:
+          type: string
+          example: "/v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/2f008ac254964e658be566241cc87c1a"
+        metadata:
+          type: object
+        created_at:
+          type: string
+          format: dateTime
+          example: "2015-04-17T06:39:52+00:00"
+        updated_at:
+          type: string
+          format: dateTime
+          example: "2015-04-17T06:39:52+00:00"
+    point_of_sale:
+      type: object
+      properties:
+        entry_mode:
+          type: string
+          enum:
+            - manually_keyed
+            - magstripe
+            - barcode
+            - ocr
+            - chip
+            - contactless_chip
+            - magstripe_fallback
+            - manually_keyed_fallback
+            - contactless_magstripe
+          example: "chip"
+        identification_number:
+          type: string
+          example: "4b7d03e6aa01463bb5673f04a7717db9"
+    refunded:
+      type: boolean
+      example: false
+    voided:
+      type: boolean
+      example: false
+    captured:
+      type: boolean
+      example: false
+    fees:
+      type: string
+      example: "0.05"
+    fee_details:
+      type: object
+      properties:
+        amount:
+          type: string
+          example: "0.05"
+        prepaid:
+          type: boolean
+          example: true
+        currency:
+          type: string
+          example: "BRL"
+        type:
+          type: string
+          example: "zoop_credit_fee_d0"
+        description:
+          type: string
+          example: "Zoop prepaid card-present credit fee"
+    uri:
+      type: string
+      example: |
+        /v1/marketplaces/3249465a7753536b62545a6a684b0000/transactions/0009462369b14ee596aabfd27faa97f7
+    metadata:
+      type: object
+    expected_on:
+      type: string
+      format: dateTime
+      example: "2015-04-17T06:39:52+00:00"
+    created_at:
+      type: string
+      format: dateTime
+      example: "2015-04-17T06:39:52+00:00"
+    updated_at:
+      type: string
+      format: dateTime
+      example: "2015-04-17T06:39:52+00:00"
+TransactionUpdateRequest:
+  type: object
+  properties:
+    description:
+      type: string
+      example: "BRL"
+    metadata:
+      type: object
+TransactionVoidRequest:
+  type: object
+  required:
+    - on_behalf_of
+    - amount
+  properties:
+    on_behalf_of:
+      type: string
+      description: Identificador do seller responsável pela venda
+      example: 1e5ee2e290d040769806c79e6ef94ee1
+    amount:
+      type: integer
+      description: valor da venda a ser estornado em centavos
+TransactionCaptureRequest:
+  type: object
+  required:
+    - on_behalf_of
+    - amount
+  properties:
+    on_behalf_of:
+      type: string
+      description: Identificador do seller responsável pela venda
+      example: 1e5ee2e290d040769806c79e6ef94ee1
+    amount:
+      type: integer
+      description: "valor da venda a ser capturado em centavos. para captura parcial basta enviar valor a menor, sendo possível realizar somente uma captura parcial por autorização"
+SplitRuleRequest:
+  type: object
+  required:
+    - amount
+  properties:
+    recipient:
+      type: string
+      description: Identificador do seller recebedor
+      example: 1e5ee2e290d040769806c79e6ef94ee1
+    liable:
+      type: boolean
+      description: define se o recebedor arca com prejuízo em caso de chargeback ou não. 1 arca; 0 não arca.
+      default: 0
+    charge_processing_fee:
+      type: boolean
+      description: define se vai ser feito split em cima do valor bruto (0) ou do valor líquido (1) da transação
+      default: 0
+    percentage:
+      type: integer
+      description: percentual da venda a ser splitado.
+    amount:
+      type: integer
+      description: valor em centavos a ser splitado.
+CardRequest:
+  type: object
+  required:
+    - token
+    - customer
+  properties:
+    token:
+      type: string
+      description: Identificador do token de cartão a ser associado ao customer
+      example: 1e5ee2e290d040769806c79e6ef94ee1
+    customer:
+      type: string
+      description: Identificador do customer
+SourceResponse:
+  type: object
+  properties:
+    id:
+      type: string
+      example: 0009462369b14ee596aabfd27faa97f7
+    status:
+      type: string
+      enum:
+        - pending
+        - charged
+        - deleted
+      example: charged
+    usage:
+      type: string
+      enum:
+        - single_use
+        - reusable
+      default: single_use
+    amount:
+      type: string
+      example: "1.00"
+      description: valor a ser cobrado na venda (opcional)
+    currency:
+      type: string
+      example: "BRL"
+      description: moeda do valor a ser cobrado na venda (opcional)
+    description:
+      type: string
+      example: "BRL"
+      description: descrição da venda quando gerada (opcional)
+    type:
+      type: string
+      enum:
+        - wallet
+        - card
+        - card_and_wallet
+        - token
+        - customer
+        - three_d_secure
+        - debit_online
+      example: card
+    capture:
+      type: boolean
+      example: false
+      description: "Capturar transação (true) ou criar uma pre-autorização (false) para ser capturada a posteriori"
+    on_behalf_of:
+      type: string
+      example: "1e5ee2e290d040769806c79e6ef94ee1"
+    reference_id:
+      type: string
+      example: "10902"
+      description: "ID referência da sua aplicação VARCHAR(500)"
+    card:
+      type: object
+      description: "objeto obrigatório no tipo card e card_and_wallet"
+      properties:
+        id:
+          type: string
+          example: "2f008ac254964e658be566241cc87c1a"
+        amount:
+          type: string
+          example: "1.00"
+          description: valor a ser cobrado na venda (opcional)
+        resource:
+          type: string
+          example: "card"
+        description:
+          type: string
+          example: null
+        card_brand:
+          type: string
+          example: "Visa"
+        first4_digits:
+          type: string
+          example: "4893"
+        last4_digits:
+          type: string
+          example: null
+        expiration_month:
+          type: string
+          example: "7"
+        expiration_year:
+          type: string
+          example: "2023"
+        holder_name:
+          type: string
+          example: "LEITE/ANDRE S DE M"
+        is_active:
+          type: boolean
+          example: false
+        is_valid:
+          type: boolean
+          example: true
+        is_verified:
+          type: boolean
+          example: false
+        customer:
+          type: string
+          example: "e4e8c5b569da48b28d896385f5481bcf"
+        fingerprint:
+          type: string
+          example: "9f2843f0c1b08d6018927b4e5e884a869ae49"
+        uri:
+          type: string
+          example: "/v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/2f008ac254964e658be566241cc87c1a"
+        metadata:
+          type: object
+        created_at:
+          type: string
+          format: dateTime
+          example: "2015-04-17T06:39:52+00:00"
+        updated_at:
+          type: string
+          format: dateTime
+          example: "2015-04-17T06:39:52+00:00"
+    installment_plan:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum:
+            - interest_free
+            - with_interest
+          description: "modo de parcelamento, com juros no emissor (with_interest), ou sem juros (interest_free), com o custo já calculado no valor da transação. "
+        number_installments:
+          type: integer
+          description: número de parcelas (1-12)
+    statement_descriptor:
+      type: string
+      example: "CORRENTISTA 03  3011"
+    customer:
+      type: object
+      description: identificador do comprador que será cobrado
+      properties:
+        id:
+          type: string
+          example: "1e5ee2e290d040769806c79e6ef94ee1"
+          description: "identificador do comprador que será cobrado para source tipo customer, wallet e card_and_wallet"
+        amount:
+          type: integer
+          example: 100
+          description: valor a ser cobrado neste customer (opcional)
+    token:
+      type: object
+      description: "identificador do token de cartão que será cobrado obrigatorio no source tipo token"
+      properties:
+        id:
+          type: string
+          description: "identificador do cartão para source tipo card"
+          example: "1e5ee2e290d040769806c79e6ef94ee1"
+        amount:
+          type: integer
+          example: 100
+          description: valor a ser cobrado neste token (opcional)
+    uri:
+      type: string
+      example: |
+        /v1/marketplaces/3249465a7753536b62545a6a684b0000/sources/0009462369b14ee596aabfd27faa97f7
+    metadata:
+      type: object
+    created_at:
+      type: string
+      format: dateTime
+      example: "2015-04-17T06:39:52+00:00"
+    updated_at:
+      type: string
+      format: dateTime
+      example: "2015-04-17T06:39:52+00:00"
+SourceRequest:
+  type: object
+  required:
+    - type
+    - usage
+  properties:
+    usage:
+      type: string
+      enum:
+        - single_use
+        - reusable
+      default: single_use
+    amount:
+      type: integer
+      example: 100
+      description: valor em centavos a ser cobrado na venda (opcional)
+    currency:
+      type: string
+      example: "BRL"
+      description: moeda do valor a ser cobrado na venda
+    description:
+      type: string
+      example: "BRL"
+      description: descrição da venda quando gerada (opcional)
+    type:
+      type: string
+      enum:
+        - wallet
+        - card
+        - card_and_wallet
+        - token
+        - customer
+        - three_d_secure
+        - debit_online
+      example: card
+    capture:
+      type: boolean
+      example: false
+      description: "Capturar transação (true) ou criar uma pre-autorização (false) para ser capturada a posteriori"
+    on_behalf_of:
+      type: string
+      example: "1e5ee2e290d040769806c79e6ef94ee1"
+    reference_id:
+      type: string
+      example: "10902"
+      description: "ID referência da sua aplicação VARCHAR(500)"
+    card:
+      type: object
+      description: "objeto obrigatório no tipo card e card_and_wallet"
+      properties:
+        id:
+          type: string
+          example: "8c795953db6342be9fc14a36d5308bed"
+          description: "identificador do cartão para source tipo card"
+        amount:
+          type: integer
+          example: 100
+          description: valor a ser cobrado neste cartao (opcional)
+        holder_name:
+          type: string
+        expiration_month:
+          type: string
+          description: mês de expiração do cartão (MM)
+        expiration_year:
+          type: string
+          description: ano de expiração do cartão (AAAA)
+        card_number:
+          type: string
+          description: Número do cartão
+        security_code:
+          type: string
+          description: Código de segurança do cartão (CVC)
+    installment_plan:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum:
+            - interest_free
+            - with_interest
+          description: "modo de parcelamento, com juros no emissor (with_interest), ou sem juros (interest_free), com o custo já calculado no valor da transação. "
+        number_installments:
+          type: integer
+          description: número de parcelas (1-12)
+    statement_descriptor:
+      type: string
+      example: "CORRENTISTA 03  3011"
+    customer:
+      type: object
+      description: identificador do comprador que será cobrado
+      properties:
+        id:
+          type: string
+          example: "1e5ee2e290d040769806c79e6ef94ee1"
+          description: "identificador do comprador que será cobrado para source tipo customer, wallet e card_and_wallet"
+        amount:
+          type: integer
+          example: 100
+          description: valor a ser cobrado neste customer (opcional)
+    token:
+      type: object
+      description: "identificador do token de cartão que será cobrado obrigatorio no source tipo token"
+      properties:
+        id:
+          type: string
+          description: "identificador do cartão para source tipo card"
+          example: "1e5ee2e290d040769806c79e6ef94ee1"
+        amount:
+          type: integer
+          example: 100
+          description: valor a ser cobrado neste token (opcional)
+    metadata:
+      type: object
+TransactionCNPRequest:
+  type: object
+  required:
+    - amount
+    - currency
+    - description
+    - payment_type
+    - on_behalf_of
+  properties:
+    amount:
+      type: integer
+      example: 100
+      description: "valor em centavos a ser cobrado pela transação"
+    currency:
+      type: string
+      example: "BRL"
+    description:
+      type: string
+      example: "BRL"
+    payment_type:
+      type: string
+      enum:
+        - credit
+        - wallet
+        - boleto
+      example: credit
+    capture:
+      type: boolean
+      example: false
+      description: "Capturar transação (true) ou criar uma pre-autorização (false) para ser capturada a posteriori"
+    on_behalf_of:
+      type: string
+      example: "1e5ee2e290d040769806c79e6ef94ee1"
+    reference_id:
+      type: string
+      example: "10902"
+      description: "ID referência da sua aplicação VARCHAR(500)"
+    payment_method:
+      type: object
+      properties:
+        expiration_date:
+          type: string
+          example: 20170410
+          description: 'Data de vencimento utilizado nas vendas por boleto'
+        top_instructions:
+          type: array
+          description: 'Instruções para o comprador utilizado nas vendas por boleto'
+          items:
+            type: string
+    source:
+      $ref: '#/SourceRequest'
+    installment_plan:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum:
+            - interest_free
+            - with_interest
+          description: "modo de parcelamento, com juros no emissor (with_interest), ou sem juros (interest_free), com o custo já calculado no valor da transação. "
+        number_installments:
+          type: integer
+          description: número de parcelas (1-12)
+    statement_descriptor:
+      type: string
+      example: "CORRENTISTA 03  3011"
+    customer:
+      type: string
+      description: identificador do comprador que será cobrado
+      example: "1e5ee2e290d040769806c79e6ef94ee1"
+    token:
+      type: string
+      description: identificador do token de cartão que será cobrado
+      example: "1e5ee2e290d040769806c79e6ef94ee1"
+    metadata:
+      type: object

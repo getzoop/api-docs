@@ -1,0 +1,10 @@
+{
+    "moduleName": "Zoop",
+    "modelPackage" : "Zoop",
+    "apiPackage" : "Zoop",
+    "projectName": "Zoop",
+    "projectVersion": "1.0.0",
+    "projectDescription": "Python client library for the Zoop API",
+    "projectLicenseName": "Apache-2.0",
+    "licenseName": "Apache 2.0"
+  }

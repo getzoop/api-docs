@@ -1,0 +1,183 @@
+Business:
+  type: object
+  properties:
+    id:
+      type: string
+      example: 17d9e827664b47509f12a082b6047e7a
+      description: Identificador exclusivo para este vendedor
+      readOnly: true
+    status:
+      type: string
+      readOnly: true
+      enum:
+        - new
+        - expired
+        - action_required
+        - pending
+        - enabled
+        - active
+        - disabled
+        - deleted
+      example: pending
+    resource:
+      readOnly: true
+      type: string
+      example: seller
+    type:
+      readOnly: true
+      type: string
+      enum:
+        - individual
+        - business
+      example: business
+    account_balance:
+      readOnly: true
+      type: number
+      example: 0.00
+    current_balance:
+      readOnly: true
+      type: number
+      example: 0.00
+    fiscal_responsibility:
+      type: string
+      description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+    owner:
+      type: object
+      properties:
+        first_name:
+          type: string
+          example: José
+        last_name:
+          type: string
+          example: Da Silva
+        email:
+          type: string
+          example: teeste@teste.com
+        phone_number:
+          type: string
+          example: " 12029579543"
+        taxpayer_id:
+          type: string
+          example: "76537741807"
+        birthdate:
+          type: string
+          example: "1982-12-15"
+    owner_address:
+      type: object
+      properties:
+        line1:
+          type: string
+          example: "167 West 74th Street"
+        line2:
+          type: string
+          example: "543"
+        line3:
+          type: string
+          example: "APT 601"
+        neighborhood:
+          type: string
+          example: "Downtown"
+        city:
+          type: string
+          example: "Washington"
+        state:
+          type: string
+          example: "DC"
+          description: 'Sigla do estado, com duas letras. Utilizando as duas letras finais no formato Código ISO 3166-2 para o estado.'
+        postal_code:
+          type: string
+          example: "10023"
+        country_code:
+          type: string
+          example: "US"
+          description: 'ISO 3166-1 alpha-2 - códigos de país de duas letras.'
+    description:
+      type: string
+      example:
+    business_name:
+      type: string
+      example: "Zoop Inc"
+    business_phone:
+      type: string
+      example: "12026256754"
+    business_email:
+      type: string
+      example: "hello@pagzoop.com"
+    business_website:
+      type: string
+      example: "http://getzoop.com"
+    business_description:
+      type: string
+      example: "The open mobile payment platform"
+    business_facebook:
+      type: string
+      example: "http://fb.com/getzoop"
+    business_twitter:
+      type: string
+      example: "http://twitter.com/getzoop"
+    ein:
+      type: string
+      example: "24742492000159"
+      description: 'CNPJ da empresa somente números'
+    statement_descriptor:
+      type: string
+      example: "NOME FANTASIA"
+      description: "Esse é o nome que aparecerá na fatura do seu cliente"
+    business_opening_date:
+      type: string
+      format: date
+      example: "2015-04-17"
+    business_address:
+      type: object
+      properties:
+        line1:
+          type: string
+          example: "167 West 74th Street"
+        line2:
+          type: string
+          example: "543"
+        line3:
+          type: string
+          example: "APT 601"
+        neighborhood:
+          type: string
+          example: "Downtown"
+        city:
+          type: string
+          example: "Washington"
+        state:
+          type: string
+          example: "DC"
+          description: 'Sigla do estado, com duas letras. Utilizando as duas letras finais no formato Código ISO 3166-2 para o estado.'
+        postal_code:
+          type: string
+          example: "10023111"
+          description: 'CEP somente números'
+        country_code:
+          type: string
+          example: "BR"
+          description: 'ISO 3166-1 alpha-2 - códigos de país de duas letras.'
+    delinquent:
+      type: boolean
+    default_debit:
+      type: string
+      description: 'O método de pagamento padrão (cartão ou conta bancária) associado a um vendedor que será usado, por exemplo, para debitar a conta bancária ou cartão de crédito'
+    default_credit:
+      type: string
+      description: 'O banco bancário padrão associado a um vendedor que será usado para enviar dinheiro (crédito) a conta bancária'
+    mcc:
+      type: string
+      example: "1"
+      description: MCC ID
+    metadata:
+      type: object
+    created_at:
+      readOnly: true
+      type: string
+      format: dateTime
+      example: "2015-04-17T06:39:52+00:00"
+    updated_at:
+      readOnly: true
+      type: string
+      format: dateTime
+      example: "2015-04-17T06:39:52+00:00"
