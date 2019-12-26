@@ -30,11 +30,7 @@ tags:
 paths:
   /v1/marketplaces/{marketplace_id}/transactions:
     parameters:
-      - name: marketplace_id
-        in: path
-        description: ID do marketplace
-        required: true
-        type: string
+      - $ref: '#/parameters/marketplaceParam'
     get:
       summary: Listar transaçoes do marketplace
       tags:
