@@ -575,7 +575,7 @@ paths:
           description: Marketplace/Seller não encontrado
   '/marketplaces/{marketplace_id}/cards/tokens':
     parameters:
-      - $ref: '#/parameters/marketplaceParam'
+      - $ref: '#/parameters/marketplaceId'
     post:
       tags:
         - 'Token'
@@ -600,7 +600,7 @@ paths:
           description: Marketplace/ não encontrado
   '/marketplaces/{marketplace_id}/bank_accounts/tokens':
     parameters:
-      - $ref: '#/parameters/marketplaceParam'
+      - $ref: '#/parameters/marketplaceId'
     post:
       tags:
         - 'Token'

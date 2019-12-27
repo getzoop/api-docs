@@ -1,16 +1,16 @@
-marketplaceParam:
+marketplaceId:
   name: marketplace_id
   in: path
-  description: ID marketplace
+  description: ID do marketplace
   required: true
   type: string
-sellerParam:
+sellerId:
   name: seller_id
   in: path
-  description: ID do vendedor
+  description: ID do Seller
   required: true
   type: string
-buyerParam:
+buyerId:
   name: buyer_id
   in: path
   description: identificador do buyer

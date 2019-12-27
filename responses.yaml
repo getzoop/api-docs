@@ -1,3 +1,31 @@
+Businesses:
+  type: object
+  properties:
+    resource:
+      type: string
+      example: "list"
+    uri:
+      type: string
+      example: "/v1/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/sellers"
+    limit:
+      type: number
+      example: 100
+    offset:
+      type: number
+      example: 0
+    has_more:
+      type: boolean
+      example: false
+    query_count:
+      type: number
+      example: 2
+    total:
+      type: number
+      example: 2
+    items:
+      type: array
+      items:
+        $ref: '#/Business'
 Business:
   type: object
   properties:
@@ -5,10 +33,8 @@ Business:
       type: string
       example: 17d9e827664b47509f12a082b6047e7a
       description: Identificador exclusivo para este vendedor
-      readOnly: true
     status:
       type: string
-      readOnly: true
       enum:
         - new
         - expired
@@ -20,22 +46,18 @@ Business:
         - deleted
       example: pending
     resource:
-      readOnly: true
       type: string
       example: seller
     type:
-      readOnly: true
       type: string
       enum:
         - individual
         - business
       example: business
     account_balance:
-      readOnly: true
       type: number
       example: 0.00
     current_balance:
-      readOnly: true
       type: number
       example: 0.00
     fiscal_responsibility:
@@ -62,35 +84,6 @@ Business:
         birthdate:
           type: string
           example: "1982-12-15"
-    owner_address:
-      type: object
-      properties:
-        line1:
-          type: string
-          example: "167 West 74th Street"
-        line2:
-          type: string
-          example: "543"
-        line3:
-          type: string
-          example: "APT 601"
-        neighborhood:
-          type: string
-          example: "Downtown"
-        city:
-          type: string
-          example: "Washington"
-        state:
-          type: string
-          example: "DC"
-          description: 'Sigla do estado, com duas letras. Utilizando as duas letras finais no formato Código ISO 3166-2 para o estado.'
-        postal_code:
-          type: string
-          example: "10023"
-        country_code:
-          type: string
-          example: "US"
-          description: 'ISO 3166-1 alpha-2 - códigos de país de duas letras.'
     description:
       type: string
       example:
@@ -118,15 +111,11 @@ Business:
     ein:
       type: string
       example: "24742492000159"
-      description: 'CNPJ da empresa somente números'
+      description: 'CNPJ da empresa (somente números)'
     statement_descriptor:
       type: string
       example: "NOME FANTASIA"
-      description: "Esse é o nome que aparecerá na fatura do seu cliente"
-    business_opening_date:
-      type: string
-      format: date
-      example: "2015-04-17"
+      description: Esse é o nome que aparece na fatura associado a transação. Importante ser fácil de reconhecer para evitar chargebacks.
     business_address:
       type: object
       properties:
@@ -141,18 +130,51 @@ Business:
           example: "APT 601"
         neighborhood:
           type: string
-          example: "Downtown"
+          example: "Barra da Tijuca"
         city:
           type: string
-          example: "Washington"
+          example: "Rio de Janeiro"
         state:
           type: string
-          example: "DC"
-          description: 'Sigla do estado, com duas letras. Utilizando as duas letras finais no formato Código ISO 3166-2 para o estado.'
+          example: "RJ"
+          description: Código ISO 3166-2 para o estado, com duas letras
         postal_code:
           type: string
-          example: "10023111"
-          description: 'CEP somente números'
+          example: "10023000"
+          description: CEP com 8 digitos sem separador
+        country_code:
+          type: string
+          example: "BR"
+          description: ISO 3166-1 alpha-2 - códigos de país de duas letras.
+    business_opening_date:
+      type: string
+      format: date
+      example: "2015-04-17"
+    owner_address:
+      type: object
+      properties:
+        line1:
+          type: string
+          example: "167 West 74th Street"
+        line2:
+          type: string
+          example: "543"
+        line3:
+          type: string
+          example: "APT 601"
+        neighborhood:
+          type: string
+          example: "Barra da Tijuca"
+        city:
+          type: string
+          example: "Rio de Janeiro"
+        state:
+          type: string
+          example: "RJ"
+        postal_code:
+          type: string
+          example: "10023000"
+          description: CEP com 8 digitos sem separador
         country_code:
           type: string
           example: "BR"
@@ -168,16 +190,156 @@ Business:
     mcc:
       type: string
       example: "1"
-      description: MCC ID
+      description: Envie o código de atividade do negócio (MCC ID). A lista completa se encontra em /v1/merchant_category_codes
     metadata:
       type: object
     created_at:
-      readOnly: true
       type: string
       format: dateTime
       example: "2015-04-17T06:39:52+00:00"
     updated_at:
-      readOnly: true
+      type: string
+      format: dateTime
+      example: "2015-04-17T06:39:52+00:00"
+Individuals:
+  type: object
+  properties:
+    resource:
+      type: string
+      example: "list"
+    uri:
+      type: string
+      example: "/v1/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/sellers"
+    limit:
+      type: number
+      example: 100
+    offset:
+      type: number
+      example: 0
+    has_more:
+      type: boolean
+      example: false
+    query_count:
+      type: number
+      example: 2
+    total:
+      type: number
+      example: 2
+    items:
+      type: array
+      items:
+        $ref: '#/Individual'
+Individual:
+  type: object
+  description: Estrutura padrão de um seller pessoa física
+  properties:
+    id:
+      type: string
+      example: 17d9e827664b47509f12a082b6047e7a
+    status:
+      type: string
+      enum:
+        - new
+        - expired
+        - action_required
+        - pending
+        - enabled
+        - active
+        - disabled
+        - deleted
+      example: pending
+    resource:
+      type: string
+      example: seller
+    type:
+      type: string
+      enum:
+        - individual
+        - business
+      example: individual
+    account_balance:
+      type: number
+      example: 0.00
+    current_balance:
+      type: number
+      example: 0.00
+    fiscal_responsibility:
+      type: string
+      description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+    first_name:
+      type: string
+      example: José
+    last_name:
+      type: string
+      example: Da Silva
+    email:
+      type: string
+      example: teeste@teste.com
+    phone_number:
+      type: string
+      example: " 12029579543"
+    taxpayer_id:
+      type: string
+      example: "76537741807"
+      description: 'CPF do vendedor'
+    birthdate:
+      type: string
+      example: "1982-12-15"
+    statement_descriptor:
+      type: string
+      example: "NOME FANTASIA"
+    description:
+      type: string
+      example:
+    address:
+      type: object
+      properties:
+        line1:
+          type: string
+          example: "167 West 74th Street"
+        line2:
+          type: string
+          example: "543"
+        line3:
+          type: string
+          example: "APT 601"
+        neighborhood:
+          type: string
+          example: "Barra da Tijuca"
+        city:
+          type: string
+          example: "Rio de Janeiro"
+        state:
+          type: string
+          example: "RJ"
+          description: Código ISO 3166-2 para o estado, com duas letras
+        postal_code:
+          type: string
+          example: "10023000"
+          description: CEP com 8 digitos sem separador
+        country_code:
+          type: string
+          example: "BR"
+          description: ISO 3166-1 alpha-2 - códigos de país de duas letras.
+    delinquent:
+      type: boolean
+    default_debit:
+      type: string
+      description: 'cartão default para compras'
+    default_credit:
+      type: string
+      description: 'conta bancaria default para depositios'
+    mcc:
+      type: string
+      example: "1"
+      description: Envie o código de atividade do negócio (MCC ID). A lista completa se encontra em /v1/merchant_category_codes
+    metadata:
+      type: object
+    created_at:
+      type: string
+      format: dateTime
+      example: "2015-04-17T06:39:52+00:00"
+    updated_at:
       type: string
       format: dateTime
       example: "2015-04-17T06:39:52+00:00"
