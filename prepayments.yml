@@ -158,7 +158,14 @@ paths:
         in: "query"
         required: false
         description: "Apenas considerar recebíveis de transações cujo entry mode está entre os especificados. Valores possíveis: chip, magstripe, magstripe_fallback, manually_keyed. Caso não seja preenchido, considera todos os tipos de entry mode."
-        type: "string"
+        type: "array"
+        items:
+          type: "string"
+          enum:
+            - "chip"
+            - "magstripe"
+            - "magstripe_fallback"
+            - "manually_keyed"
       responses:
         200:
           description: "Sucesso na recuperação das informações de antecipação"
