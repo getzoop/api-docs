@@ -154,6 +154,11 @@ paths:
         required: false
         description: "Apenas considerar recebíveis cuja agenda original de liquidação seja até esta data (inclusive). Caso não seja preenchida, é considerada a data de liquidação do recebível mais tardio."
         type: "string"
+      - name: "entry_modes"
+        in: "query"
+        required: false
+        description: "Apenas considerar recebíveis de transações cujo entry mode está entre os especificados. Valores possíveis: chip, magstripe, magstripe_fallback, manually_keyed. Caso não seja preenchido, considera todos os tipos de entry mode."
+        type: "string"
       responses:
         200:
           description: "Sucesso na recuperação das informações de antecipação"
