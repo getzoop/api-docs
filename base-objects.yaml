@@ -178,7 +178,7 @@ paths:
         '200':
           description: Vendedor cadastrado com sucesso
           schema:
-            $ref: '#/responses/Individual'
+            $ref: '#/definitions/IndividualResponse'
         '404':
           description: 'Marketplace não encontrado'
         '400':
@@ -205,7 +205,7 @@ paths:
         '200':
           description: Vendedor alterado com sucesso
           schema:
-            $ref: '#/responses/Individual'
+            $ref: '#/definitions/IndividualResponse'
         '404':
           description: 'Marketplace não encontrado'
         '400':
@@ -231,7 +231,7 @@ paths:
         '201':
           description: Vendedor cadastrado com sucesso
           schema:
-            $ref: '#/responses/Business'
+            $ref: '#/definitions/BusinessesResponse'
         '404':
           description: 'Marketplace não encontrado'
         '400':
@@ -258,7 +258,7 @@ paths:
         '200':
           description: Vendedor alterado com sucesso
           schema:
-            $ref: '#/responses/Business'
+            $ref: '#/definitions/BusinessResponse'
         '404':
           description: 'Marketplace/Vendedor não encontrado'
         '400':
@@ -277,7 +277,7 @@ paths:
         '200':
           description: Vendedor recuperado com sucesso
           schema:
-            $ref: '#/responses/Business'
+            $ref: '#/definitions/BusinessResponse'
         '404':
           description: 'Marketplace/Vendedor não encontrado'
     delete:
@@ -320,7 +320,7 @@ paths:
         '200':
           description: Vendedor recuperado com sucesso
           schema:
-            $ref: '#/responses/Businesses'
+            $ref: '#/definitions/BusinessesResponse'
         '404':
           description: 'Marketplace/Vendedor não encontrado'
   '/v1/marketplaces/{marketplace_id}/sellers/search':
@@ -346,7 +346,7 @@ paths:
         '200':
           description: Vendedor encontrado com sucesso
           schema:
-            $ref: '#/responses/Businesses'
+            $ref: '#/definitions/BusinessesResponse'
         '404':
           description: 'Vendedor não encontrado'
         '400':
@@ -748,7 +748,6 @@ definitions:
       metadata:
         type: object
   Business:
-    type: object
     properties:
       fiscal_responsibility:
         type: string
@@ -877,7 +876,6 @@ definitions:
       metadata:
         type: object
   Individuals:
-    type: object
     properties:
       resource:
         type: string
@@ -905,7 +903,6 @@ definitions:
         items:
           $ref: '#/definitions/Individual'
   Individual:
-    type: object
     properties:
       fiscal_responsibility:
         type: string
@@ -1159,9 +1156,9 @@ definitions:
         enum:
           - checking
           - savings
-responses:
-  Businesses:
+  BusinessesResponse:
     type: object
+    description: Seller
     properties:
       resource:
         type: string
@@ -1187,8 +1184,8 @@ responses:
       items:
         type: array
         items:
-          $ref: '#/responses/Business'
-  Business:
+          $ref: '#/definitions/BusinessResponse'
+  BusinessResponse:
     type: object
     properties:
       id:
@@ -1362,7 +1359,7 @@ responses:
         type: string
         format: dateTime
         example: "2015-04-17T06:39:52+00:00"
-  Individuals:
+  IndividualsResponse:
     type: object
     properties:
       resource:
@@ -1389,8 +1386,8 @@ responses:
       items:
         type: array
         items:
-          $ref: '#/responses/Individual'
-  Individual:
+          $ref: '#/definitions/IndividualResponse'
+  IndividualResponse:
     type: object
     description: Estrutura padrão de um seller pessoa física
     properties:
