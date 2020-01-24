@@ -39,6 +39,8 @@ paths:
       produces:
         - application/json
       parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - $ref: '#/parameters/sellerId'
         - name: file
           type: file
           in: formData
@@ -49,7 +51,8 @@ paths:
           in: formData
           type: string
           required: true
-          description: Categoria do documento cadastrado
+          description: Categoria do documento cadastrado que podem assumir os seguintes domínios
+                       identificacao, atividade, residencia e cnpj
         - name: metadata
           in: formData
           type: string
