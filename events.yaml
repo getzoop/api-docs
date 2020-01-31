@@ -3,7 +3,7 @@ x-api-id: 'notificações-e-eventos'
 host: api.zoop.ws
 info:
   title: Notificações e Eventos
-  version: "1.1"
+  version: "1.2"
 
 securityDefinitions:
   basicAuth:
@@ -168,15 +168,15 @@ definitions:
       method:
         type: string
         example: "POST"
-        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+        description: 'valor estático "POST"'
       url:
         type: string
         example: 'https://seusistema.com/webhook'
-        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+        description: 'URL do seu sistema que irá receber as chamadas'
       description:
         type: string
         example: 'Nome do webhook'
-        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+        description: 'Nome do webhook para identificação posterior'
       events:
         type: array
         description: lista de tipos de eventos a serem enviados para este webhook
@@ -214,17 +214,18 @@ definitions:
         method:
           type: string
           example: "POST"
-          description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+          description: 'valor estático "POST"'
         url:
           type: string
           example: '{{SUA_URL_DE_WEBHOOK}}'
-          description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+          description: 'URL do seu sistema que irá receber as chamadas'
         description:
           type: string
           example: 'Nome do webhook'
-          description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+          description: 'Nome do webhook para identificação posterior'
         events:
           type: array
+          description: lista de tipos de eventos a serem enviados para este webhook
           items:
             type: string
             example: "transaction.pre_authorization.succeeded"
@@ -264,21 +265,6 @@ definitions:
     properties:
       method:
         type: string
-        example: "POST"
-        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
-      url:
-        type: string
-        example: 'https://seusistema.com/webhook'
-        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
-      description:
-        type: string
-        example: 'Nome do webhook'
-        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
-      events:
-        type: array
-        items:
-          type: string
-          example: "transaction.pre_authorization.succeeded"
 parameters:
   marketplaceId:
     name: marketplace_id
