@@ -31,7 +31,12 @@ paths:
       description: ''
       parameters:
         - $ref: '#/parameters/marketplaceId'
-        - $ref: '#/definitions/Webhook'
+        - in: body
+          name: body
+          description: Individual webhook
+          required: true
+          schema:
+            $ref: '#/definitions/Webhook'
       consumes:
         - application/json
       produces:
@@ -120,8 +125,8 @@ paths:
     get:
       parameters:
       - $ref: '#/parameters/marketplaceId'
-      - $ref: '#/parameters/dateRangeLTEParam'
       - $ref: '#/parameters/dateRangeGTEParam'
+      - $ref: '#/parameters/dateRangeLTEParam'
       - $ref: '#/parameters/resourceParam'
       tags:
         - 'Evento'
@@ -137,56 +142,49 @@ paths:
   '/v1/marketplaces/{marketplace_id}/events/actions/replay':
     parameters:
       - $ref: '#/parameters/marketplaceId'
-      - $ref: '#/parameters/dateRangeLTEParam'
       - $ref: '#/parameters/dateRangeGTEParam'
+      - $ref: '#/parameters/dateRangeLTEParam'
     post:
       tags:
         - 'Evento'
       summary: 'Redisparo de eventos'
-      description: 'Uma solicitação de replay (ou reenvio) de eventos irá notificar no máximo os 100 primeiros eventos encontrados em sua filtrage. Portanto, caso haja um número maior do que 100 eventos a serem solicitados, o solicitante deverá ajustar o range de timestamps de forma que este comporte 100 eventos.'
+      description: 'Uma solicitação de replay (ou reenvio) de eventos irá notificar no máximo os 100 primeiros eventos encontrados em sua filtragem. Portanto, caso haja um número maior do que 100 eventos a serem solicitados, o solicitante deverá ajustar o range de timestamps de forma que este comporte 100 eventos.'
       parameters:
         - $ref: '#/parameters/marketplaceId'
-        - $ref: '#/definitions/Webhook'
       consumes:
         - application/json
       produces:
         - application/json
       responses:
         '200':
-          description: Webhook criado com sucesso
-          schema:
-            $ref: '#/definitions/WebhookResponse'
+          description: Replay solicitado com sucesso
         '400':
           description: Requisição inválida
         '404':
           description: Marketplace não encontrado
 definitions:
   Webhook:
-    in: body
-    name: webhook
-    description: The user to create.
-    schema:
-      type: object
-      properties:
-        method:
+    properties:
+      method:
+        type: string
+        example: "POST"
+        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+      url:
+        type: string
+        example: 'https://seusistema.com/webhook'
+        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+      description:
+        type: string
+        example: 'Nome do webhook'
+        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+      events:
+        type: array
+        description: lista de tipos de eventos a serem enviados para este webhook
+        items:
           type: string
-          example: "POST"
-          description: 'ID de vendedor responsável por receber os créditos pelas vendas'
-        url:
-          type: string
-          example: 'https://seusistema.com/webhook'
-          description: 'ID de vendedor responsável por receber os créditos pelas vendas'
-        description:
-          type: string
-          example: 'Nome do webhook'
-          description: 'ID de vendedor responsável por receber os créditos pelas vendas'
-        events:
-          type: array
-          items:
-            type: string
-            example: "transaction.pre_authorization.succeeded"
-        metadata:
-          type: object
+          example: "transaction.pre_authorization.succeeded"
+      metadata:
+        type: object
   WebhookListResponse:
     properties: 
       resource:
@@ -263,29 +261,24 @@ definitions:
           type: string
           example: "webhook"
   Error:
-    in: body
-    name: webhook
-    description: The user to create.
-    schema:
-      type: object
-      properties:
-        method:
+    properties:
+      method:
+        type: string
+        example: "POST"
+        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+      url:
+        type: string
+        example: 'https://seusistema.com/webhook'
+        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+      description:
+        type: string
+        example: 'Nome do webhook'
+        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+      events:
+        type: array
+        items:
           type: string
-          example: "POST"
-          description: 'ID de vendedor responsável por receber os créditos pelas vendas'
-        url:
-          type: string
-          example: 'https://seusistema.com/webhook'
-          description: 'ID de vendedor responsável por receber os créditos pelas vendas'
-        description:
-          type: string
-          example: 'Nome do webhook'
-          description: 'ID de vendedor responsável por receber os créditos pelas vendas'
-        events:
-          type: array
-          items:
-            type: string
-            example: "transaction.pre_authorization.succeeded"
+          example: "transaction.pre_authorization.succeeded"
 parameters:
   marketplaceId:
     name: marketplace_id
