@@ -168,6 +168,7 @@ definitions:
       method:
         type: string
         example: "POST"
+        enum: [POST]
         description: 'valor estático "POST"'
       url:
         type: string
