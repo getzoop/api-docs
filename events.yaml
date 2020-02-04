@@ -128,6 +128,9 @@ paths:
       - $ref: '#/parameters/dateRangeGTEParam'
       - $ref: '#/parameters/dateRangeLTEParam'
       - $ref: '#/parameters/resourceParam'
+      - $ref: '#/parameters/resourceTypeParam'
+      - $ref: '#/parameters/eventTypeParam'
+      - $ref: '#/parameters/eventStatusParam'
       tags:
         - 'Evento'
       summary: 'Listar eventos por marketplace'
@@ -340,3 +343,18 @@ parameters:
     in: query
     type: string
     description: "Id do recurso a que os eventos listados se referem (ex: ID de uma transação)"
+  resourceTypeParam:
+    name: resource
+    in: query
+    type: string
+    description: "O tipo do evento. Exemplo: transaction"
+  eventTypeParam:
+    name: type
+    in: query
+    type: string
+    description: "Tipo do evento. Exemplo: transaction.failed"
+  eventStatusParam:
+    name: status
+    in: query
+    type: string
+    description: "Status do evento. Ex: failed"
