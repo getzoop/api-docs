@@ -235,6 +235,7 @@ definitions:
             example: "transaction.pre_authorization.succeeded"
         status:
           type: string
+          enum: ["new", "succeeded", "failed"]
           example: "registered"
         last_error:
           type: string
