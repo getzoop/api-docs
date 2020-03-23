@@ -1,10 +1,12 @@
-openapi: 3.0.0
+openapi: 3.0.2
 info:
   title: Métodos de Cobrança
   version: "1.1"
 security:
   - basicAuth: []
 tags:
+  - name: Transação V2
+    description: Nova versão da API de operações de pagamento com dados de cartão de crédito
   - name: Transação
     description: Operações de pagamento com dados de cartão de crédito
   - name: Transação Cartão Presente (CHIP&PIN)
@@ -24,7 +26,7 @@ paths:
     get:
       summary: Listar transaçoes do marketplace
       tags:
-        - Transação
+        - Transação V2
       parameters:
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/sortParam"
@@ -64,17 +66,68 @@ paths:
     post:
       summary: Criar transação Cartão Não Presente
       tags:
-        - Transação
+        - Transação V2
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              oneOf:
-                - $ref: "#/components/schemas/DisposableToken"
-                - $ref: "#/components/schemas/TransactionV2"
-        description: Transacao
+              title: Transação API V2
+              allOf:
+              - $ref: "#/components/schemas/TransactionV2"
+            examples:
+              DisposableToken:
+                summary: Transação com Token Descartável
+                value:
+                  token: "822a8bda73c546a8b2f12a5ebcce7732"
+                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7732"
+                  amount: 300
+                  capture: true
+                  description: "Uma descrição breve da motivação da sua transação"
+                  reference_id: "822a8bda73c546a8b2f12a5ebcce7732"
+                  statement_descriptor: "822a8bda73c546a8b2f12a5ebcce7732"
+              DigitalWallet: 
+                summary: Cartão padrão da carteira digital do comprador
+                value:
+                  customer: "822a8bda73c546a8b2f12a5ebcce7732"
+                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7733"
+                  amount: 300
+                  capture: true
+                  description: "Uma descrição breve da motivação da sua transação"
+                  reference_id: "822a8bda73c546a8b2f12a5ebcce7732"
+                  statement_descriptor: "822a8bda73c546a8b2f12a5ebcce7732"
+              DigitalWalletSecondary: 
+                summary: Cobrando de outros cartões da carteira digital do comprador
+                value:
+                  source:
+                    type: "card"
+                    card:
+                      id: "822a8bda73c546a8b2f12a5ebcce7732"
+                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7733"
+                  amount: 300
+                  capture: true
+                  description: "Uma descrição breve da motivação da sua transação"
+                  reference_id: "822a8bda73c546a8b2f12a5ebcce7732"
+                  statement_descriptor: "822a8bda73c546a8b2f12a5ebcce7732"
+              NoToken: 
+                summary: Cobrando de um cartão não tokenizado previamente
+                value:
+                  source:
+                    type: "card"
+                    card:
+                      holder_name: "Fulano de Tal"
+                      expiration_month: "09"
+                      expiration_year: "2027"
+                      card_number: "2027202720272027"
+                      security_code: "223"
+                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7733"
+                  amount: 300
+                  capture: true
+                  description: "Uma descrição breve da motivação da sua transação"
+                  reference_id: "822a8bda73c546a8b2f12a5ebcce7732"
+                  statement_descriptor: "822a8bda73c546a8b2f12a5ebcce7732"
       responses:
         "200":
           description: Transação criada com sucesso
@@ -84,6 +137,68 @@ paths:
                 $ref: "#/components/schemas/TransactionResponse"
         "404":
           description: Transação não encontrada
+  "/v2/marketplaces/{marketplace_id}/transactions/{transaction_id}/void":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+        - Transação V2
+      summary: Estornar transação cartão não presente
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionVoidRequest"
+        description: Transacao
+      responses:
+        "200":
+          description: Transação estornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionResponse"
+        "400":
+          description: Requisição/Parametros inválidos
+        "404":
+          description: Marketplace/Transação não encontrado
+  "/v2/marketplaces/{marketplace_id}/transactions/{transaction_id}/capture":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+        - Transação V2
+      summary: Capturar transação cartão não presente
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionCaptureRequest"
+        description: Transacao
+      responses:
+        "200":
+          description: Transação capturada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionResponse"
+        "400":
+          description: Requisição/Parametros inválidos
+        "404":
+          description: Marketplace/Transação não encontrado
 # V1          
   "/v1/marketplaces/{marketplace_id}/transactions":
     parameters:
@@ -1061,9 +1176,7 @@ components:
     DisposableToken:
       type: object
       required:
-        - on_behalf_of
         - amount
-        - token
       properties:
         token:
           type: string
@@ -1107,7 +1220,7 @@ components:
               type: string
               description: "Uma descrição breve do parcelamento"
         split_rules:
-          type: array
+          type: object
           description: "Regras de divisão de recebimento financeiro para outros vendedores envolvidos na transação"
           properties:
             recipient:
@@ -1125,12 +1238,29 @@ components:
             charge_processing_fee:
               type: boolean
               description: "Aplica o percentual solicitado em cima do valor bruto da transação quando true ou em cima do valor líquido quando false. Default false. Tem efeito apenas quando usado em conjunto com o campo split_rules[].percentage."
+    Card:
+      type: object
+      description: "Objeto agrupador dos dados de cartão do pagador da transação"
+      properties:
+        id: 
+          type: string
+          description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
+        holder_name:
+          type: string
+          description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
+        expiration_month:
+          type: string
+          description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
+        expiration_year:
+          type: string
+          description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
+        security_code:
+          type: string
+          description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
     TransactionV2:
       type: object
       required:
-        - on_behalf_of
         - amount
-        - token
       properties:
         token:
           type: string
@@ -1148,24 +1278,7 @@ components:
               type: string
               description: "Tipo da fonte de pagamento. Por enquanto, o único tipo aceito é card"
             card:
-              type: object
-              description: "Objeto agrupador dos dados de cartão do pagador da transação"
-              properties:
-                id: 
-                  type: string
-                  description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
-                holder_name:
-                  type: string
-                  description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
-                expiration_month:
-                  type: string
-                  description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
-                expiration_year:
-                  type: string
-                  description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
-                security_code:
-                  type: string
-                  description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
+              $ref: "#/components/schemas/Card"
             description:
               type: string
               description: "Uma descrição breve do parcelamento"
@@ -1207,7 +1320,7 @@ components:
               type: string
               description: "Uma descrição breve do parcelamento"
         split_rules:
-          type: array
+          type: object
           description: "Regras de divisão de recebimento financeiro para outros vendedores envolvidos na transação"
           properties:
             recipient:
