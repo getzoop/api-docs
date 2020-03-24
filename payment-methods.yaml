@@ -87,7 +87,7 @@ paths:
                   capture: true
                   description: "Uma descrição breve da motivação da sua transação"
                   reference_id: "822a8bda73c546a8b2f12a5ebcce7732"
-                  statement_descriptor: "822a8bda73c546a8b2f12a5ebcce7732"
+                  statement_descriptor: "Loja do Joao"
               DigitalWallet: 
                 summary: Cartão padrão da carteira digital do comprador
                 value:
@@ -97,7 +97,7 @@ paths:
                   capture: true
                   description: "Uma descrição breve da motivação da sua transação"
                   reference_id: "822a8bda73c546a8b2f12a5ebcce7732"
-                  statement_descriptor: "822a8bda73c546a8b2f12a5ebcce7732"
+                  statement_descriptor: "Loja do Joao"
               DigitalWalletSecondary: 
                 summary: Cobrando de outros cartões da carteira digital do comprador
                 value:
@@ -110,7 +110,7 @@ paths:
                   capture: true
                   description: "Uma descrição breve da motivação da sua transação"
                   reference_id: "822a8bda73c546a8b2f12a5ebcce7732"
-                  statement_descriptor: "822a8bda73c546a8b2f12a5ebcce7732"
+                  statement_descriptor: "Loja do Joao"
               NoToken: 
                 summary: Cobrando de um cartão não tokenizado previamente
                 value:
@@ -127,7 +127,7 @@ paths:
                   capture: true
                   description: "Uma descrição breve da motivação da sua transação"
                   reference_id: "822a8bda73c546a8b2f12a5ebcce7732"
-                  statement_descriptor: "822a8bda73c546a8b2f12a5ebcce7732"
+                  statement_descriptor: "Loja do Joao"
       responses:
         "200":
           description: Transação criada com sucesso
@@ -244,7 +244,7 @@ paths:
         "404":
           description: Marketplace não encontrado
     post:
-      summary: Criar transação Cartão Não Presente
+      summary: Criar transação (Cartão Não Presente e Boleto)
       tags:
         - Transação
       parameters:
@@ -253,7 +253,101 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TransactionCNPRequest"
+              title: Transação V1
+              allOf:
+              - $ref: "#/components/schemas/TransactionCNPRequest"
+            examples:
+              DigitalWalletSecondary: 
+                summary: Transação com cartão específico associado ao comprador
+                value:
+                  source:
+                    type: "card"
+                    card:
+                      id: "822a8bda73c546a8b2f12a5ebcce7732"
+                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7733"
+                  customer: "c07ee65cda84495787cd091fea554549"
+                  amount: 300
+                  description: "Uma descrição breve da motivação da sua transação"
+                  statement_descriptor: "Loja do Joao"
+                  payment_type: "credit"
+              DigitalWallet:
+                summary: Transação com cartão padrão associado ao comprador
+                value:
+                  customer: "c07ee65cda84495787cd091fea554549"
+                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7732"
+                  amount: 300
+                  currency: "BRL"
+                  description: "Uma descrição breve da motivação da sua transação"
+                  statement_descriptor: "Loja do Joao"
+                  payment_type: "credit"
+              NoToken:
+                summary: Transação com cartão sem tokenização
+                value:
+                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7732"
+                  amount: 300
+                  currency: "BRL"
+                  description: "Uma descrição breve da motivação da sua transação"
+                  statement_descriptor: "Loja do Joao"
+                  payment_type: "credit"
+                  source:
+                    usage: "single_use"
+                    amount: 7
+                    currency: "BRL"
+                    type: "card"
+                    card:
+                      card_number: "4539003370725497"
+                      holder_name: "João Silva"
+                      expiration_month: "03"
+                      expiration_year: "2027"
+                      security_code: "123"
+              DisposableToken:
+                summary: Transação com Token Descartável
+                value:
+                  token: "822a8bda73c546a8b2f12a5ebcce7732"
+                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7732"
+                  amount: 300
+                  currency: "BRL"
+                  description: "Uma descrição breve da motivação da sua transação"
+                  statement_descriptor: "Loja do Joao"
+                  payment_type: "credit"
+              SimpleBoletoTransaction:
+                summary: Transação com boleto simples
+                value:
+                  amount: 300
+                  currency: "BRL"
+                  description: "venda"
+                  on_behalf_of: "573e2aa71cb94ecda8dee14087327b48"
+                  customer: "573e2aa71cb94ecda8dee14087327b48"
+                  payment_type: "boleto"         
+              BoletoTransaction:
+                summary: Transação com boleto completa
+                value:
+                  amount: 300
+                  currency: "BRL"
+                  description: "Venda de ingressos para o show do dia 30"
+                  reference_id: "reference_5132"
+                  on_behalf_of: "573e2aa71cb94ecda8dee14087327b48"
+                  customer: "573e2aa71cb94ecda8dee14087327b48"
+                  payment_type: "boleto"
+                  payment_method:
+                    expiration_date: "2018-11-20"
+                    payment_limit_date: "2018-11-20"
+                    body_instructions:
+                      - "Pedido #5132"
+                    billing_instructions:
+                      late_fee:
+                        mode: "FIXED"
+                        amount: 500
+                      interest:
+                        mode: "DAILY_AMOUNT"
+                        amount: 200
+                      discount:
+                        - mode: "FIXED"
+                          limit_date: "2018-11-09"
+                          amount: 150
+                        - mode: "FIXED"
+                          limit_date: "2018-11-10"
+                          amount: 100
         description: Transacao
       responses:
         "200":
@@ -1173,71 +1267,6 @@ components:
       type: http
       scheme: basic
   schemas:
-    DisposableToken:
-      type: object
-      required:
-        - amount
-      properties:
-        token:
-          type: string
-          example: "822a8bda73c546a8b2f12a5ebcce7732"
-          description: "Identificador retornado na tokenização do cartão"
-        on_behalf_of:
-          type: string
-          example: "822a8bda73c546a8b2f12a5ebcce7732"
-          description: "Identificador do vendedor responsável pela transação"
-        amount:
-          type: integer
-          example: 300
-          description: "Número centavos a ser cobrado na transação"
-        capture:
-          type: boolean
-          example: true
-          description: "Indica autorização direta quando true ou pré-autorização quando false. Default: true"
-        description:
-          type: string
-          example: "822a8bda73c546a8b2f12a5ebcce7732"
-          description: "Uma descrição breve da motivação da sua transação"
-        reference_id:
-          type: string
-          example: "822a8bda73c546a8b2f12a5ebcce7732"
-          description: "Identificador da transação no seu sistema, como por exemplo, um código de pedido."
-        statement_descriptor:
-          type: string
-          example: "822a8bda73c546a8b2f12a5ebcce7732"
-          description: "A descrição à aparecer na fatura do pagador. Para evitar disputas e can que seja algo que o cliente rapidamente identifique a cobrança."
-        installment_plan:
-          type: object
-          description: "Plano de parcelamento da transação"
-          properties:
-            mode:
-              type: string
-              description: "Modo de cobrança de juros no parcelamento, sendo pago pelo comprador quando with_interest e pelo lojista quando interest_free"
-            number_installments:
-              type: string
-              description: "Quantidade de parcelas"
-            description:
-              type: string
-              description: "Uma descrição breve do parcelamento"
-        split_rules:
-          type: object
-          description: "Regras de divisão de recebimento financeiro para outros vendedores envolvidos na transação"
-          properties:
-            recipient:
-              type: string
-              description: "Identificador do recebedor do montante líquido calculado pelo sistema"
-            liable:
-              type: boolean
-              description: "Define se o recebedor entra no rateio do prejuízo em caso de reembolso forçado, arcando com a quantia recebida quando true e não arcando quando false. Default false"
-            amount:
-              type: integer
-              description: "Valor fixo a ser aplicado recebido pela transação. Somado quando utilizado em conjunto com o campo split_rules[].percentage. Obrigatório quando não passado o campo split_rules[].percentage."
-            percentage:
-              type: integer
-              description: "Valor percentual a ser aplicado recebido pela transação. Somado quando utilizado em conjunto com o campo split_rules[].amount. Obrigatório quando não passado o campo split_rules[].amount."
-            charge_processing_fee:
-              type: boolean
-              description: "Aplica o percentual solicitado em cima do valor bruto da transação quando true ou em cima do valor líquido quando false. Default false. Tem efeito apenas quando usado em conjunto com o campo split_rules[].percentage."
     Card:
       type: object
       description: "Objeto agrupador dos dados de cartão do pagador da transação"
@@ -1370,7 +1399,21 @@ components:
         id:
           type: string
           example: 0009462369b14ee596aabfd27faa97f7
-        $ref: "#/components/parameters/transactionStatus"
+        status:
+          description: Retorna transações onde o status for igual o informado. Para busca múltipla basta concatenar com ,
+          type: string
+          enum:
+            - succeeded
+            - failed
+            - canceled
+            - pre_authorized
+            - reversed
+            - refunded
+            - pending
+            - new
+            - partial_refunded
+            - dispute
+            - charged_back
         resource:
           type: string
           example: transaction
@@ -1974,7 +2017,6 @@ components:
               description: valor a ser cobrado neste token (opcional)
         metadata:
           type: object
-
     TransactionCNPRequest:
       type: object
       required:

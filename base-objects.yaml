@@ -522,12 +522,7 @@ paths:
           description: Marketplace/Seller não encontrado
   "/v1/marketplaces/{marketplace_id}/cards/tokens":
     parameters:
-      - name: marketplace_id
-        in: path
-        description: ID do marketplace
-        required: true
-        schema:
-          type: string
+      - $ref: "#/components/parameters/marketplaceId"
     post:
       tags:
         - Token
@@ -538,6 +533,12 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/TokenCardRequest"
+            example:
+              holder_name: "João da Silva"
+              card_number: "4444333322221111"
+              security_code: "999"
+              expiration_month: "9"
+              expiration_year: "2027"
         required: true
       responses:
         "200":
@@ -593,8 +594,10 @@ paths:
       responses:
         "200":
           description: Token recuperado com sucesso
-        "404":
-          description: Marketplace/Token não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenCardResponse"
 servers:
   - url: https://api.zoop.ws
 components:
