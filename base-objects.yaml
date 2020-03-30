@@ -971,7 +971,10 @@ components:
           example: Da Silva
         email:
           type: string
-          example: teeste@teste.com
+          example: teeste@zoop.com.br
+        website:
+          type: string
+          example: https://zoop.com.br
         phone_number:
           type: string
           example: " 12029579543"

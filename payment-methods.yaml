@@ -253,9 +253,7 @@ paths:
         content:
           application/json:
             schema:
-              title: Transação V1
-              allOf:
-              - $ref: "#/components/schemas/TransactionCNPRequest"
+              $ref: "#/components/schemas/TransactionCNPRequest"
             examples:
               DigitalWalletSecondary: 
                 summary: Transação com cartão específico associado ao comprador
@@ -1271,21 +1269,41 @@ components:
       type: object
       description: "Objeto agrupador dos dados de cartão do pagador da transação"
       properties:
+        holder_name:
+          type: string
+          description: "Nome no cartão"
+        expiration_month:
+          type: string
+          description: "Mês de vencimento. Ex.: 9"
+          example: "9"
+        expiration_year:
+          type: string
+          description: "Ano de vencimento. Ex.: 2027"
+          example: "2027"
+        security_code:
+          type: string
+          description: "Código de segurança (CVV) que fica atrás do cartão"
+    SimpleCardResponse:
+      type: object
+      description: "Objeto agrupador dos dados de cartão do pagador da transação"
+      properties:
         id: 
           type: string
           description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
         holder_name:
           type: string
-          description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
+          description: "Nome no cartão"
         expiration_month:
           type: string
-          description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
+          description: "Mês de vencimento. Ex.: 9"
+          example: "9"
         expiration_year:
           type: string
-          description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
+          description: "Ano de vencimento. Ex.: 2027"
+          example: "2027"
         security_code:
           type: string
-          description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
+          description: "Código de segurança (CVV) que fica atrás do cartão"
     TransactionV2:
       type: object
       required:
@@ -1904,6 +1922,7 @@ components:
       required:
         - type
         - usage
+        - currency
       properties:
         usage:
           type: string
