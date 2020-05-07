@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "API de Antecipação sob demanda da Zoop"
-  version: "3.1.0"
+  version: "3.2.0"
   title: "API de Antecipação sob demanda da Zoop"
 host: "api.zoop.ws"
 basePath: "/"
@@ -133,7 +133,8 @@ paths:
         in: "query"
         required: false
         description: "Taxa de antecipação do parceiro"
-        type: "float"
+        type: "number"
+        format: "float"
       - name: "min_transaction_date"
         in: "query"
         required: false
@@ -377,17 +378,17 @@ definitions:
         format: "date"
         example: "2018-01-19"
       receivables:
-          description: "Lista de IDs de recebíveis que deverão ser incluídos na solicitação de antecipação"
-          type: "array"
-          items:
-            type: "string"
-            example: "6c451d93c2d278728d4c9e8caee4290f"
+        description: "Lista de IDs de recebíveis que deverão ser incluídos na solicitação de antecipação"
+        type: "array"
+        items:
+          type: "string"
+          example: "6c451d93c2d278728d4c9e8caee4290f"
       transactions:
-          description: "Lista de IDs de transações cujos recebíveis deverão ser incluídos na solicitação de antecipação"
-          type: "array"
-          items:
-            type: "string"
-            example: "4290f3c2d2787e8c28d4c96c451d9aee"
+        description: "Lista de IDs de transações cujos recebíveis deverão ser incluídos na solicitação de antecipação"
+        type: "array"
+        items:
+          type: "string"
+          example: "4290f3c2d2787e8c28d4c96c451d9aee"
       target_amount:
         description: "Valor alvo, em centavos de Reais, para escolha dos recebíveis a antecipar mediante algoritmo de busca, que seleciona recebíveis incrementalmente até atingir este valor alvo, até o limite percentual da margem (campo *margin*). Recebíveis que façam o valor total de antecipação ultrapassar o valor alvo com a margem incluída não são incluídos na antecipação. Caso um recebível faça o valor da antecipação atingir o intervalo entre o valor alvo e a margem, o algoritmo é interrompido e a simulação é concluída com os recebíveis selecionados."
         type: "integer"
@@ -409,6 +410,16 @@ definitions:
         type: "number"
         format: "float"
         example: "0.0094"
+      entry_modes:
+        description: "Lista de métodos de captura de transação que poderão ter seus recebíveis antecipados"
+        type: "array"
+        items:
+          type: "string"
+          enum:
+            - "chip"
+            - "magstripe"
+            - "magstripe_fallback"
+            - "manually_keyed"
       auto_commit:
         description: "Permite desativar o transito automático do status `simulated` para `ready`. Se a requisição enviar em seu payload `auto_commit`=false, o status permanecerá `simulated` aguardando a confirmação do usuário da API através da requisição `/commit`.
           A operação `/commit` transita somente do status `simulated` para o status `ready`.  O valor default é `true`."
