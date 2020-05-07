@@ -126,7 +126,7 @@ paths:
         type: "string"
       - name: "prepayment_date"
         in: "query"
-        required: false
+        required: true
         description: "Data para a qual os recebíveis serão antecipados. Caso não seja preenchido, é considerado *D0*."
         type: "string"
       - name: "partner_fee"
@@ -158,7 +158,7 @@ paths:
       - name: "entry_modes"
         in: "query"
         required: false
-        description: "Lista de métodos de captura de transação que poderão ter seus recebíveis antecipados"
+        description: "Apenas considerar recebíveis de transações cujo entry mode está entre os especificados. Valores possíveis: chip, magstripe, magstripe_fallback, manually_keyed. Caso não seja preenchido, considera todos os tipos de entry mode."
         type: "array"
         items:
           type: "string"
