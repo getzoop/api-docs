@@ -3,7 +3,7 @@ info:
   description: Planos e Assinaturas
   version: 1.0.0
   title: Planos e Assinaturas
-basePath: /v1
+basePath: /v2
 host: api.zoop.ws
 securityDefinitions:
   basicAuth:
