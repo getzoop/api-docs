@@ -198,10 +198,24 @@ paths:
         description: "ID do Seller"
         required: true
         type: "string"
-      - in: "body"
-        name: "body"
-        schema:
-          $ref: "#/definitions/PrepaymentListRequest"
+      - name: "expected_on_range"
+        in: "query"
+        description: "Filtra pela Data Prevista do Pagamento do objeto. É possível adicionar ao final da chave (expected_on_range) os valores: [gt], [gte], [lt] e [lte] de forma que a data prevista do pagamento seja posterior a, posterior ou igual a, anterior a, ou anterior ou igual a, respectivamente, o valor informado para o filtro."
+        type: string
+        format: date
+      - name: "created_at_range"
+        in: "query"
+        description: "Filtra pela Data de Criação do objeto."
+        type: string
+        format: date
+      - name: "status"
+        in: "query"
+        description: "Filtra pelo Status do objeto."
+        type: string
+      - name: "sort"
+        in: "query"
+        description: "Ordena pela data de criação dos recebíveis."
+        type: string
       responses:
         200:
           description: "Sucesso na recuperação das antecipações"
