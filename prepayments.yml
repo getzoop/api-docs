@@ -1,17 +1,17 @@
 swagger: "2.0"
 info:
   description: "API de Antecipação sob demanda da Zoop"
-  version: "2.4.0"
+  version: "3.2.0"
   title: "API de Antecipação sob demanda da Zoop"
 host: "api.zoop.ws"
-basePath: "/v1"
+basePath: "/"
 tags:
 - name: "Antecipação"
   description: "Pedidos de antecipação sob demanda"
 schemes:
 - "https"
 paths:
-  /marketplaces/{marketplaceId}/prepayments:
+  /v1/marketplaces/{marketplaceId}/prepayments:
     post:
       tags:
       - "Antecipação"
@@ -32,12 +32,12 @@ paths:
         description: "Solicitação de antecipação, com filtros de escolha de recebíveis"
         required: true
         schema:
-          $ref: "#/definitions/AnticipationRequest"
+          $ref: "#/definitions/PrepaymentRequest"
       responses:
         200:
           description: "Sucesso na criação da antecipação"
           schema:
-            $ref: "#/definitions/Anticipation"
+            $ref: "#/definitions/Prepayment"
         400:
           description: "Requisição inválida"
         404:
@@ -64,13 +64,13 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/Anticipation"
+              $ref: "#/definitions/Prepayment"
         400:
           description: "Requisição inválida"
         404:
           description: "Marketplace não encontrado"
 
-  /marketplaces/{marketplaceId}/sellers/{sellerId}/prepayments:
+  /v1/marketplaces/{marketplaceId}/sellers/{sellerId}/prepayments:
     get:
       tags:
       - "Antecipação"
@@ -97,13 +97,138 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/Anticipation"
+              $ref: "#/definitions/Prepayment"
         400:
           description: "Requisição inválida"
         404:
           description: "Marketplace ou Seller não encontrado"
 
-  /marketplaces/{marketplaceId}/prepayments/{prepaymentId}:
+  /v1/marketplaces/{marketplaceId}/sellers/{sellerId}/prepayments/info:
+    get:
+      tags:
+      - "Antecipação"
+      summary: "Recupera informações da agenda futura do Seller"
+      description: "Recupera informações da agenda futura do Seller"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: "sellerId"
+        in: "path"
+        description: "ID do Seller"
+        required: true
+        type: "string"
+      - name: "prepayment_date"
+        in: "query"
+        required: true
+        description: "Data para a qual os recebíveis serão antecipados. Caso não seja preenchido, é considerado *D0*."
+        type: "string"
+      - name: "partner_fee"
+        in: "query"
+        required: false
+        description: "Taxa de antecipação do parceiro"
+        type: "number"
+        format: "float"
+      - name: "min_transaction_date"
+        in: "query"
+        required: false
+        description: "Apenas considerar recebíveis de vendas realizadas após esta data (inclusive). Caso não seja preenchida, é considerada a data da venda mais antiga com recebíveis não liquidados."
+        type: "string"
+      - name: "max_transaction_date"
+        in: "query"
+        required: false
+        description: "Apenas considerar recebíveis de vendas realizadas até esta data (inclusive). Caso não seja preenchida, é considerado *D-1*. Este também é o valor máximo para este campo."
+        type: "string"
+      - name: "min_expected_date"
+        in: "query"
+        required: false
+        description: "Apenas considerar recebíveis cuja agenda original de liquidação seja após esta data (inclusive). Caso não seja preenchida, é considerado *D+1* do campo prepayment_date. Este também é o valor mínimo para este campo."
+        type: "string"
+      - name: "max_expected_date"
+        in: "query"
+        required: false
+        description: "Apenas considerar recebíveis cuja agenda original de liquidação seja até esta data (inclusive). Caso não seja preenchida, é considerada a data de liquidação do recebível mais tardio."
+        type: "string"
+      - name: "entry_modes"
+        in: "query"
+        required: false
+        description: "Apenas considerar recebíveis de transações cujo entry mode está entre os especificados. Valores possíveis: chip, magstripe, magstripe_fallback, manually_keyed. Caso não seja preenchido, considera todos os tipos de entry mode."
+        type: "array"
+        items:
+          type: "string"
+          enum:
+            - "chip"
+            - "magstripe"
+            - "magstripe_fallback"
+            - "manually_keyed"
+      responses:
+        200:
+          description: "Sucesso na recuperação das informações de antecipação"
+          schema:
+            $ref: "#/definitions/PrepaymentInfoResponse"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace ou Seller não encontrado"
+
+  /v2/marketplaces/{marketplaceId}/sellers/{sellerId}/prepayments:
+    get:
+      tags:
+      - "Antecipação"
+      summary: "Listagem paginada de antecipações do Seller"
+      description: "Lista as antecipações sob demanda solicitadas pelo Marketplace, para o Seller. Aceita parâmetros de paginação."
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: "sellerId"
+        in: "path"
+        description: "ID do Seller"
+        required: true
+        type: "string"
+      - name: "expected_on_range"
+        in: "query"
+        description: "Filtra pela Data Prevista do Pagamento do objeto. É possível adicionar ao final da chave (expected_on_range) os valores: [gt], [gte], [lt] e [lte] de forma que a data prevista do pagamento seja posterior a, posterior ou igual a, anterior a, ou anterior ou igual a, respectivamente, o valor informado para o filtro."
+        type: string
+        format: date
+      - name: "created_at_range"
+        in: "query"
+        description: "Filtra pela Data de Criação do objeto."
+        type: string
+        format: date
+      - name: "status"
+        in: "query"
+        description: "Filtra pelo Status do objeto."
+        type: string
+      - name: "sort"
+        in: "query"
+        description: "Ordena pela data de criação dos recebíveis."
+        type: string
+      responses:
+        200:
+          description: "Sucesso na recuperação das antecipações"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/PrepaymentResponse"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace ou Seller não encontrado"
+
+  /v1/marketplaces/{marketplaceId}/prepayments/{prepaymentId}:
     get:
       tags:
       - "Antecipação"
@@ -126,12 +251,12 @@ paths:
         200:
           description: "Sucesso na recuperação da antecipação"
           schema:
-            $ref: "#/definitions/Anticipation"
+            $ref: "#/definitions/Prepayment"
         400:
           description: "Requisição inválida"
         404:
           description: "Marketplace ou Antecipação não encontrada"
-  /marketplaces/{marketplaceId}/prepayments/{prepaymentId}/commit:
+  /v1/marketplaces/{marketplaceId}/prepayments/{prepaymentId}/commit:
     post:
       tags:
       - "Antecipação"
@@ -154,15 +279,84 @@ paths:
         200:
           description: "Sucesso na atualização do status da antecipação"
           schema:
-            $ref: "#/definitions/Anticipation"
+            $ref: "#/definitions/Prepayment"
         400:
           description: "Requisição inválida"
         404:
           description: "Marketplace ou Antecipação não encontrada"
-
-
 definitions:
-  AnticipationRequest:
+  PrepaymentListRequest:
+    type: object
+    properties:
+      expected_on_range:
+        type: string
+        format: date
+        example: '2019-05-30'
+        description: "Filtra pela Data Prevista do Pagamento do objeto."
+      created_at_range:
+        type: string
+        format: date
+        example: '2019-05-30'
+        description: "Filtra pela Data de Criação do objeto."
+      status:
+        type: string
+        example: "pending"
+        description: "Filtra pelo Status do objeto."
+      sort:
+        type: string
+        example: "DESC"
+        description: "Ordena pela data de criação dos recebíveis."
+
+  PrepaymentInfoResponse:
+    type: "object"
+    properties:
+      customer:
+        description: "ID do cliente"
+        type: "string"
+        example: "66c20f661f7945b5adb4ce8fc01a3879"
+      receivables_count:
+        description: "Quantidade de recebíveis antecipáveis segundo os filtros"
+        type: "integer"
+        example: "1000"
+      total_gross_amount:
+        description: "Valor bruto a ser antecipado"
+        type: "integer"
+        example: "500000"
+      total_net_amount_before_prepayment_fees:
+        description: "Valor líquido a ser antecipado antes da aplicação das taxas de antecipação"
+        type: "integer"
+        example: "480000"
+      total_net_amount_after_prepayment_fees:
+        description: "Valor líquido a ser antecipado depois de aplicadas as taxas de antecipação"
+        type: "integer"
+        example: "470000"
+  PrepaymentResponse:
+    type: object
+    properties:
+      resource:
+        type: string
+      uri:
+        type: string
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Prepayment"
+      has_more:
+        type: boolean
+      limit:
+        type: integer
+      total_pages:
+        type: integer
+      page:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: string
+      query_count:
+        type: string
+
+  PrepaymentRequest:
     type: "object"
     required:
     - "customer"
@@ -183,7 +377,7 @@ definitions:
         format: "date"
         example: "2018-01-19"
       max_transaction_date:
-        description: "Apenas considerar recebíveis de vendas realizadas até esta data (inclusive). Caso não seja preenchida, é considerado *D-1*. Este também é o valor máximo para este campo."
+        description: "Apenas considerar recebíveis de vendas realizadas até esta data (inclusive). Caso não seja preenchida, é considerado *D-1*."
         type: "string"
         format: "date"
         example: "2018-01-19"
@@ -198,17 +392,17 @@ definitions:
         format: "date"
         example: "2018-01-19"
       receivables:
-          description: "Lista de IDs de recebíveis que deverão ser incluídos na solicitação de antecipação"
-          type: "array"
-          items:
-            type: "string"
-            example: "6c451d93c2d278728d4c9e8caee4290f"
+        description: "Lista de IDs de recebíveis que deverão ser incluídos na solicitação de antecipação"
+        type: "array"
+        items:
+          type: "string"
+          example: "6c451d93c2d278728d4c9e8caee4290f"
       transactions:
-          description: "Lista de IDs de transações cujos recebíveis deverão ser incluídos na solicitação de antecipação"
-          type: "array"
-          items:
-            type: "string"
-            example: "4290f3c2d2787e8c28d4c96c451d9aee"
+        description: "Lista de IDs de transações cujos recebíveis deverão ser incluídos na solicitação de antecipação"
+        type: "array"
+        items:
+          type: "string"
+          example: "4290f3c2d2787e8c28d4c96c451d9aee"
       target_amount:
         description: "Valor alvo, em centavos de Reais, para escolha dos recebíveis a antecipar mediante algoritmo de busca, que seleciona recebíveis incrementalmente até atingir este valor alvo, até o limite percentual da margem (campo *margin*). Recebíveis que façam o valor total de antecipação ultrapassar o valor alvo com a margem incluída não são incluídos na antecipação. Caso um recebível faça o valor da antecipação atingir o intervalo entre o valor alvo e a margem, o algoritmo é interrompido e a simulação é concluída com os recebíveis selecionados."
         type: "integer"
@@ -230,6 +424,16 @@ definitions:
         type: "number"
         format: "float"
         example: "0.0094"
+      entry_modes:
+        description: "Lista de métodos de captura de transação que poderão ter seus recebíveis antecipados"
+        type: "array"
+        items:
+          type: "string"
+          enum:
+            - "chip"
+            - "magstripe"
+            - "magstripe_fallback"
+            - "manually_keyed"
       auto_commit:
         description: "Permite desativar o transito automático do status `simulated` para `ready`. Se a requisição enviar em seu payload `auto_commit`=false, o status permanecerá `simulated` aguardando a confirmação do usuário da API através da requisição `/commit`.
           A operação `/commit` transita somente do status `simulated` para o status `ready`.  O valor default é `true`."
@@ -241,7 +445,7 @@ definitions:
         example: "true|false"
         default: "false"
 
-  Anticipation:
+  Prepayment:
     type: "object"
     required:
     - "customer"
