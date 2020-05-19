@@ -183,6 +183,12 @@ paths:
         required: true
         type: integer
         format: int64
+      - in: body
+        name: body
+        description: Senha de 4 dígitos
+        required: true
+        schema:
+          "$ref": "#/definitions/CardActivate"
       responses:
         '200':
           description: Cartão ativado com sucesso!
@@ -329,6 +335,14 @@ definitions:
       resource: resource
       uri: uri
       card_id: 0
+  CardActivate:
+    type: object
+    properties:
+      pin_code:
+        type: integer
+        description: Senha de 4 dígitos
+    example:
+      pin_code: 1234
   Card:
     type: object
     properties:
