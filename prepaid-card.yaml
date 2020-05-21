@@ -22,8 +22,8 @@ paths:
       tags:
       - Cartões
       summary: Lista de cartões pré-pagos associados pelo marketplace
-      description: A listagem é feita pelo market place, trazendo todos os cartões
-        associados por ele a qualquer estabelecimento
+      description: A listagem é feita pelo marketplace, trazendo todos os cartões
+        associados a ele a qualquer estabelecimento
       operationId: get_all_cards
       parameters:
       - name: marketplace_id
@@ -81,7 +81,7 @@ paths:
         type: string
       - name: bank_account_id
         in: query
-        description: ID do cartão a ser excluido
+        description: ID do cartão a ser excluído
         required: true
         type: string
       responses:
@@ -131,7 +131,7 @@ paths:
       tags:
       - Gerenciamento
       summary: Lista de cartões pré-pagos de um estabelecimento
-      description: A listagem é feita pelo estabelecimento, trazendo todos os cartoes
+      description: A listagem é feita pelo estabelecimento, trazendo todos os cartões
         associados a ele
       operationId: get_all_cards_by_seller
       parameters:
@@ -195,7 +195,7 @@ paths:
           schema:
             "$ref": "#/definitions/Card"
         '400':
-          description: ID do cartão inválido inválido
+          description: ID do cartão inválido
         '401':
           description: Solicitação não autorizada
   "/marketplaces/{marketplace_id}/sellers/{seller_id}/prepaid-cards/{card_id}/block":
@@ -228,7 +228,7 @@ paths:
           schema:
             "$ref": "#/definitions/Card"
         '400':
-          description: ID do cartão inválido inválido
+          description: ID do cartão inválido
         '401':
           description: Solicitação não autorizada
   "/marketplaces/{marketplace_id}/sellers/{seller_id}/prepaid-cards/{card_id}/lock":
@@ -261,7 +261,7 @@ paths:
           schema:
             "$ref": "#/definitions/Card"
         '400':
-          description: ID do cartão inválido inválido
+          description: ID do cartão inválido
         '401':
           description: Solicitação não autorizada
   "/marketplaces/{marketplace_id}/sellers/{seller_id}/prepaid-cards/{card_id}/unlock":
@@ -269,7 +269,7 @@ paths:
       tags:
       - Gerenciamento
       summary: Desbloqueia um cartão pré-pago
-      description: É possível desbloquear um cartão pré-pago.
+      description: É possível desbloquear um cartão pré-pago
       operationId: unlock_card
       parameters:
       - name: marketplace_id
@@ -294,7 +294,7 @@ paths:
           schema:
             "$ref": "#/definitions/Card"
         '400':
-          description: ID do cartão inválido inválido
+          description: ID do cartão inválido
         '401':
           description: Solicitação não autorizada
   "/healthcheck":
@@ -325,7 +325,7 @@ definitions:
         description: CPF ou CNPJ do solicitante.
       mothers_name:
         type: string
-        description: Nome da mãe do usuário do cartão
+        description: Nome da mãe da pessoa portadora do cartão
       resource:
         type: string
       uri:
@@ -354,10 +354,10 @@ definitions:
         description: Número do cartão exibido no verso do cartão
       card_mask_number:
         type: string
-        description: Os números do cartão de forma máscarada
+        description: Os números do cartão de forma mascarada
       card_name:
         type: string
-        description: Nome do Holder no cartão
+        description: Nome do (a) Holder no cartão
       balance:
         type: string
         description: Saldo do cartão
@@ -389,10 +389,10 @@ definitions:
         description: Número do cartão exibido no verso do cartão
       card_mask_number:
         type: string
-        description: Os números do cartão de forma máscarada
+        description: Os números do cartão de forma mascarada
       holder_name:
         type: string
-        description: Nome do Holder no cartão
+        description: Nome do (a) Holder no cartão
       document:
         type: object
         description: Documento do portador
@@ -402,7 +402,7 @@ definitions:
         description: Data de validade do cartão
       last_4_digit:
         type: string
-        description: Ultimos 4 digitos do cartão
+        description: Últimos 4 digitos do cartão
       status:
         type: string
         description: Status do cartão pré-pago
