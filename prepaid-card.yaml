@@ -26,7 +26,7 @@ paths:
         associados a ele a qualquer estabelecimento
       operationId: get_all_cards
       parameters:
-      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/parameters/marketplaceID"
       responses:
         '200':
           description: Listagem efetuada com sucesso
@@ -42,7 +42,7 @@ paths:
         cartões pré-pagos de sua rede aos respectivos estabelecimentos.
       operationId: associate_card
       parameters:
-      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/parameters/marketplaceID"
       - in: body
         name: body
         description: Dados do cartão necessário para associação com o estabelecimento
@@ -66,7 +66,7 @@ paths:
         e desassocia o cartão para a sua devida exclusão
       operationId: delete_card_by_bank_account
       parameters:
-      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/parameters/marketplaceID"
       - name: bank_account_id
         in: query
         description: ID do cartão a ser excluído
@@ -92,8 +92,8 @@ paths:
         ID informado
       operationId: get_card_detail
       parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/cardID"
+      - $ref: "#/parameters/marketplaceID"
+      - $ref: "#/parameters/cardID"
       responses:
         '200':
           description: Detalhe do cartão encontrado.
@@ -114,8 +114,8 @@ paths:
         associados a ele
       operationId: get_all_cards_by_seller
       parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/sellerID"
+      - $ref: "#/parameters/marketplaceID"
+      - $ref: "#/parameters/sellerID"
       responses:
         '200':
           description: Listagem efetuada com sucesso
@@ -138,9 +138,9 @@ paths:
         do cartão uma URL será informada para redirecionamento para a operadora.
       operationId: activate_card
       parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/sellerID"
-      - $ref: "#/components/parameters/cardID"
+      - $ref: "#/parameters/marketplaceID"
+      - $ref: "#/parameters/sellerID"
+      - $ref: "#/parameters/cardID"
       - in: body
         name: body
         description: Senha de 4 dígitos
@@ -164,9 +164,9 @@ paths:
       description: É possível bloquear um cartão pré-pago.
       operationId: block_card
       parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/sellerID"
-      - $ref: "#/components/parameters/cardID"
+      - $ref: "#/parameters/marketplaceID"
+      - $ref: "#/parameters/sellerID"
+      - $ref: "#/parameters/cardID"
       responses:
         '200':
           description: Bloqueio efetuado com sucesso!
@@ -184,9 +184,9 @@ paths:
       description: É possível bloquear um cartão pré-pago de forma temporária.
       operationId: lock_card
       parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/sellerID"
-      - $ref: "#/components/parameters/cardID"
+      - $ref: "#/parameters/marketplaceID"
+      - $ref: "#/parameters/sellerID"
+      - $ref: "#/parameters/cardID"
       responses:
         '200':
           description: Bloqueio efetuado com sucesso!
@@ -204,9 +204,9 @@ paths:
       description: É possível desbloquear um cartão pré-pago
       operationId: unlock_card
       parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/sellerID"
-      - $ref: "#/components/parameters/cardID"
+      - $ref: "#/parameters/marketplaceID"
+      - $ref: "#/parameters/sellerID"
+      - $ref: "#/parameters/cardID"
       responses:
         '200':
           description: Bloqueio efetuado com sucesso!
@@ -374,27 +374,26 @@ definitions:
       establishment_name: establishment_name
       status: pending
 
-components:
-  parameters:
-    cardID:
-      name: card_id
-      in: path
-      description: ID do cartão pré-pago
-      required: true
-      type: integer
-      format: int64
-    marketplaceID:
-      name: marketplace_id
-      in: path
-      description: ID do marketplace
-      required: true
-      schema:
-        type: string
-    sellerID:
-      name: seller_id
-      in: path
-      description: ID do estabelecimento
-      required: true
-      schema:
-        type: string
+parameters:
+  cardID:
+    name: card_id
+    in: path
+    description: ID do cartão pré-pago
+    required: true
+    type: integer
+    format: int64
+  marketplaceID:
+    name: marketplace_id
+    in: path
+    description: ID do marketplace
+    required: true
+    schema:
+      type: string
+  sellerID:
+    name: seller_id
+    in: path
+    description: ID do estabelecimento
+    required: true
+    schema:
+      type: string
 
