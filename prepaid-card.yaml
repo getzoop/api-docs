@@ -387,13 +387,11 @@ parameters:
     in: path
     description: ID do marketplace
     required: true
-    schema:
-      type: string
+    type: string
   sellerID:
     name: seller_id
     in: path
     description: ID do estabelecimento
     required: true
-    schema:
-      type: string
+    type: string
 
