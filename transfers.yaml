@@ -169,7 +169,7 @@ paths:
         '404':
           description: Marketplace/Transferência não encontrada
           
-  /v2/marketplaces/{marketplace_id}/adjustments/{owner}/to/{receiver}:
+  /v1/marketplaces/{marketplace_id}/adjustments/{owner}/to/{receiver}:
     parameters:
       - name: marketplace_id
         in: path
@@ -208,7 +208,7 @@ paths:
         '404':
           description: Marketplace/Customer não encontrado
           
-  /v2/marketplaces/{marketplace_id}/adjustments/{owner}:
+  /v1/marketplaces/{marketplace_id}/adjustments/{owner}:
     parameters:
       - name: marketplace_id
         in: path
