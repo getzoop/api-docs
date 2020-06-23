@@ -7,7 +7,7 @@ host: "api.zoop.ws"
 basePath: "/"
 tags:
 - name: "Antecipação"
-  description: "Pedidos de antecipação sob demanda, no caso de antecipação limitada, irá ser retornado apenas o valor dos recebíveis cuja a soma seja menor que o limite."
+  description: "Pedidos de antecipação sob demanda, no caso de antecipação limitada, irá ser retornado apenas o valor dos recebíveis cuja a soma seja menor que o limite. (limite disponível é a diferença entre o limite configurado e valor já antecipado previamente)"
 schemes:
 - "https"
 paths:
