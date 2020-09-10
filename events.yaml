@@ -181,7 +181,7 @@ definitions:
         type: string
         example: 'Nome do webhook'
         description: 'Nome do webhook para identificação posterior'
-      events:
+      event:
         type: array
         description: lista de tipos de eventos a serem enviados para este webhook
         items:
