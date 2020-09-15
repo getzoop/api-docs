@@ -132,7 +132,7 @@ paths:
     get:
       tags:
         - 'Vendedor'
-      summary: Downaload documentos de um vendedor pelo ID
+      summary: Download documentos de um vendedor pelo ID
       description: ''
       operationId: getSellerDocument
       responses:
