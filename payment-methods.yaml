@@ -232,7 +232,6 @@ paths:
             type: string
             enum:
               - credit
-              - wallet
               - boleto
       responses:
         "200":
@@ -1450,7 +1449,6 @@ components:
         payment_type:
           enum:
             - credit
-            - wallet
             - boleto
           example: credit
         transaction_number:
@@ -1777,13 +1775,7 @@ components:
         type:
           type: string
           enum:
-            - wallet
             - card
-            - card_and_wallet
-            - token
-            - customer
-            - three_d_secure
-            - debit_online
           example: card
         capture:
           type: boolean
@@ -1863,14 +1855,6 @@ components:
         installment_plan:
           type: object
           properties:
-            mode:
-              type: string
-              enum:
-                - interest_free
-                - with_interest
-              description: "modo de parcelamento, com juros no emissor (with_interest), ou
-                sem juros (interest_free), com o custo já calculado no valor da
-                transação. "
             number_installments:
               type: integer
               description: número de parcelas (1-12)
@@ -1945,13 +1929,7 @@ components:
         type:
           type: string
           enum:
-            - wallet
             - card
-            - card_and_wallet
-            - token
-            - customer
-            - three_d_secure
-            - debit_online
           example: card
         capture:
           type: boolean
@@ -1994,14 +1972,6 @@ components:
         installment_plan:
           type: object
           properties:
-            mode:
-              type: string
-              enum:
-                - interest_free
-                - with_interest
-              description: "modo de parcelamento, com juros no emissor (with_interest), ou
-                sem juros (interest_free), com o custo já calculado no valor da
-                transação. "
             number_installments:
               type: integer
               description: número de parcelas (1-12)
@@ -2059,7 +2029,6 @@ components:
           type: string
           enum:
             - credit
-            - wallet
             - boleto
           example: credit
         capture:
@@ -2091,14 +2060,6 @@ components:
         installment_plan:
           type: object
           properties:
-            mode:
-              type: string
-              enum:
-                - interest_free
-                - with_interest
-              description: "modo de parcelamento, com juros no emissor (with_interest), ou
-                sem juros (interest_free), com o custo já calculado no valor da
-                transação. "
             number_installments:
               type: integer
               description: número de parcelas (1-12)

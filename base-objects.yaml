@@ -908,6 +908,15 @@ definitions:
         description: Envie o código de atividade do negócio (MCC ID). A lista completa se encontra em /v1/merchant_category_codes
       metadata:
         type: object
+    required:
+        - owner
+        - ein
+        - owner_address
+        - business_address
+        - mcc
+        - business_name
+        - business_phone
+        - business_email
   Individuals:
     properties:
       resource:
@@ -1000,6 +1009,15 @@ definitions:
         description: Envie o código de atividade do negócio (MCC ID). A lista completa se encontra em /v1/merchant_category_codes
       metadata:
         type: object
+    required:
+      - first_name
+      - last_name
+      - email
+      - phone_number
+      - taxpayer_id
+      - birthdate
+      - address
+      - mcc           
   TokenCardRequest:
     type: object
     properties:
