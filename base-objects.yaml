@@ -420,6 +420,12 @@ paths:
         - application/json
       produces:
         - application/json
+      parameters:
+        - in: body
+          name: buyer data
+          required: true
+          schema:
+            $ref: '#/definitions/BuyerRequest'  
       responses:
         '200':
           description: Comprador alterado com sucesso
@@ -1039,6 +1045,7 @@ definitions:
     required:
       - holder_name
       - expiration_month
+      - expiration_year
       - card_number
       - security_code
   BuyerRequest:
@@ -1092,6 +1099,14 @@ definitions:
           country_code:
             type: string
             example: "US"
+    required:  
+      - first_name
+      - last_name
+      - email
+      - phone_number
+      - taxpayer_id
+      - birthdate
+      - address
   Buyer:
     type: object
     properties:
@@ -1184,15 +1199,7 @@ definitions:
       updated_at:
         type: string
         format: dateTime
-        example: "2015-04-17T06:39:52+00:00"
-    required:  
-      - first_name
-      - last_name
-      - email
-      - phone_number
-      - taxpayer_id
-      - birthdate
-      - address        
+        example: "2015-04-17T06:39:52+00:00"     
   BankAccountRequest:
     type: object
     properties:
