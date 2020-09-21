@@ -1036,6 +1036,11 @@ definitions:
       security_code:
         type: string
         description: Código de segurança do cartão (CVC)
+    required:
+      - holder_name
+      - expiration_month
+      - card_number
+      - security_code
   BuyerRequest:
     type: object
     properties:
@@ -1180,6 +1185,14 @@ definitions:
         type: string
         format: dateTime
         example: "2015-04-17T06:39:52+00:00"
+    required:  
+      - first_name
+      - last_name
+      - email
+      - phone_number
+      - taxpayer_id
+      - birthdate
+      - address        
   BankAccountRequest:
     type: object
     properties:
@@ -1194,7 +1207,7 @@ definitions:
         description: Agencia sem DV (4 digitos)
       account_number:
         type: number
-        description: Conta Bancaria com DV
+        description: Conta Bancaria com DV ( dígito verificador)
       taxpayer_id:
         type: string
         description: CPF, caso seller seja PF
@@ -1203,10 +1216,18 @@ definitions:
         description: CNPJ, caso seller seja PJ
       type:
         type: string
-        description: Conta corrente ou poupança
+        description: Conta corrente (checking) ou poupança (savings)
         enum:
           - checking
           - savings
+    required:
+      - holder_name
+      - bank_code
+      - routing_number
+      - account_number
+      - taxpayer_id
+      - ein
+      - type
   BusinessesResponse:
     type: object
     description: Seller
