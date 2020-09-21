@@ -1199,15 +1199,7 @@ definitions:
       updated_at:
         type: string
         format: dateTime
-        example: "2015-04-17T06:39:52+00:00"
-    required:  
-      - first_name
-      - last_name
-      - email
-      - phone_number
-      - taxpayer_id
-      - birthdate
-      - address        
+        example: "2015-04-17T06:39:52+00:00"     
   BankAccountRequest:
     type: object
     properties:
