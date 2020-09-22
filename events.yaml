@@ -27,7 +27,7 @@ paths:
     post:
       tags:
         - 'Webhook'
-      summary: 'Cria webhook por marketplace'
+      summary: 'Criar webhook por marketplace'
       description: ''
       parameters:
         - $ref: '#/parameters/marketplaceId'
@@ -181,7 +181,7 @@ definitions:
         type: string
         example: 'Nome do webhook'
         description: 'Nome do webhook para identificação posterior'
-      events:
+      event:
         type: array
         description: lista de tipos de eventos a serem enviados para este webhook
         items:
@@ -189,6 +189,10 @@ definitions:
           example: "transaction.pre_authorization.succeeded"
       metadata:
         type: object
+    required:
+       - method
+       - url
+       - event      
   WebhookListResponse:
     properties: 
       resource:
@@ -227,7 +231,7 @@ definitions:
           type: string
           example: 'Nome do webhook'
           description: 'Nome do webhook para identificação posterior'
-        events:
+        event:
           type: array
           description: lista de tipos de eventos a serem enviados para este webhook
           items:
