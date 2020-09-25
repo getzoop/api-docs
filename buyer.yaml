@@ -300,7 +300,6 @@ definitions:
       updated_at:
         type: string
         format: dateTime
-        example: "2015-04-17T06:39:52+00:00"     
         example: "2015-04-17T06:39:52+00:00"
 parameters:
   marketplaceId:
