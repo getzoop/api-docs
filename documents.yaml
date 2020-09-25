@@ -1,0 +1,329 @@
+swagger: '2.0'
+host: api.zoop.ws
+info:
+  title: Documentos
+  version: "1.1"
+
+securityDefinitions:
+  basicAuth:
+    type: basic
+security:
+  - basicAuth: []
+
+tags:
+  - name: Documento
+    description: Envio de documentos necessários para credenciamento de vendedores.
+  
+schemes:
+  - https
+
+paths:
+  '/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/documents':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/sellerId'
+    post:
+      tags:
+        - 'Vendedor'
+      summary: Criar documento de cadastro de vendedor
+      description: ''
+      operationId: addDocument
+      consumes:
+         - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - $ref: '#/parameters/sellerId'
+        - name: file
+          type: file
+          in: formData
+          required: true
+          format: binary
+          description: Documento que será cadastrado
+        - name: category
+          in: formData
+          type: string
+          required: true
+          description: Categoria do documento cadastrado que podem assumir os seguintes domínios
+                       identificacao, atividade, residencia e cnpj
+        - name: metadata
+          in: formData
+          type: string
+          description: Metadados associados ao documento
+        - name: description
+          in: formData
+          type: string
+          description: Descrição do documento
+      responses:
+        '201':
+          description: Documento criado com sucesso
+          schema:
+            $ref: '#/definitions/Document'
+        '404':
+          description: 'Marketplace/Vendedor/Documento não encontrado'
+    get:
+      tags:
+        - 'Vendedor'
+      summary: Listar documentos de um vendedor
+      description: ''
+      operationId: findSellerDocument
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - $ref: '#/parameters/sellerId'
+        - $ref: '#/parameters/limitParam'
+        - $ref: '#/parameters/sortParam'
+        - $ref: '#/parameters/offsetParam'
+        - $ref: '#/parameters/dateRangeParam'
+        - $ref: '#/parameters/dateRangeGTParam'
+        - $ref: '#/parameters/dateRangeGTEParam'
+        - $ref: '#/parameters/dateRangeLTParam'
+        - $ref: '#/parameters/dateRangeLTEParam'
+      responses:
+        '200':
+          description: Documentos recuperados com sucesso
+          schema:
+            $ref: '#/definitions/Documents'
+        '404':
+          description: 'Marketplace/Vendedor não encontrado'
+  '/v1/marketplaces/{marketplace_id}/sellers/documents/{id}':
+    put:
+      tags:
+        - 'Vendedor'
+      summary: Atualiza os dados de um documento de um vendedor
+      description: ''
+      operationId: updateDocument
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - name: id
+          in: path
+          description: ID do documento
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Document object
+          required: true
+          schema:
+            $ref: '#/definitions/Document'
+      responses:
+        '200':
+          description: Documento alterado com sucesso
+          schema:
+            $ref: '#/definitions/Document'
+        '404':
+          description: 'Marketplace/Documento não encontrado'
+  '/v1/marketplaces/{marketplace_id}/documents/{document_id}/file':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/documentId'
+    get:
+      tags:
+        - 'Vendedor'
+      summary: Download documentos de um vendedor pelo ID
+      description: ''
+      operationId: getSellerDocument
+      responses:
+        '200':
+          description: Download de Imagem
+          schema:
+            $ref: '#/definitions/DocumentImage'
+        '404':
+          description: 'Marketplace/Vendedor não encontrado'
+definitions:
+  DocumentImage:
+    type: array
+    items:
+      type: string
+    example:
+      - image/png,
+      - image/bmp,
+      - image/tiff,
+      - image/jpeg,
+      - image/gif,
+      - application/pdf,
+      - octet-stream,
+      - application/octet-stream,
+      - application/zip,
+      - application/msword,
+      - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+  Documents:
+    type: object
+    properties:
+      resource:
+        type: string
+        example: "list"
+      uri:
+        type: string
+        example: "/v1/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/sellers/582dcc754cef4e6e8ed3134067c2f76b/documents"
+      limit:
+        type: number
+        example: 100
+      offset:
+        type: number
+        example: 0
+      has_more:
+        type: boolean
+        example: false
+      query_count:
+        type: number
+        example: 2
+      total:
+        type: number
+        example: 2
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/Document'
+  Document:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 00dad23fae8b49638f6b897f6b7df5c2
+      name:
+        type: string
+        example: 59d7d71a9b617.pdf
+      status:
+        type: string
+        enum:
+          - pending
+          - uploaded
+          - reviewving
+          - action_required
+          - approved
+          - published
+          - rejected
+          - archived
+          - deleted
+        example: pending
+      path:
+        type: string
+        example: https://static-assetss.s3.amazonaws.com/59d7d71a9b617.pdf
+      extension:
+        type: string
+        example: pdf
+      mime_type:
+        type: string
+        example: application/pdf
+      size:
+        type: integer
+        example: 11401
+      md5:
+        type: string
+        example: 02136adef2c29815d97902147069b23c
+      description:
+        type: string
+        example: "documento de identificacao"
+      category:
+        type: string
+        enum:
+          - identification
+          - address
+          - activity
+          - ein
+        example: identification
+      uploaded_by:
+        type: object
+        properties:
+          id:
+            type: string
+            example: ab22b0c077e04099afa144d375cbf293
+          resource:
+            type: string
+            enum:
+              - seller
+              - buyer
+              - marketplace
+            example: seller
+          type:
+            type: string
+            enum:
+              - individual
+              - business
+            example: individual
+      uploaded_ip:
+        type: string
+      metadata:
+        type: object
+parameters:
+  marketplaceId:
+    name: marketplace_id
+    in: path
+    description: ID do marketplace
+    required: true
+    type: string
+  sellerId:
+    name: seller_id
+    in: path
+    description: ID do Seller
+    required: true
+    type: string
+  documentId:
+    name: document_id
+    in: path
+    description: ID do documento
+    required: true
+    type: string  
+  limitParam:
+    name: limit
+    in: query
+    description: Limita o número de objetos retornados, podendo ser entre 1 e 100
+    required: false
+    type: number
+    format: int32
+    default: 20
+  sortParam:
+    name: sort
+    in: query
+    description: Determinar como ordenar a lista em relação a data de criação do objeto
+    required: false
+    type: string
+    enum:
+      - time-descending
+      - time-ascending
+    default: time-descending
+  offsetParam:
+    name: offset
+    in: query
+    description: Determina o ponto de inicio dos registros retornados
+    required: false
+    type: number
+    format: int32
+    default: 0
+  dateRangeParam:
+    name: date_range
+    in: query
+    description: Filtro na lista base de objetos pela data de criação. O valor pode ser uma string com um horário em UTC timestamp, ou pode ser uma lista com os parametros abaixo
+    required: false
+    type: number
+  dateRangeGTParam:
+    name: date_range[gt]
+    in: query
+    description: Retorna valores onde a data maior que o timestamp informado
+    required: false
+    type: number
+  dateRangeGTEParam:
+    name: date_range[gte]
+    in: query
+    description: Retorna valores onde a data for maior ou igual que o timestamp informado
+    required: false
+    type: number
+  dateRangeLTParam:
+    name: date_range[lt]
+    in: query
+    description: Retorna valores onde a data for menor que o timestamp informado
+    required: false
+    type: number
+  dateRangeLTEParam:
+    name: date_range[lte]
+    in: query
+    description: Retorna valores onde a data for menor ou igual que o timestamp informado
+    required: false
+    type: number

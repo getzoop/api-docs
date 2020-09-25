@@ -1,0 +1,1020 @@
+swagger: '2.0'
+host: api.zoop.ws
+info:
+  title: Vendedores
+  version: "1.1"
+
+securityDefinitions:
+  basicAuth:
+    type: basic
+security:
+  - basicAuth: []
+
+tags:
+  - name: 'Vendedor'
+    description: 'Pessoas ou empresas que vendem dentro do seu marketplace.'
+  
+schemes:
+  - https
+
+paths:
+  '/v1/merchant_category_codes':
+    get:
+      tags:
+        - 'Vendedor'
+      summary: Listar MCCs (Merchant Category Codes)
+      description: ''
+      operationId: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Operação realizada com sucesso
+          schema:
+            example: {
+                resource: "list",
+                uri: "/v1/merchant_category_codes",
+                items: [
+                            {
+                                id: "1",
+                                code: "5300",
+                                category: "Alimentação",
+                                description: "Atacado",
+                                resource: "merchant_category_code"
+                            }
+                        ],
+                        has_more: true,
+                        limit: 100,
+                        total_pages: 2,
+                        page: 1,
+                        offset: 0,
+                        total: "103"
+              }
+  '/v1/marketplaces/{marketplace_id}/sellers/individuals':
+    post:
+      tags:
+        - 'Vendedor'
+      summary: Criar novo vendedor do tipo indivíduo
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - in: body
+          name: body
+          description: Individual object
+          required: true
+          schema:
+            $ref: '#/definitions/Individual'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Vendedor cadastrado com sucesso
+          schema:
+            $ref: '#/definitions/IndividualResponse'
+        '404':
+          description: 'Marketplace não encontrado'
+        '400':
+          description: 'Missing required param'
+  '/v1/marketplaces/{marketplace_id}/sellers/individuals/{seller_id}':
+    put:
+      tags:
+        - 'Vendedor'
+      summary: Alterar um vendedor do tipo indivíduo
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - $ref: '#/parameters/sellerId'
+        - in: body
+          name: body
+          description: Individual object
+          required: true
+          schema:
+            $ref: '#/definitions/Individual'
+      responses:
+        '200':
+          description: Vendedor alterado com sucesso
+          schema:
+            $ref: '#/definitions/IndividualResponse'
+        '404':
+          description: 'Marketplace não encontrado'
+        '400':
+          description: 'Missing required param'
+  '/v1/marketplaces/{marketplace_id}/sellers/businesses':
+    post:
+      tags:
+        - 'Vendedor'
+      summary: Criar novo vendedor do tipo empresa
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - in: body
+          name: body
+          description: Individual object
+          required: true
+          schema:
+            $ref: '#/definitions/Business'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '201':
+          description: Vendedor cadastrado com sucesso
+          schema:
+            $ref: '#/definitions/BusinessesResponse'
+        '404':
+          description: 'Marketplace não encontrado'
+        '400':
+          description: 'Missing required param'
+  '/v1/marketplaces/{marketplace_id}/sellers/businesses/{seller_id}':
+    put:
+      tags:
+        - 'Vendedor'
+      summary: Alterar um vendedor do tipo empresa
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - $ref: '#/parameters/sellerId'
+        - in: body
+          name: body
+          description: Business object
+          required: true
+          schema:
+            $ref: '#/definitions/Business'
+      responses:
+        '200':
+          description: Vendedor alterado com sucesso
+          schema:
+            $ref: '#/definitions/BusinessResponse'
+        '404':
+          description: 'Marketplace/Vendedor não encontrado'
+        '400':
+          description: 'Missing required param'
+  '/v1/marketplaces/{marketplace_id}/sellers/{seller_id}':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/sellerId'
+    get:
+      tags:
+        - 'Vendedor'
+      summary: Recupera detalhes de vendedor pelo id, os campos começando por "business_" são específicos para empresas.
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Vendedor recuperado com sucesso
+          schema:
+            $ref: '#/definitions/BusinessResponse'
+        '404':
+          description: 'Marketplace/Vendedor não encontrado'
+    delete:
+      tags:
+        - 'Vendedor'
+      summary: Deleta um de vendedor pelo id
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Vendedor deletado com sucesso
+          schema:
+            example:
+              {
+                'id': "17d9e827664b47509f12a082b6047e7a",
+                'resource': 'seller',
+                'type': 'individual',
+                'deleted': true
+              }
+        '404':
+          description: 'Marketplace/Vendedor não encontrado'
+  '/v1/marketplaces/{marketplace_id}/sellers':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/limitParam'
+      - $ref: '#/parameters/sortParam'
+      - $ref: '#/parameters/offsetParam'
+      - $ref: '#/parameters/dateRangeParam'
+      - $ref: '#/parameters/dateRangeGTParam'
+      - $ref: '#/parameters/dateRangeGTEParam'
+      - $ref: '#/parameters/dateRangeLTParam'
+      - $ref: '#/parameters/dateRangeLTEParam'
+    get:
+      tags:
+        - 'Vendedor'
+      summary: Listando vendedores
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Vendedor recuperado com sucesso
+          schema:
+            $ref: '#/definitions/BusinessesResponse'
+        '404':
+          description: 'Marketplace/Vendedor não encontrado'
+  '/v1/marketplaces/{marketplace_id}/sellers/search':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+      - in: query
+        name: taxpayer_id
+        type: string    
+        description: CPF do vendedor
+      - in: query
+        name: ein
+        type: string
+        description: CNPJ do vendedor
+    get:
+      tags:
+        - 'Vendedor'
+      summary: Buscando de vendedor por CPF/CNPJ
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Vendedor encontrado com sucesso
+          schema:
+            $ref: '#/definitions/BusinessesResponse'
+        '404':
+          description: 'Vendedor não encontrado'
+        '400':
+          description: 'Missing required parameter'
+definitions:
+  DocumentImage:
+    type: array
+    items:
+      type: string
+    example:
+      - image/png,
+      - image/bmp,
+      - image/tiff,
+      - image/jpeg,
+      - image/gif,
+      - application/pdf,
+      - octet-stream,
+      - application/octet-stream,
+      - application/zip,
+      - application/msword,
+      - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+  Documents:
+    type: object
+    properties:
+      resource:
+        type: string
+        example: "list"
+      uri:
+        type: string
+        example: "/v1/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/sellers/582dcc754cef4e6e8ed3134067c2f76b/documents"
+      limit:
+        type: number
+        example: 100
+      offset:
+        type: number
+        example: 0
+      has_more:
+        type: boolean
+        example: false
+      query_count:
+        type: number
+        example: 2
+      total:
+        type: number
+        example: 2
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/Document'
+  Document:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 00dad23fae8b49638f6b897f6b7df5c2
+      name:
+        type: string
+        example: 59d7d71a9b617.pdf
+      status:
+        type: string
+        enum:
+          - pending
+          - uploaded
+          - reviewving
+          - action_required
+          - approved
+          - published
+          - rejected
+          - archived
+          - deleted
+        example: pending
+      path:
+        type: string
+        example: https://static-assetss.s3.amazonaws.com/59d7d71a9b617.pdf
+      extension:
+        type: string
+        example: pdf
+      mime_type:
+        type: string
+        example: application/pdf
+      size:
+        type: integer
+        example: 11401
+      md5:
+        type: string
+        example: 02136adef2c29815d97902147069b23c
+      description:
+        type: string
+        example: "documento de identificacao"
+      category:
+        type: string
+        enum:
+          - identification
+          - address
+          - activity
+          - ein
+        example: identification
+      uploaded_by:
+        type: object
+        properties:
+          id:
+            type: string
+            example: ab22b0c077e04099afa144d375cbf293
+          resource:
+            type: string
+            enum:
+              - seller
+              - buyer
+              - marketplace
+            example: seller
+          type:
+            type: string
+            enum:
+              - individual
+              - business
+            example: individual
+      uploaded_ip:
+        type: string
+      metadata:
+        type: object
+  Business:
+    properties:
+      fiscal_responsibility:
+        type: string
+        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+      owner:
+        type: object
+        properties:
+          first_name:
+            type: string
+            example: José
+          last_name:
+            type: string
+            example: Da Silva
+          email:
+            type: string
+            example: teeste@teste.com
+          phone_number:
+            type: string
+            example: " 12029579543"
+          taxpayer_id:
+            type: string
+            example: "76537741807"
+          birthdate:
+            type: string
+            example: "1982-12-15"
+      description:
+        type: string
+        example: Descrição da empresa
+      business_name:
+        type: string
+        example: "Zoop Inc"
+      business_phone:
+        type: string
+        example: "12026256754"
+      business_email:
+        type: string
+        example: "hello@pagzoop.com"
+      business_website:
+        type: string
+        example: "http://getzoop.com"
+      business_description:
+        type: string
+        example: "The open mobile payment platform"
+      business_facebook:
+        type: string
+        example: "http://fb.com/getzoop"
+      business_twitter:
+        type: string
+        example: "http://twitter.com/getzoop"
+      ein:
+        type: string
+        example: "24742492000159"
+        description: 'CNPJ da empresa'
+      statement_descriptor:
+        type: string
+        example: "NOME FANTASIA"
+        description: Esse é o nome que aparece na fatura associado a transação. Importante ser fácil de reconhecer para evitar chargebacks.
+      business_address:
+        type: object
+        properties:
+          line1:
+            type: string
+            example: "167 West 74th Street"
+          line2:
+            type: string
+            example: "543"
+          line3:
+            type: string
+            example: "APT 601"
+          neighborhood:
+            type: string
+            example: "Barra da Tijuca"
+          city:
+            type: string
+            example: "Rio de Janeiro"
+          state:
+            type: string
+            example: "RJ"
+            description: Código ISO 3166-2 para o estado, com duas letras
+          postal_code:
+            type: string
+            example: "10023000"
+            description: CEP com 8 digitos sem separador
+          country_code:
+            type: string
+            example: "BR"
+            description: ISO 3166-1 alpha-2 - códigos de país de duas letras.
+      business_opening_date:
+        type: string
+        format: date
+        example: "2015-04-17"
+      owner_address:
+        type: object
+        properties:
+          line1:
+            type: string
+            example: "167 West 74th Street"
+          line2:
+            type: string
+            example: "543"
+          line3:
+            type: string
+            example: "APT 601"
+          neighborhood:
+            type: string
+            example: "Barra da Tijuca"
+          city:
+            type: string
+            example: "Rio de Janeiro"
+          state:
+            type: string
+            example: "RJ"
+            description: Código ISO 3166-2 para o estado, com duas letras
+          postal_code:
+            type: string
+            example: "10023000"
+            description: CEP com 8 digitos sem separador
+          country_code:
+            type: string
+            example: "BR"
+            description: ISO 3166-1 alpha-2 - códigos de país de duas letras.
+      mcc:
+        type: string
+        example: "1"
+        description: Envie o código de atividade do negócio (MCC ID). A lista completa se encontra em /v1/merchant_category_codes
+      metadata:
+        type: object
+    required:
+        - owner
+        - ein
+        - owner_address
+        - business_address
+        - mcc
+        - business_name
+        - business_phone
+        - business_email
+  Individuals:
+    properties:
+      resource:
+        type: string
+        example: "list"
+      uri:
+        type: string
+        example: "/v1/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/sellers"
+      limit:
+        type: number
+        example: 100
+      offset:
+        type: number
+        example: 0
+      has_more:
+        type: boolean
+        example: false
+      query_count:
+        type: number
+        example: 2
+      total:
+        type: number
+        example: 2
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/Individual'
+  Individual:
+    properties:
+      fiscal_responsibility:
+        type: string
+        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+      first_name:
+        type: string
+        example: José
+      last_name:
+        type: string
+        example: Da Silva
+      email:
+        type: string
+        example: teeste@teste.com
+      phone_number:
+        type: string
+        example: " 12029579543"
+      taxpayer_id:
+        type: string
+        example: "76537741807"
+        description: 'CPF do vendedor'
+      birthdate:
+        type: string
+        example: "1982-12-15"
+      statement_descriptor:
+        type: string
+        example: "NOME FANTASIA"
+      description:
+        type: string
+        example:
+      address:
+        type: object
+        properties:
+          line1:
+            type: string
+            example: "167 West 74th Street"
+          line2:
+            type: string
+            example: "543"
+          line3:
+            type: string
+            example: "APT 601"
+          neighborhood:
+            type: string
+            example: "Downtown"
+          city:
+            type: string
+            example: "Washington"
+          state:
+            type: string
+            example: "DC"
+            description: Código ISO 3166-2 para o estado, com duas letras
+          postal_code:
+            type: string
+            example: "10023"
+          country_code:
+            type: string
+            example: "BR"
+            description: ISO 3166-1 alpha-2 - códigos de país de duas letras.
+      mcc:
+        type: string
+        example: "1"
+        description: Envie o código de atividade do negócio (MCC ID). A lista completa se encontra em /v1/merchant_category_codes
+      metadata:
+        type: object
+    required:
+      - first_name
+      - last_name
+      - email
+      - phone_number
+      - taxpayer_id
+      - birthdate
+      - address
+      - mcc           
+  BusinessesResponse:
+    type: object
+    description: Seller
+    properties:
+      resource:
+        type: string
+        example: "list"
+      uri:
+        type: string
+        example: "/v1/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/sellers"
+      limit:
+        type: number
+        example: 100
+      offset:
+        type: number
+        example: 0
+      has_more:
+        type: boolean
+        example: false
+      query_count:
+        type: number
+        example: 2
+      total:
+        type: number
+        example: 2
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/BusinessResponse'
+  BusinessResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 17d9e827664b47509f12a082b6047e7a
+        description: Identificador exclusivo para este vendedor
+      status:
+        type: string
+        enum:
+          - new
+          - expired
+          - action_required
+          - pending
+          - enabled
+          - active
+          - disabled
+          - deleted
+        example: pending
+      resource:
+        type: string
+        example: seller
+      type:
+        type: string
+        enum:
+          - individual
+          - business
+        example: business
+      account_balance:
+        type: number
+        example: 0.00
+      current_balance:
+        type: number
+        example: 0.00
+      fiscal_responsibility:
+        type: string
+        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+      owner:
+        type: object
+        properties:
+          first_name:
+            type: string
+            example: José
+          last_name:
+            type: string
+            example: Da Silva
+          email:
+            type: string
+            example: teeste@teste.com
+          phone_number:
+            type: string
+            example: " 12029579543"
+          taxpayer_id:
+            type: string
+            example: "76537741807"
+          birthdate:
+            type: string
+            example: "1982-12-15"
+      description:
+        type: string
+        example:
+      business_name:
+        type: string
+        example: "Zoop Inc"
+      business_phone:
+        type: string
+        example: "12026256754"
+      business_email:
+        type: string
+        example: "hello@pagzoop.com"
+      business_website:
+        type: string
+        example: "http://getzoop.com"
+      business_description:
+        type: string
+        example: "The open mobile payment platform"
+      business_facebook:
+        type: string
+        example: "http://fb.com/getzoop"
+      business_twitter:
+        type: string
+        example: "http://twitter.com/getzoop"
+      ein:
+        type: string
+        example: "24742492000159"
+        description: 'CNPJ da empresa'
+      statement_descriptor:
+        type: string
+        example: "NOME FANTASIA"
+        description: Esse é o nome que aparece na fatura associado a transação. Importante ser fácil de reconhecer para evitar chargebacks.
+      business_address:
+        type: object
+        properties:
+          line1:
+            type: string
+            example: "167 West 74th Street"
+          line2:
+            type: string
+            example: "543"
+          line3:
+            type: string
+            example: "APT 601"
+          neighborhood:
+            type: string
+            example: "Barra da Tijuca"
+          city:
+            type: string
+            example: "Rio de Janeiro"
+          state:
+            type: string
+            example: "RJ"
+            description: Código ISO 3166-2 para o estado, com duas letras
+          postal_code:
+            type: string
+            example: "10023000"
+            description: CEP com 8 digitos sem separador
+          country_code:
+            type: string
+            example: "BR"
+            description: ISO 3166-1 alpha-2 - códigos de país de duas letras.
+      business_opening_date:
+        type: string
+        format: date
+        example: "2015-04-17"
+      owner_address:
+        type: object
+        properties:
+          line1:
+            type: string
+            example: "167 West 74th Street"
+          line2:
+            type: string
+            example: "543"
+          line3:
+            type: string
+            example: "APT 601"
+          neighborhood:
+            type: string
+            example: "Barra da Tijuca"
+          city:
+            type: string
+            example: "Rio de Janeiro"
+          state:
+            type: string
+            example: "RJ"
+          postal_code:
+            type: string
+            example: "10023000"
+            description: CEP com 8 digitos sem separador
+          country_code:
+            type: string
+            example: "BR"
+      delinquent:
+        type: boolean
+      default_debit:
+        type: string
+        description: 'O método de pagamento padrão (cartão ou conta bancária) associado a um vendedor que será usado, por exemplo, para debitar a conta bancária ou cartão de crédito'
+      default_credit:
+        type: string
+        description: 'O banco bancário padrão associado a um vendedor que será usado para enviar dinheiro (crédito) a conta bancária'
+      mcc:
+        type: string
+        example: "1"
+        description: Envie o código de atividade do negócio (MCC ID). A lista completa se encontra em /v1/merchant_category_codes
+      metadata:
+        type: object
+      created_at:
+        type: string
+        format: dateTime
+        example: "2015-04-17T06:39:52+00:00"
+      updated_at:
+        type: string
+        format: dateTime
+        example: "2015-04-17T06:39:52+00:00"
+  IndividualsResponse:
+    type: object
+    properties:
+      resource:
+        type: string
+        example: "list"
+      uri:
+        type: string
+        example: "/v1/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/sellers"
+      limit:
+        type: number
+        example: 100
+      offset:
+        type: number
+        example: 0
+      has_more:
+        type: boolean
+        example: false
+      query_count:
+        type: number
+        example: 2
+      total:
+        type: number
+        example: 2
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/IndividualResponse'
+  IndividualResponse:
+    type: object
+    description: Estrutura padrão de um seller pessoa física
+    properties:
+      id:
+        type: string
+        example: 17d9e827664b47509f12a082b6047e7a
+      status:
+        type: string
+        enum:
+          - new
+          - expired
+          - action_required
+          - pending
+          - enabled
+          - active
+          - disabled
+          - deleted
+        example: pending
+      resource:
+        type: string
+        example: seller
+      type:
+        type: string
+        enum:
+          - individual
+          - business
+        example: individual
+      account_balance:
+        type: number
+        example: 0.00
+      current_balance:
+        type: number
+        example: 0.00
+      fiscal_responsibility:
+        type: string
+        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
+      first_name:
+        type: string
+        example: José
+      last_name:
+        type: string
+        example: Da Silva
+      email:
+        type: string
+        example: teeste@teste.com
+      phone_number:
+        type: string
+        example: " 12029579543"
+      taxpayer_id:
+        type: string
+        example: "76537741807"
+        description: 'CPF do vendedor'
+      birthdate:
+        type: string
+        example: "1982-12-15"
+      statement_descriptor:
+        type: string
+        example: "NOME FANTASIA"
+      description:
+        type: string
+        example:
+      address:
+        type: object
+        properties:
+          line1:
+            type: string
+            example: "167 West 74th Street"
+          line2:
+            type: string
+            example: "543"
+          line3:
+            type: string
+            example: "APT 601"
+          neighborhood:
+            type: string
+            example: "Barra da Tijuca"
+          city:
+            type: string
+            example: "Rio de Janeiro"
+          state:
+            type: string
+            example: "RJ"
+            description: Código ISO 3166-2 para o estado, com duas letras
+          postal_code:
+            type: string
+            example: "10023000"
+            description: CEP com 8 digitos sem separador
+          country_code:
+            type: string
+            example: "BR"
+            description: ISO 3166-1 alpha-2 - códigos de país de duas letras.
+      delinquent:
+        type: boolean
+      default_debit:
+        type: string
+        description: 'cartão default para compras'
+      default_credit:
+        type: string
+        description: 'conta bancaria default para depositios'
+      mcc:
+        type: string
+        example: "1"
+        description: Envie o código de atividade do negócio (MCC ID). A lista completa se encontra em /v1/merchant_category_codes
+      metadata:
+        type: object
+      created_at:
+        type: string
+        format: dateTime
+        example: "2015-04-17T06:39:52+00:00"
+      updated_at:
+        type: string
+        format: dateTime
+        example: "2015-04-17T06:39:52+00:00"
+parameters:
+  marketplaceId:
+    name: marketplace_id
+    in: path
+    description: ID do marketplace
+    required: true
+    type: string
+  sellerId:
+    name: seller_id
+    in: path
+    description: ID do Seller
+    required: true
+    type: string
+  documentId:
+    name: document_id
+    in: path
+    description: ID do documento
+    required: true
+    type: string  
+  limitParam:
+    name: limit
+    in: query
+    description: Limita o número de objetos retornados, podendo ser entre 1 e 100
+    required: false
+    type: number
+    format: int32
+    default: 20
+  sortParam:
+    name: sort
+    in: query
+    description: Determinar como ordenar a lista em relação a data de criação do objeto
+    required: false
+    type: string
+    enum:
+      - time-descending
+      - time-ascending
+    default: time-descending
+  offsetParam:
+    name: offset
+    in: query
+    description: Determina o ponto de inicio dos registros retornados
+    required: false
+    type: number
+    format: int32
+    default: 0
+  dateRangeParam:
+    name: date_range
+    in: query
+    description: Filtro na lista base de objetos pela data de criação. O valor pode ser uma string com um horário em UTC timestamp, ou pode ser uma lista com os parametros abaixo
+    required: false
+    type: number
+  dateRangeGTParam:
+    name: date_range[gt]
+    in: query
+    description: Retorna valores onde a data maior que o timestamp informado
+    required: false
+    type: number
+  dateRangeGTEParam:
+    name: date_range[gte]
+    in: query
+    description: Retorna valores onde a data for maior ou igual que o timestamp informado
+    required: false
+    type: number
+  dateRangeLTParam:
+    name: date_range[lt]
+    in: query
+    description: Retorna valores onde a data for menor que o timestamp informado
+    required: false
+    type: number
+  dateRangeLTEParam:
+    name: date_range[lte]
+    in: query
+    description: Retorna valores onde a data for menor ou igual que o timestamp informado
+    required: false
+    type: number
