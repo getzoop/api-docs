@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "API de Antecipação sob demanda da Zoop"
-  version: "3.1.0"
+  version: "3.2.0"
   title: "API de Antecipação sob demanda da Zoop"
 host: "api.zoop.ws"
 basePath: "/"
@@ -102,7 +102,43 @@ paths:
           description: "Requisição inválida"
         404:
           description: "Marketplace ou Seller não encontrado"
-
+  /v1/marketplaces/{marketplaceId}/sellers/{customerId}/receivables:
+    get:
+      tags:
+      - "Antecipação"
+      summary: "Verificando Recebíveis Aptos a Antecipação"
+      description: "Verificando recebíveis Aptos"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: "CustomerId"
+        in: "path"
+        description: "ID do Customer"
+        required: true
+        type: "string"
+      - name: "prepayable_for"
+        in: "path"
+        description: "Retorna os recebíveis que estão aptos ao participar de uma antecipação, a parir da data informada"
+        required: true
+        type: "string"  
+      responses:
+        200:
+          description: "Sucesso na recuperação dos recebiveis aptos"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Prepayable"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace ou Seller não encontrado"
   /v1/marketplaces/{marketplaceId}/sellers/{sellerId}/prepayments/info:
     get:
       tags:
@@ -133,7 +169,8 @@ paths:
         in: "query"
         required: false
         description: "Taxa de antecipação do parceiro"
-        type: "float"
+        type: "number"
+        format: "float"
       - name: "min_transaction_date"
         in: "query"
         required: false
@@ -197,10 +234,24 @@ paths:
         description: "ID do Seller"
         required: true
         type: "string"
-      - in: "body"
-        name: "body"
-        schema:
-          $ref: "#/definitions/PrepaymentListRequest"
+      - name: "expected_on_range"
+        in: "query"
+        description: "Filtra pela Data Prevista do Pagamento do objeto. É possível adicionar ao final da chave (expected_on_range) os valores: [gt], [gte], [lt] e [lte] de forma que a data prevista do pagamento seja posterior a, posterior ou igual a, anterior a, ou anterior ou igual a, respectivamente, o valor informado para o filtro."
+        type: string
+        format: date
+      - name: "created_at_range"
+        in: "query"
+        description: "Filtra pela Data de Criação do objeto."
+        type: string
+        format: date
+      - name: "status"
+        in: "query"
+        description: "Filtra pelo Status do objeto."
+        type: string
+      - name: "sort"
+        in: "query"
+        description: "Ordena pela data de criação dos recebíveis."
+        type: string
       responses:
         200:
           description: "Sucesso na recuperação das antecipações"
@@ -377,17 +428,17 @@ definitions:
         format: "date"
         example: "2018-01-19"
       receivables:
-          description: "Lista de IDs de recebíveis que deverão ser incluídos na solicitação de antecipação"
-          type: "array"
-          items:
-            type: "string"
-            example: "6c451d93c2d278728d4c9e8caee4290f"
+        description: "Lista de IDs de recebíveis que deverão ser incluídos na solicitação de antecipação"
+        type: "array"
+        items:
+          type: "string"
+          example: "6c451d93c2d278728d4c9e8caee4290f"
       transactions:
-          description: "Lista de IDs de transações cujos recebíveis deverão ser incluídos na solicitação de antecipação"
-          type: "array"
-          items:
-            type: "string"
-            example: "4290f3c2d2787e8c28d4c96c451d9aee"
+        description: "Lista de IDs de transações cujos recebíveis deverão ser incluídos na solicitação de antecipação"
+        type: "array"
+        items:
+          type: "string"
+          example: "4290f3c2d2787e8c28d4c96c451d9aee"
       target_amount:
         description: "Valor alvo, em centavos de Reais, para escolha dos recebíveis a antecipar mediante algoritmo de busca, que seleciona recebíveis incrementalmente até atingir este valor alvo, até o limite percentual da margem (campo *margin*). Recebíveis que façam o valor total de antecipação ultrapassar o valor alvo com a margem incluída não são incluídos na antecipação. Caso um recebível faça o valor da antecipação atingir o intervalo entre o valor alvo e a margem, o algoritmo é interrompido e a simulação é concluída com os recebíveis selecionados."
         type: "integer"
@@ -409,6 +460,16 @@ definitions:
         type: "number"
         format: "float"
         example: "0.0094"
+      entry_modes:
+        description: "Lista de métodos de captura de transação que poderão ter seus recebíveis antecipados"
+        type: "array"
+        items:
+          type: "string"
+          enum:
+            - "chip"
+            - "magstripe"
+            - "magstripe_fallback"
+            - "manually_keyed"
       auto_commit:
         description: "Permite desativar o transito automático do status `simulated` para `ready`. Se a requisição enviar em seu payload `auto_commit`=false, o status permanecerá `simulated` aguardando a confirmação do usuário da API através da requisição `/commit`.
           A operação `/commit` transita somente do status `simulated` para o status `ready`.  O valor default é `true`."
@@ -491,3 +552,34 @@ definitions:
         type: "string"
         format: "date"
         example: "2018-01-19 19:47:07"
+  Prepayable:
+    type: "object"
+    required:
+    - "customer"
+    - "prepayment_date"
+    properties:
+      id:
+        description: "ID da Recebivel."
+        type: "string"
+        example: "026937979d3b48d2831b145185d38ab3"
+      resource:
+        description: "ID da Recebivel."      
+        type: "string"
+        example: "receivable"
+      status: "pending"
+      recipient: "047cf3697440496fa588672f76c0e3db"
+      transaction: "443796d192c24f18a961b485da3f49d7"
+      split_rule: "null"
+      installment: "null"
+      liable: true
+      amount: "11.52"
+      gross_amount: "12.00"
+      anticipation_fee: "0.00"
+      paid_at: "null"
+      created_at: "2020-09-10T13:42:52+00:00"
+      transaction_created_at: "2020-09-10T13:42:49+00:00"
+      canceled_at: "null"
+      expected_on: "2020-10-12T00:00:00+00:00"
+      authorization_code: "null"
+      id_original_receivable: "null"
+      prepaid: false

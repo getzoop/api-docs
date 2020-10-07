@@ -1,0 +1,372 @@
+swagger: '2.0'
+host: api.zoop.ws
+info:
+  title: Objetos Base
+  version: "1.1"
+
+securityDefinitions:
+  basicAuth:
+    type: basic
+security:
+  - basicAuth: []
+
+tags:
+  - name: 'Comprador'
+    description: 'Pessoas ou empresas que compram dentro do seu marketplace'
+  
+schemes:
+  - https
+
+paths:
+  '/v1/marketplaces/{marketplace_id}/buyers':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+    post:
+      tags:
+        - 'Comprador'
+      summary: 'Criar comprador'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: buyer data
+          required: true
+          schema:
+            $ref: '#/definitions/BuyerRequest'
+      responses:
+        '200':
+          description: Comprador criado com sucesso
+          schema:
+            $ref: "#/definitions/Buyer"
+        '400':
+          description: 'Missing required param'
+        '404':
+          description: Marketplace não encontrado
+    get:
+      tags:
+        - 'Comprador'
+      summary: 'Listar comprador por marketplace'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Comprador encontrado
+        '404':
+          description: Marketplace não encontrado
+  '/v1/marketplaces/{marketplace_id}/buyers/{buyer_id}':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/buyerId'
+    put:
+      tags:
+        - 'Comprador'
+      summary: 'Alterar detalhes de comprador'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: buyer data
+          required: true
+          schema:
+            $ref: '#/definitions/BuyerRequest'  
+      responses:
+        '200':
+          description: Comprador alterado com sucesso
+          schema:
+            $ref: "#/definitions/Buyer"
+        '400':
+          description: 'Missing required param'
+        '404':
+          description: Marketplace/Buyer não encontrado
+    get:
+      tags:
+        - 'Comprador'
+      summary: 'Recuperar detalhes de comprador'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Comprador alterado com sucesso
+          schema:
+            $ref: "#/definitions/Buyer"
+        '404':
+          description: Marketplace/Buyer não encontrado
+    delete:
+      tags:
+        - 'Comprador'
+      summary: 'Remover comprador pelo identificador'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Comprador removido com sucesso
+        '404':
+          description: Marketplace/Buyer não encontrado
+  '/v1/marketplaces/{marketplace_id}/buyers/search':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+    get:
+      tags:
+        - 'Comprador'
+      summary: 'Buscar comprador por CPF/CNPJ'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Comprador encontrado
+        '404':
+          description: Marketplace não encontrado
+  '/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/balances':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+      - name: seller_id
+        in: path
+        description: identificador do seller
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Saldo de Conta'
+      summary: 'Recuperar saldo de conta por seller'
+      description: 'Recupera o saldo corrente e saldo total de conta'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Saldo recuperado com sucesso
+        '404':
+          description: Marketplace/Seller não encontrado
+definitions:
+  BuyerRequest:
+    type: object
+    properties:
+      first_name:
+        type: string
+        example: José
+      last_name:
+        type: string
+        example: Da Silva
+      email:
+        type: string
+        example: teeste@teste.com
+      phone_number:
+        type: string
+        example: " 12029579543"
+      taxpayer_id:
+        type: string
+        example: "76537741807"
+      birthdate:
+        type: string
+        example: "1982-12-15"
+      description:
+        type: string
+        example:
+      address:
+        type: object
+        properties:
+          line1:
+            type: string
+            example: "167 West 74th Street"
+          line2:
+            type: string
+            example: "543"
+          line3:
+            type: string
+            example: "APT 601"
+          neighborhood:
+            type: string
+            example: "Downtown"
+          city:
+            type: string
+            example: "Washington"
+          state:
+            type: string
+            example: "DC"
+          postal_code:
+            type: string
+            example: "10023"
+          country_code:
+            type: string
+            example: "US"
+    required:  
+      - first_name
+      - last_name
+      - email
+      - phone_number
+      - taxpayer_id
+      - birthdate
+      - address
+  Buyer:
+    type: object
+    properties:
+      id:
+        type: string
+        example: d2385e3c49164e6195f072763c0a1eaa
+      status:
+        type: string
+        enum:
+          - new
+          - expired
+          - action_required
+          - pending
+          - enabled
+          - active
+          - disabled
+          - deleted
+        example: pending
+      resource:
+        type: string
+        example: buyer
+      account_balance:
+        type: number
+        example: 0.00
+      current_balance:
+        type: number
+        example: 0.00
+      first_name:
+        type: string
+        example: José
+      last_name:
+        type: string
+        example: Da Silva
+      email:
+        type: string
+        example: teeste@teste.com
+      phone_number:
+        type: string
+        example: " 12029579543"
+      taxpayer_id:
+        type: string
+        example: "76537741807"
+      birthdate:
+        type: string
+        example: "1982-12-15"
+      description:
+        type: string
+        example:
+      address:
+        type: object
+        properties:
+          line1:
+            type: string
+            example: "167 West 74th Street"
+          line2:
+            type: string
+            example: "543"
+          line3:
+            type: string
+            example: "APT 601"
+          neighborhood:
+            type: string
+            example: "Downtown"
+          city:
+            type: string
+            example: "Washington"
+          state:
+            type: string
+            example: "DC"
+          postal_code:
+            type: string
+            example: "10023"
+          country_code:
+            type: string
+            example: "US"
+      delinquent:
+        type: boolean
+      default_debit:
+        type: string
+        description: 'cartão default para compras'
+      default_credit:
+        type: string
+        description: 'conta bancaria default para depositios'
+      metadata:
+        type: object
+      created_at:
+        type: string
+        format: dateTime
+        example: "2015-04-17T06:39:52+00:00"
+      updated_at:
+        type: string
+        format: dateTime
+        example: "2015-04-17T06:39:52+00:00"
+parameters:
+  marketplaceId:
+    name: marketplace_id
+    in: path
+    description: ID do marketplace
+    required: true
+    type: string
+  buyerId:
+    name: buyer_id
+    in: path
+    description: identificador do comprador
+    required: true
+    type: string
+  limitParam:
+    name: limit
+    in: query
+    description: Limita o número de objetos retornados, podendo ser entre 1 e 100
+    required: false
+    type: number
+    format: int32
+    default: 20
+  sortParam:
+    name: sort
+    in: query
+    description: Determinar como ordenar a lista em relação a data de criação do objeto
+    required: false
+    type: string
+    enum:
+      - time-descending
+      - time-ascending
+    default: time-descending
+  offsetParam:
+    name: offset
+    in: query
+    description: Determina o ponto de inicio dos registros retornados
+    required: false
+    type: number
+    format: int32
+    default: 0
+  dateRangeParam:
+    name: date_range
+    in: query
+    description: Filtro na lista base de objetos pela data de criação. O valor pode ser uma string com um horário em UTC timestamp, ou pode ser uma lista com os parametros abaixo
+    required: false
+    type: number
+  dateRangeGTParam:
+    name: date_range[gt]
+    in: query
+    description: Retorna valores onde a data maior que o timestamp informado
+    required: false
+    type: number
+  dateRangeGTEParam:
+    name: date_range[gte]
+    in: query
+    description: Retorna valores onde a data for maior ou igual que o timestamp informado
+    required: false
+    type: number
+  dateRangeLTParam:
+    name: date_range[lt]
+    in: query
+    description: Retorna valores onde a data for menor que o timestamp informado
+    required: false
+    type: number
+  dateRangeLTEParam:
+    name: date_range[lte]
+    in: query
+    description: Retorna valores onde a data for menor ou igual que o timestamp informado
+    required: false
+    type: number

@@ -1,0 +1,267 @@
+openapi: 3.0.0
+info:
+  title: Token de cartões
+  version: "1.1"
+security:
+  - basicAuth: []
+tags:
+  - name: Token
+    description: Token de cartões de crédito
+paths:
+  "/v1/marketplaces/{marketplace_id}/cards/tokens":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceId"
+    post:
+      tags:
+        - Token
+      summary: Criar novo token de cartão
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenCardRequest"
+            example:
+              holder_name: "João da Silva"
+              card_number: "4444333322221111"
+              security_code: "999"
+              expiration_month: "9"
+              expiration_year: "2027"
+        required: true
+      responses:
+        "200":
+          description: Token de cartão criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenCardResponse"
+        "400":
+          description: Requisição/Parâmetros invalidos
+        "404":
+          description: Marketplace/ não encontrado
+  "/v1/marketplaces/{marketplace_id}/tokens/{token_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceId"
+      - name: token_id
+        in: path
+        description: identificador do token
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Token
+      summary: Recuperar detalhes de token de cartão/conta bancária
+      description: ""
+      responses:
+        "200":
+          description: Token recuperado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenCardResponse"
+servers:
+  - url: https://api.zoop.ws
+components:
+  parameters:
+    marketplaceId:
+      name: marketplace_id
+      in: path
+      description: ID do marketplace
+      required: true
+      schema:
+        type: string
+    limitParam:
+      name: limit
+      in: query
+      description: Limita o número de objetos retornados, podendo ser entre 1 e 100
+      required: false
+      schema:
+        type: number
+        format: int32
+        default: 20
+    sortParam:
+      name: sort
+      in: query
+      description: Determinar como ordenar a lista em relação a data de criação do objeto
+      required: false
+      schema:
+        type: string
+        enum:
+          - time-descending
+          - time-ascending
+        default: time-descending
+    offsetParam:
+      name: offset
+      in: query
+      description: Determina o ponto de inicio dos registros retornados
+      required: false
+      schema:
+        type: number
+        format: int32
+        default: 0
+    dateRangeParam:
+      name: date_range
+      in: query
+      description: Filtro na lista base de objetos pela data de criação. O valor pode ser
+        uma string com um horário em UTC timestamp, ou pode ser uma lista com os
+        parametros abaixo
+      required: false
+      schema:
+        type: number
+    dateRangeGTParam:
+      name: date_range[gt]
+      in: query
+      description: Retorna valores onde a data maior que o timestamp informado
+      required: false
+      schema:
+        type: number
+    dateRangeGTEParam:
+      name: date_range[gte]
+      in: query
+      description: Retorna valores onde a data for maior ou igual que o timestamp informado
+      required: false
+      schema:
+        type: number
+    dateRangeLTParam:
+      name: date_range[lt]
+      in: query
+      description: Retorna valores onde a data for menor que o timestamp informado
+      required: false
+      schema:
+        type: number
+    dateRangeLTEParam:
+      name: date_range[lte]
+      in: query
+      description: Retorna valores onde a data for menor ou igual que o timestamp informado
+      required: false
+      schema:
+        type: number
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    TokenCardRequest:
+      type: object
+      properties:
+        holder_name:
+          type: string
+          description: Nome do portador
+        expiration_month:
+          type: string
+          description: mês de expiração do cartão (MM)
+        expiration_year:
+          type: string
+          description: ano de expiração do cartão (AAAA)
+        card_number:
+          type: string
+          description: Número do cartão
+        security_code:
+          type: string
+          description: Código de segurança do cartão (CVC)
+    TokenCardResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 420f9fa974bd4210a77783e94447d218
+        resource:
+          type: string
+          example: token
+        used:
+          type: boolean
+          example: false
+        type:
+          type: string
+          example: card
+        card:
+          $ref: "#/components/schemas/CardResponse"
+        uri:
+          type: string
+          example: /v1/marketplaces/3249465a7753536b62545a6a684b0000/tokens/420f9fa974bd4210a77783e94447d218
+        created_at:
+          type: string
+          example: 2019-05-06T12:39:27+00:00
+        updated_at:
+          type: string
+          example: 2019-05-06T12:39:34+00:00
+    CardResponse:
+      type: object
+      required:
+        - token
+        - customer
+      properties:
+        id:
+          type: string
+          description: Identificador único do cartão
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        resource:
+          type: string
+          description: Tipo de recurso
+          example: card
+        description:
+          type: string
+          description: Descrição do cartão
+          example: Cartão trabalho
+        card_brand:
+          type: string
+          description: Bandeira do cartão
+          example: Visa
+        first4_digits:
+          type: string
+          description: Primeiros 4 dígitos do cartão
+          example: "4929"
+        fingerprint:
+          type: string
+          description: Identificador de segurança da transação
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        customer:
+          type: string
+          description: Identificador do customer
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        expiration_month:
+          type: string
+          description: Mês da expiração cartão
+          example: "9"
+        expiration_year:
+          type: string
+          description: Ano da expiração cartão
+          example: "2020"
+        holder_name:
+          type: string
+          example: Joao da Silva
+        is_active:
+          type: boolean
+          example: true
+        is_valid:
+          type: boolean
+          example: true
+        is_verified:
+          type: boolean
+          example: true
+        address:
+          type: string
+        verification_checklist:
+          type: object
+          properties:
+            postal_code_check:
+              type: string
+              example: unchecked
+            security_code_check:
+              type: string
+              example: unchecked
+            address_line1_check:
+              type: string
+              example: unchecked
+        metadata:
+          type: object
+        uri:
+          type: string
+          example: /v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/02ec41795637446d805b6795b3b3331e
+        created_at:
+          type: string
+          example: 2019-05-06T12:39:27+00:00
+        updated_at:
+          type: string
+          example: 2019-05-06T12:39:34+00:00
