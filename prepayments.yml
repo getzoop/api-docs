@@ -555,9 +555,6 @@ definitions:
         example: "2018-01-19 19:47:07"
   Prepayable:
     type: "object"
-    required:
-    - "customer"
-    - "prepayment_date"
     properties:
       id:
         description: "ID da Recebivel."
@@ -642,4 +639,4 @@ definitions:
       prepaid:
         description: "Indica se o recebivel foi antecipado ou não"
         type: "boolean"
-        example: "false"     
+        example: "false"
