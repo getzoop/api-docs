@@ -6,7 +6,7 @@ info:
 host: "api.zoop.ws"
 basePath: "/"
 tags:
-- name: "Antecipação"
+- name: "Antecipação sob demanda "
   description: "Pedidos de antecipação sob demanda"
 schemes:
 - "https"
@@ -284,6 +284,43 @@ paths:
           description: "Requisição inválida"
         404:
           description: "Marketplace ou Antecipação não encontrada"
+  /v1/marketplaces/{marketplaceId}/sellers/{customerId}/receivables:
+    get:
+      tags:
+      - "Antecipação"
+      summary: "Verificando Recebíveis Aptos a Antecipação"
+      description: "Verificando recebíveis Aptos"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: "customerId"
+        in: "path"
+        description: "ID do Customer"
+        required: true
+        type: "string"
+      - name: "prepayable_for"
+        in: "query"
+        description: "Retorna os recebíveis que estão aptos ao participar de uma antecipação, a parir da data informada"
+        required: true
+        type: "string"  
+      responses:
+        200:
+          description: "Sucesso na recuperação dos recebiveis aptos"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Prepayable"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace ou Seller não encontrado"
 definitions:
   PrepaymentListRequest:
     type: object
@@ -516,3 +553,93 @@ definitions:
         type: "string"
         format: "date"
         example: "2018-01-19 19:47:07"
+  Prepayable:
+    type: "object"
+    required:
+    - "customer"
+    - "prepayment_date"
+    properties:
+      id:
+        description: "ID da Recebivel."
+        type: "string"
+        example: "026937979d3b48d2831b145185d38ab3"
+      resource:
+        description: "ID da Recebivel."      
+        type: "string"
+        example: "receivable"
+      status:
+        description: "Status do Recebivel"      
+        type: "string"
+        example: "pending"
+      recipient:
+        description: "Id do recipient"      
+        type: "string"
+        example: "047cf3697440496fa588672f76c0e3db"
+      transaction:
+        description: "Id da Transação"      
+        type: "string"
+        example: "443796d192c24f18a961b485da3f49d7"
+      split_rule:
+        description: "Id do Split"      
+        type: "string"
+        example: "null"
+      installment:
+        description: "Parcelamento"      
+        type: "string"
+        example: "null"
+      liable:
+        description: "Indica que em caso de chargeback o vendendor irá arcar com a devolução"
+        type: "boolean"
+        example: "true"
+      amount:
+        description: "Valor do recebível"
+        type: "number"
+        format: "float"
+        example: "11.52"
+      gross_amount:
+        description: "Valor do Bruto"
+        type: "number"
+        format: "float"
+        example: "12.00"
+      anticipation_fee: 
+        description: "Taxa de antecipação"
+        type: "number"
+        format: "float"
+        example: "0.00"
+      paid_at:
+        description: "Data do pagamento"
+        type: "string"
+        format: "date"
+        example: "null"
+      created_at:
+        description: "Data do pagamento"
+        type: "string"
+        format: "date"
+        example: "2020-09-10T13:42:52+00:00"
+      transaction_created_at:
+        description: "Data da criação da transação"
+        type: "string"
+        format: "date"
+        example: "2020-09-10T13:42:49+00:00"
+      canceled_at:
+        description: "Data do cancelamento"
+        type: "string"
+        format: "date"
+        example: "null"
+      expected_on:
+        description: "Data prevista de pagamento"
+        type: "string"
+        format: "date"
+        example: "2020-10-12T00:00:00+00:00"
+      authorization_code:
+        description: "Código de autorização da venda"
+        type: "string"
+        example: "Z133937-000260004"
+      id_original_receivable:
+        description: "Id do recebivel original"
+        type: "string"
+        example: "null"
+      prepaid:
+        description: "Indica se o recebivel foi antecipado ou não"
+        type: "boolean"
+        example: "false"     
