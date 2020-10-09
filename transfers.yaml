@@ -368,7 +368,7 @@ paths:
     delete:
       tags:
         - 'Conta Bancária'
-      summary: 'Alterar detalhes de conta bancária'
+      summary: 'Remover detalhes de conta bancária'
       description: ''
       consumes:
         - application/json
@@ -404,7 +404,7 @@ paths:
       tags:
         - 'Conta Bancária'
       summary: 'Associar conta bancaria com customer'
-      description: 'Associar token de cartão com comprador'
+      description: 'Associar conta bancária ao customer ( seller / buyer )'
       consumes:
         - application/json
       produces:
@@ -504,7 +504,7 @@ paths:
         type: string
       - name: seller_id
         in: path
-        description: identificador da seller
+        description: Id do seller
         required: true
         type: string
     get:
@@ -685,7 +685,7 @@ paths:
     post:
       tags:
         - 'Plano de Vendas'
-      summary: 'Criar assinatura de plano de venda'
+      summary: 'Associar assinatura de plano de venda'
       description: ''
       parameters:
         - in: body
@@ -746,14 +746,14 @@ paths:
     delete:
       tags:
         - 'Plano de Vendas'
-      summary: 'Remover assinatura de plano de venda'
+      summary: 'Desassociar assinatura de plano de venda'
       deprecated: true
       description: ''
       produces:
         - application/json
       responses:
         '200':
-          description: Assinatura de plano de venda removido com sucesso
+          description: Assinatura de plano de venda desassociado com sucesso
         '404':
           description: Marketplace não encontrado
   /v1/marketplaces/{marketplace_id}/sellers/{seller_id}/subscriptions:
@@ -871,6 +871,7 @@ definitions:
       amount:
         type: integer
         example: 3500
+        description: 'Valor'
       statement_descriptor:
         type: string
         example: Zoop Tecnologia
@@ -883,13 +884,11 @@ definitions:
       amount:
         type: integer
         example: 3500
+        description: 'Valor' 
       description:
         type: string
         example: Cobrança de mensalidade
-      transfer_date:
-        type: string
-        format: date
-        example: Data para agendamento da transferência
+
 
   CreateAdjustmentRequest:
     type: object
@@ -897,13 +896,17 @@ definitions:
       amount:
         type: integer
         example: 3500
+        description: 'Valor'
       description:
         type: string
         example: Cobrança de mensalidade
+        description: 'Descrição'
       transfer_date:
         type: string
         format: date
         example: Data para agendamento do ajuste
+        description: 'Data para agendamento do ajuste'
+        
         
   ReceivingPolicy:
     type: object
@@ -931,6 +934,7 @@ definitions:
       customer:
         type: string
         example: 064bf90479e34865afb90cc4a0efe2cc
+        description: 'id do seller ou buyer'
       token:
         type: string
         example: 2d55be7859544074a7ae9ffe60fdf6d9
@@ -940,11 +944,12 @@ definitions:
       customer:
         type: string
         example: 064bf90479e34865afb90cc4a0efe2cc
+        description: 'Id do seller'    
       pland_id:
         type: string
         example: PLAN_ID
-      auto_collection:
-        type: boolean
+        description: 'Id do plano'
       quantity:
         type: integer
         example: 1
+        description: 'Valor padrão: "1"'
