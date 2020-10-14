@@ -945,9 +945,9 @@ definitions:
         type: string
         example: 064bf90479e34865afb90cc4a0efe2cc
         description: 'Id do seller'    
-      pland_id:
+      plan:
         type: string
-        example: PLAN_ID
+        example: PLAN
         description: 'Id do plano'
       quantity:
         type: integer
