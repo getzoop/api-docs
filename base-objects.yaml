@@ -1242,14 +1242,8 @@ definitions:
             example: "BR"
             description: 'ISO 3166-1 alpha-2 - códigos de país de duas letras. Valor padrão: "BR" '
     required:
-      - first_name
-      - last_name
-      - email
       - phone_number
-      - taxpayer_id
-      - birthdate
       - address
-      - mcc           
   TokenCardRequest:
     type: object
     properties:
