@@ -31,7 +31,7 @@ paths:
     post:
       tags:
         - 'Vendedor'
-      summary: Criar documento de cadastro de vendedor
+      summary: Enviando documento para cadastro de vendedor
       description: ''
       operationId: addDocument
       consumes:
@@ -287,7 +287,7 @@ paths:
     get:
       tags:
         - 'Vendedor'
-      summary: Recupera detalhes de vendedor pelo id, os campos começando por "business_" são específicos para empresas.
+      summary: Recupera detalhes de vendedor pelo id
       produces:
         - application/json
       responses:
@@ -354,7 +354,7 @@ paths:
     get:
       tags:
         - 'Vendedor'
-      summary: Buscando de vendedor por CPF/CNPJ
+      summary: Buscar vendedor por CPF/CNPJ
       consumes:
         - application/json
       produces:
@@ -371,6 +371,14 @@ paths:
   '/v1/marketplaces/{marketplace_id}/buyers':
     parameters:
       - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/limitParam'
+      - $ref: '#/parameters/sortParam'
+      - $ref: '#/parameters/offsetParam'
+      - $ref: '#/parameters/dateRangeParam'
+      - $ref: '#/parameters/dateRangeGTParam'
+      - $ref: '#/parameters/dateRangeGTEParam'
+      - $ref: '#/parameters/dateRangeLTParam'
+      - $ref: '#/parameters/dateRangeLTEParam'
     post:
       tags:
         - 'Comprador'
@@ -398,7 +406,7 @@ paths:
     get:
       tags:
         - 'Comprador'
-      summary: 'Listar comprador por marketplace'
+      summary: 'Listando compradores'
       description: ''
       produces:
         - application/json
@@ -464,6 +472,11 @@ paths:
   '/v1/marketplaces/{marketplace_id}/buyers/search':
     parameters:
       - $ref: '#/parameters/marketplaceId'
+      - in: query
+        name: taxpayer_id
+        type: string    
+        description: CPF/CNPJ do comprador
+        required:  true
     get:
       tags:
         - 'Comprador'
