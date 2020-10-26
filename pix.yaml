@@ -1,0 +1,214 @@
+openapi: 3.0.0
+info:
+  title: PIX
+  contact: {}
+  version: '1.0'
+servers:
+- url: https://api.zoop.internal.tech
+  variables: {}
+paths:
+  /v1/marketplaces/{marketplace_id}/transactions:
+    post:
+      tags:
+      - PIX
+      summary: Transação Pix
+      description: ''
+      operationId: createTransaction
+      parameters: 
+        - name: marketplace_id
+          in: path
+          description: 'ID do marketplace'
+          required: true
+          style: simple
+          schema:
+            type: string
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/transactionalPix'
+      responses:
+        201:
+          description: 'Created'
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sucesso'
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              example:
+                error:
+                  status: Bad Request
+                  status_code: 400
+                  type: invalid_request_error
+                  category: missing_required_param
+                  message: 'Missing required param: amount. Please verify request parameters.'
+        404:
+          description: "Not found"
+          content:
+            application/json:
+              example:
+                error:
+                  status: Not Found
+                  status_code: 404
+                  type: invalid_request_error
+                  category: resource_not_found
+                  message: 'Sorry, the seller (id: 6fbf7ec8fa3b03eb85dd43364) you are trying to use does not exist or has been deleted.'
+        500:
+          description: "Internal Server Error"
+          content:
+            application/json:
+              example:
+                status: Internal Server Error
+                status_code: 500
+                type: processing_error
+                category: server_api_error
+                message: 'Sorry, something has gone wrong. Zoop''s servers are acting up (and the people at Zoop are currently fixing the problem). If the problem persists, please contact Technical Support (support@pagzoop.com).'
+              
+        503:
+          description: "Service Unavailable"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resourcenotfound'
+              example:
+                status: service_unavailable
+                type: service_unavailable
+                code: 9998
+                message: Service Unavailable
+                category: unexpected
+                status_code: 503
+      deprecated: false
+components:
+  schemas:
+    transactionalPix:
+      title: transactionalPix
+      required:
+      - payment_type
+      - on_behalf_of
+      - amount
+      type: object
+      properties:
+        payment_type:
+          type: string
+          enum: [pix,credit,boleto]
+          description: 'Tipo de pagamento'
+        on_behalf_of:
+          type: string
+          format: UUID
+          description: 'ID do seller'
+        amount:
+          type: integer
+          format: int32
+          description: 'Valor'
+      example:
+        payment_type: pix
+        on_behalf_of: 05cb9bc17fa84a9d8503d756a57d7a2b
+        amount: 5500
+    Sucesso:
+      title: Sucesso
+      type: object
+      example:
+        id: 11b8d8b94fc34626827df28343bcd5a8
+        resource: transaction
+        status: pending
+        amount: '5500'
+        original_amount: '5500'
+        currency: BRL
+        description: venda
+        payment_type: pix
+        transaction_number: null
+        gateway_authorizer: ITAU
+        app_transaction_uid: null
+        refunds: null
+        rewards: null
+        discounts: null
+        pre_authorization: null
+        sales_receipt: null
+        on_behalf_of: 00507443BF7F4B02981D84428CF9AA65
+        customer: null
+        statement_descriptor: Teste PIX - Sucesso
+        payment_method:
+          version: 1
+          status: ative
+          type: dinamic
+          reusable: false
+          dict_key:
+            phone: (66) 66666-6666
+          expiration_date: '2020-09-15T14:14:14-03:00'
+          qrcode:
+            id: 788fe40c-95c0-4c45-aa50-f307e1a1deeb
+            pix_link: 'https://pix.bcb.gov.br/qr/MDAwMjAxMDEwMjExMjY5NTAwMTRCUi5HT1YuQkNCLlBJWDI1NzNzcGkuaG9tLmNsb3VkLml0YXUuY29tLmJyL2RvY3VtZW50b3MvZjJiYzU5NmMtNWFkNi00YjhiLTlhMDEtNmQxMWNmY2YzZDAxNTIwNDAwMDA1MzAzOTg2NTQwOTk5OTkwMC4wMDU4MDJCUjU5MTBOZXltYXIgQ1BGNjAwOVNBTyBQQVVMTzYyNjAwNTIyOHJ4WmJGcldTNHVhQVcwUno4ODlBUTUwMzAwMDE3QlIuR09WLkJDQi5CUkNPREUwMTA1MS4wLjA2MzA0Q0YxMg=='
+            emv: 00020101021126950014BR.GOV.BCB.PIX2573spi.hom.cloud.itau.com.br/documentos/f2bc596c-5ad6-4b8b-9a01-6d11cfcf3d015204000053039865409999900.005802BR5910Fulano 6009SAO PAULO626005228rxZbFrWS4uaAW0Rz889AQ50300017BR.GOV.BCB.BRCODE01051.0.06304CF12
+            imagem_base64: iVBORw0KGgoAAAANSUhEUgAAAPoAAAD6AQAAAACgl2eQAAAD4ElEQVR4Xu2YQc6kOAyFjbLIDi6AlGtklysVF4DiAnCl7HINpFyA2mUR4XmGbmlgpH+T9KI1ZZVUFHyogmM/2xD/bJ6eZx72BS77Apd9gcu+wGV/EXAQdcGs3LdOLY536ptE5KoCjnF+9jRSP3g1M3+SnKwJWLVynji/aCMdOVGTtrY2sFj8bz9a8wmKfR7+ALAytVqelFw8CHBtAJ7UskeT5zVsINf/uroQIGptXG6fZ8AUAmKBRp2bxG9nDmt+n60GHKTebhuS+STqfPxw34R+qAsgWXSegtmJ5xDZb6OLb1cTQIwhKzn0U8hT2pqE50Wq1gQOK/v1wkqcehON9rmGcoBTbskcmoaEH2r2Bs6cziu1AKwBR4NEclxc3G0/ujy6qgDFNRkOjHheOa4BD9t3cqUikF+uf2lJ+cX1RPFwtQGN3FQ7IdjMHLYpmd2elysCEElPHfdkM2kFwcR6Hq4uBJApnaeW4u4Mp540VsKf60ol4KBtYLWQ2nV8yxpo4DjXBRw13HcJNQvConAGUX1XmFKAGcKlUK0WJwp8WIS0ueVmBQAF16wp7towS7C9Sd0kqBg4NPIRUow1wJOovwBiXQA62fi4EEisZBtC36G+VwUOp6At0C6oPUrwx0cJDFcTQFQToS0xq0f/I43c+HB1MXDYeEj/kFvxIWR5e7m7q4sBxjYRegY1J4hknFPf2m2qDRwuDz6P4ske6TO67dailANMZCMqb0vwJEQmojj+W4prAAr5fon8qHkh8Ftd4NC5Y7VbiADkC4Im9fG6sxaAr4kZwohIRnF52f5l7wpTDMiMg6EGIokWLkGE1QLB/3VrHQDtKB5tTmZO6BtxgCXdF1kB2KD2AwYQbaCZU8oT36O6HIBkedGWGZrsUFbQ/T5cXQycAw76qwmTYNhGHJwbVxfAdHOOnEgfhMSGeLgpTDFwOMxNCiV+8lsToPZos2+eLAfYS+fTBPPW+KDdkvp4d3UpgKzHpPbBdJCwGHSnKO58f8xiQEZm/KlhzOY6fpL6eEnVmoDLnewRDSGuXsmrDC2pVBFgmc6yTAcQFlzyUBh02jUBdFatxXSAkDBvuNQj3sx5Zz0AvShhTMMeiQKgeUAVbqoCsFWKr8LvBtqC8RMjoasMoO+dZDpA1ks8nCNbTUDeYJx1ZMSkhkkBuWkfvX0xgDQJ6E8kJLBZuz1bU1cVwBkrIv+y1AVqgnjyHnI1AJ2HIPs1M7ogczybvRoA/p3xgLkJiOqNHlJcDmBYRp1ihJnkfuPzFO5NbzmAeBCpxDAItZf3APPjbVIx8IN9gcu+wGVf4LIvcNn/BfgHeb/dxs0/WuwAAAAASUVORK5CYII=
+        source: null
+        point_of_sale:
+          entry_mode: qrcode
+          identification_number: null
+        installment_plan: null
+        refunded: false
+        voided: false
+        captured: true
+        fees: '0.00'
+        fee_details: null
+        location_latitude: null
+        location_longitude: null
+        uri: /v1/marketplaces/0162893710a6495e86542eeff192baa1/transactions/11b8d8b94fc34626827df28343bcd5a8
+        metadata: {}
+        expected_on: null
+        created_at: '2020-09-15 17:04:14'
+        updated_at: '2020-09-15 17:04:14'
+        payment_authorization: null
+        history:
+          - id: de26ee24e1494813b4b5560b0f1ed07c
+            transaction: 11b8d8b94fc34626827df28343bcd5a8
+            amount: '5500'
+            operation_type: created
+            status: succeeded
+            response_code: null
+            response_message: null
+            authorization_code: null
+            authorizer_id: null
+            authorization_nsu: null
+            gatewayResponseTime: null
+            authorizer: null
+            created_at: '2020-09-15 17:04:14'
+    Resourcenotfound:
+      title: Resourcenotfound
+      required:
+      - status
+      - type
+      - code
+      - message
+      - category
+      - status_code
+      type: object
+      properties:
+        status:
+          type: string
+        type:
+          type: string
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        category:
+          type: string
+        status_code:
+          type: integer
+          format: int32
+      example:
+        status: not_found
+        type: not_found
+        code: 3000
+        message: Account not found
+        category: business
+        status_code: 404
+tags:
+- name: PIX
+  description: ''
