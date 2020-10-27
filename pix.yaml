@@ -4,14 +4,14 @@ info:
   contact: {}
   version: '1.0'
 servers:
-- url: https://api.zoop.internal.tech
+- url: https://api.zoop.ws
   variables: {}
 paths:
   /v1/marketplaces/{marketplace_id}/transactions:
     post:
       tags:
-      - PIX
-      summary: Transação Pix
+      - Transação
+      summary: Transação PIX
       description: ''
       operationId: createTransaction
       parameters: 
@@ -86,7 +86,6 @@ paths:
 components:
   schemas:
     transactionalPix:
-      title: transactionalPix
       required:
       - payment_type
       - on_behalf_of
@@ -95,7 +94,7 @@ components:
       properties:
         payment_type:
           type: string
-          enum: [pix,credit,boleto]
+          enum: [pix]
           description: 'Tipo de pagamento'
         on_behalf_of:
           type: string
