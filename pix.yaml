@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Métodos de Cobrança
+  title: PIX
   contact: {}
   version: '1.0'
 servers:
@@ -10,8 +10,8 @@ paths:
   /v1/marketplaces/{marketplace_id}/transactions:
     post:
       tags:
-      - PIX
-      summary: Transação Pix
+      - Transação
+      summary: Transação PIX
       description: ''
       operationId: createTransaction
       parameters: 
