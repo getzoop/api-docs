@@ -1432,7 +1432,7 @@ components:
           type: string
           example: 0009462369b14ee596aabfd27faa97f7
         status:
-          description: Retorna transações onde o status for igual o informado. Para busca múltipla basta concatenar com ,
+          description: Retorna transações onde o payment type for igual o informado. Para busca múltipla basta concatenar com a "," (vírgula).
           type: string
           enum:
             - succeeded
@@ -2006,19 +2006,6 @@ components:
               type: integer
               example: 100
               description: valor a ser cobrado neste customer (opcional)
-        token:
-          type: object
-          description: identificador do token de cartão que será cobrado obrigatorio no
-            source tipo token
-          properties:
-            id:
-              type: string
-              description: identificador do cartão para source tipo card
-              example: 1e5ee2e290d040769806c79e6ef94ee1
-            amount:
-              type: integer
-              example: 100
-              description: valor a ser cobrado neste token (opcional)
         metadata:
           type: object
     TransactionCNPRequest:
