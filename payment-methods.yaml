@@ -226,13 +226,15 @@ paths:
         - name: payment_type
           in: query
           description: Retorna transações onde o payment type for igual o informado. Para
-            busca múltipla basta concatenar com ,
+            busca múltipla basta concatenar com a "," (vírgula).
+            Ex. boleto,credit.
           required: false
           schema:
             type: string
             enum:
               - credit
               - boleto
+              - debit
       responses:
         "200":
           description: Transações recuperadas com sucesso
@@ -372,6 +374,18 @@ paths:
         - $ref: "#/components/parameters/dateRangeGTEParam"
         - $ref: "#/components/parameters/dateRangeLTParam"
         - $ref: "#/components/parameters/dateRangeLTEParam"
+        - name: payment_type
+          in: query
+          description: Retorna transações onde o payment type for igual o informado. Para
+            busca múltipla basta concatenar com a "," (vírgula).
+            Ex. boleto,credit.
+          required: false
+          schema:
+            type: string
+            enum:
+              - credit
+              - boleto
+              - debit  
       responses:
         "200":
           description: Transações recuperadas com sucesso
@@ -379,6 +393,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Transactions"
+                
         "404":
           description: Marketplace não encontrado
   "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}":
@@ -2071,10 +2086,6 @@ components:
         customer:
           type: string
           description: identificador do comprador que será cobrado
-          example: 1e5ee2e290d040769806c79e6ef94ee1
-        token:
-          type: string
-          description: identificador do token de cartão que será cobrado
           example: 1e5ee2e290d040769806c79e6ef94ee1
         metadata:
           type: object
