@@ -593,10 +593,8 @@ definitions:
         items:
           type: string
           enum:
-            - boleto
-            - credit
-            - debit
-            - wallet
+           - credit
+          default: 'credit'
       amount:
         description: valor plano em centavos
         type: integer
@@ -615,14 +613,6 @@ definitions:
       name:
         description: nome do plano
         type: string
-      grace_period:
-        description: perído (dias) de carência para a primeira cobrança do plano
-        type: integer
-        format: int32
-      tolerance_period:
-        description: perído de tolerancia caso haja falha de pagamento
-        type: integer
-        format: int32
       duration:
         description: tempo de duração do plano em relação à frequencia escolhida
         type: integer
@@ -684,10 +674,8 @@ definitions:
         items:
           type: string
           enum:
-            - boleto
-            - credit
-            - debit
-            - wallet
+           - credit
+          default: 'credit'
       amount:
         description: valor plano em centavos
         type: integer
@@ -706,14 +694,6 @@ definitions:
       name:
         description: nome do plano
         type: string
-      grace_period:
-        description: perído (dias) de carência para a primeira cobrança do plano
-        type: integer
-        format: int32
-      tolerance_period:
-        description: perído de tolerancia caso haja falha de pagamento
-        type: integer
-        format: int32
       duration:
         description: tempo de duração do plano em relação à frequencia escolhida
         type: integer
@@ -758,10 +738,8 @@ definitions:
         description: método de pagamento
         type: string
         enum:
-          - boleto
-          - credit
-          - debit
-          - wallet
+           - credit
+        default: 'credit'
       due_date:
         description: data da próxima cobrança
         type: string
@@ -785,14 +763,7 @@ definitions:
         description: moeda utilizada, no formato ISO4217
         type: string
         example: BRL
-      grace_period:
-        description: perído (dias) de carência para a primeira cobrança da assinatura
-        type: integer
-        format: int32
-      tolerance_period:
-        description: perído de tolerancia caso haja falha de pagamento
-        type: integer
-        format: int32
+
 
   SubscriptionResponse:
     type: object
@@ -852,10 +823,8 @@ definitions:
         description: método de pagamento
         type: string
         enum:
-          - boleto
-          - credit
-          - debit
-          - wallet
+           - credit
+        default: 'credit'
       due_date:
         description: data da próxima cobrança
         type: string
@@ -879,14 +848,6 @@ definitions:
         description: moeda utilizada no formato ISO4217
         type: string
         example: BRL
-      grace_period:
-        description: perído (dias) de carência para a primeira cobrança da assinatura
-        type: integer
-        format: int32
-      tolerance_period:
-        description: perído de tolerancia caso haja falha de pagamento
-        type: integer
-        format: int32
       status:
         description: status da assinatura
         type: string
@@ -940,10 +901,8 @@ definitions:
         description: método de pagamento
         type: string
         enum:
-          - boleto
-          - credit
-          - debit
-          - wallet
+           - credit
+        default: 'credit'
       due_date:
         description: data da próxima cobrança
         type: string
@@ -972,14 +931,6 @@ definitions:
         readOnly: true
         type: integer
         format: date-time
-      grace_period:
-        description: período de carência após cobrança gerada
-        type: integer
-        format: int32
-      tolerance_period:
-        description: período de tolerância caso haja falha no pagamento
-        type: integer
-        format: int32
       retries:
         description: quantidade de vezes que tentou efetuar o pagamento
         type: integer
@@ -1059,10 +1010,8 @@ definitions:
         description: métodos de pagamentos
         type: string
         enum:
-          - boleto
-          - credit
-          - debit
-          - wallet
+           - credit
+        default: 'credit'
       due_date:
         description: data da próxima cobrança
         type: string
@@ -1091,14 +1040,6 @@ definitions:
         description: data do cancelamento
         type: string
         format: date-time
-      grace_period:
-        description: período de carência após cobrança gerada
-        type: integer
-        format: int32
-      tolerance_period:
-        description: período de tolerância caso haja falha no pagamento
-        type: integer
-        format: int32
       retries:
         description: quantidade de vezes que tentou efetuar o pagamento
         type: integer
