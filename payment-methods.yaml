@@ -951,7 +951,7 @@ paths:
       - $ref: "#/components/parameters/marketplaceID"
       - name: receipt_id
         in: path
-        description: identificador do recibo
+        description: identificador do recibo (chave "sales_receipt" do response da transação)
         required: true
         schema:
           type: string
@@ -960,6 +960,11 @@ paths:
         - Recibo
       summary: Enviar recibo por email
       description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReciboEmailResponse"
       responses:
         "200":
           description: Recibo enviado com sucesso
@@ -970,7 +975,7 @@ paths:
       - $ref: "#/components/parameters/marketplaceID"
       - name: receipt_id
         in: path
-        description: identificador do recibo
+        description: identificador do recibo (chave "sales_receipt" do response da transação)
         required: true
         schema:
           type: string
@@ -979,6 +984,11 @@ paths:
         - Recibo
       summary: Enviar recibo por SMS
       description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReciboSMSResponse"
       responses:
         "200":
           description: Recibo enviado com sucesso
@@ -1297,6 +1307,24 @@ components:
         security_code:
           type: string
           description: "Código de segurança (CVV) que fica atrás do cartão"
+    ReciboSMSResponse:
+      type: object
+      required:
+       - to
+      properties: 
+        to:
+          type: string
+          description: Número de telefone para onde o recibo será enviado.
+          example: +55 21999010000
+    ReciboEmailResponse:
+      type: object
+      required:
+       - to
+      properties: 
+        to:
+          type: string
+          description: Email para onde o recibo será enviado.
+          example: teste@teste.com.br
     SimpleCardResponse:
       type: object
       description: "Objeto agrupador dos dados de cartão do pagador da transação"
