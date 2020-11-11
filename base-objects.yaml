@@ -369,16 +369,7 @@ paths:
         '400':
           description: 'Missing required parameter'
   '/v1/marketplaces/{marketplace_id}/buyers':
-    parameters:
-      - $ref: '#/parameters/marketplaceId'
-      - $ref: '#/parameters/limitParam'
-      - $ref: '#/parameters/sortParam'
-      - $ref: '#/parameters/offsetParam'
-      - $ref: '#/parameters/dateRangeParam'
-      - $ref: '#/parameters/dateRangeGTParam'
-      - $ref: '#/parameters/dateRangeGTEParam'
-      - $ref: '#/parameters/dateRangeLTParam'
-      - $ref: '#/parameters/dateRangeLTEParam'
+
     post:
       tags:
         - 'Comprador'
@@ -389,11 +380,12 @@ paths:
       produces:
         - application/json
       parameters:
+        - $ref: '#/parameters/marketplaceId' 
         - in: body
           name: buyer data
           required: true
           schema:
-            $ref: '#/definitions/BuyerRequest'
+           $ref: '#/definitions/BuyerRequest'
       responses:
         '200':
           description: Comprador criado com sucesso
@@ -415,6 +407,16 @@ paths:
           description: Comprador encontrado
         '404':
           description: Marketplace não encontrado
+      parameters:
+        - $ref: '#/parameters/marketplaceId'      
+        - $ref: '#/parameters/limitParam'
+        - $ref: '#/parameters/sortParam'
+        - $ref: '#/parameters/offsetParam'
+        - $ref: '#/parameters/dateRangeParam'
+        - $ref: '#/parameters/dateRangeGTParam'
+        - $ref: '#/parameters/dateRangeGTEParam'
+        - $ref: '#/parameters/dateRangeLTParam'
+        - $ref: '#/parameters/dateRangeLTEParam'      
   '/v1/marketplaces/{marketplace_id}/buyers/{buyer_id}':
     parameters:
       - $ref: '#/parameters/marketplaceId'
