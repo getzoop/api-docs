@@ -1207,6 +1207,15 @@ definitions:
       metadata:
         type: object
         description: 'Mapeamento de chaves de string para valores de sequência de caracteres. key (Chave) é o identificador para os metadados (máximo de 30 caracteres). value (valor) é a informação a ser armazenada como metadados.'
+    required:
+      - first_name
+      - last_name
+      - email
+      - phone_number
+      - taxpayer_id
+      - birthdate
+      - address
+      - mcc
   IndividualAlterar:
     properties:
       phone_number:
