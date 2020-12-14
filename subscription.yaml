@@ -505,7 +505,7 @@ paths:
         400:
           description: invalid input, object invalid
   /marketplaces/{marketplace_id}/invoices/{invoice_id}/void:
-    post:
+    delete:
       tags:
           - Faturas
       summary: Estornar e reembolsar fatura
@@ -745,11 +745,6 @@ definitions:
         type: string
         format: date
         example: 2017-07-21
-      due_since_date:
-        description: data da primeira cobrança da assinatura
-        type: string
-        format: date
-        example: 2017-07-21
       expiration_date:
         description: data final da assinatura
         type: string
@@ -827,11 +822,6 @@ definitions:
         default: 'credit'
       due_date:
         description: data da próxima cobrança
-        type: string
-        format: date
-        example: 2017-07-21
-      due_since_date:
-        description: data da primeira cobrança da assinatura
         type: string
         format: date
         example: 2017-07-21
