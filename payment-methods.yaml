@@ -1806,15 +1806,15 @@ components:
         amount:
           type: string
           example: "1.00"
-          description: valor a ser cobrado na venda (opcional)
+          description: Valor a ser cobrado na venda.
         currency:
           type: string
           example: BRL
-          description: moeda do valor a ser cobrado na venda (opcional)
+          description: Moeda do valor a ser cobrado na venda (opcional).
         description:
           type: string
           example: BRL
-          description: descrição da venda quando gerada (opcional)
+          description: Descrição da venda quando gerada (opcional).
         type:
           type: string
           enum:
@@ -1828,13 +1828,14 @@ components:
         on_behalf_of:
           type: string
           example: 1e5ee2e290d040769806c79e6ef94ee1
+          description: Identificador do seller responsável pela venda.
         reference_id:
           type: string
           example: "10902"
           description: ID referência da sua aplicação VARCHAR(500)
         card:
           type: object
-          description: objeto obrigatório no tipo card e card_and_wallet
+          description: Objeto obrigatório no tipo card.
           properties:
             id:
               type: string
@@ -1842,7 +1843,7 @@ components:
             amount:
               type: string
               example: "1.00"
-              description: valor a ser cobrado na venda (opcional)
+              description: valor a ser cobrado na venda (opcional).
             resource:
               type: string
               example: card
@@ -1906,30 +1907,30 @@ components:
           example: CORRENTISTA 03  3011
         customer:
           type: object
-          description: identificador do comprador que será cobrado
+          description: Identificador do comprador que será cobrado.
           properties:
             id:
               type: string
               example: 1e5ee2e290d040769806c79e6ef94ee1
-              description: identificador do comprador que será cobrado para source tipo
-                customer, wallet e card_and_wallet
+              description: Identificador do comprador que será cobrado para source tipo
+                customer.
             amount:
               type: integer
               example: 100
-              description: valor a ser cobrado neste customer (opcional)
+              description: Valor a ser cobrado neste customer (opcional).
         token:
           type: object
-          description: identificador do token de cartão que será cobrado obrigatorio no
-            source tipo token
+          description: Identificador do token de cartão que será cobrado obrigatorio no
+            source tipo token.
           properties:
             id:
               type: string
-              description: identificador do cartão para source tipo card
+              description: Identificador do cartão para source tipo card.
               example: 1e5ee2e290d040769806c79e6ef94ee1
             amount:
               type: integer
               example: 100
-              description: valor a ser cobrado neste token (opcional)
+              description: Valor a ser cobrado neste token (opcional).
         uri:
           type: string
           example: >
@@ -1960,15 +1961,15 @@ components:
         amount:
           type: integer
           example: 100
-          description: valor em centavos a ser cobrado na venda (opcional)
+          description: Valor em centavos a ser cobrado na venda (opcional).
         currency:
           type: string
           example: BRL
-          description: moeda do valor a ser cobrado na venda
+          description: Moeda do valor a ser cobrado na venda.
         description:
           type: string
           example: BRL
-          description: descrição da venda quando gerada (opcional)
+          description: Descrição da venda quando gerada (opcional).
         type:
           type: string
           enum:
@@ -1988,7 +1989,7 @@ components:
           description: ID referência da sua aplicação VARCHAR(500)
         card:
           type: object
-          description: objeto obrigatório no tipo card e card_and_wallet
+          description: Objeto obrigatório no tipo card.
           properties:
             id:
               type: string
@@ -2000,6 +2001,7 @@ components:
               description: valor a ser cobrado neste cartao (opcional)
             holder_name:
               type: string
+              description: Nome do portador do cartão.
             expiration_month:
               type: string
               description: mês de expiração do cartão (MM)
@@ -2029,11 +2031,11 @@ components:
               type: string
               example: 1e5ee2e290d040769806c79e6ef94ee1
               description: identificador do comprador que será cobrado para source tipo
-                customer, wallet e card_and_wallet
+                customer.
             amount:
               type: integer
               example: 100
-              description: valor a ser cobrado neste customer (opcional)
+              description: Valor a ser cobrado neste customer (opcional)
         metadata:
           type: object
     TransactionCNPRequest:
@@ -2048,19 +2050,22 @@ components:
         amount:
           type: integer
           example: 100
-          description: valor em centavos a ser cobrado pela transação
+          description: Valor em centavos a ser cobrado pela transação
         currency:
           type: string
           example: BRL
+          description: Moeda do valor a ser cobrado na venda "BRL".
         description:
           type: string
           example: Venda pelo site
+          description: Descrição
         payment_type:
           type: string
           enum:
             - credit
             - boleto
           example: credit
+          description: Tipo de pagamento
         capture:
           type: boolean
           example: false
@@ -2069,6 +2074,7 @@ components:
         on_behalf_of:
           type: string
           example: 1e5ee2e290d040769806c79e6ef94ee1
+          description: Identificador do seller responsável pela venda.
         reference_id:
           type: string
           example: "10902"
@@ -2104,3 +2110,4 @@ components:
           example: 1e5ee2e290d040769806c79e6ef94ee1
         metadata:
           type: object
+          description: Mapeamento de chaves de string para valores de sequência de caracteres. key (Chave) é o identificador para os metadados (máximo de 30 caracteres). value (valor) é a informação a ser armazenada como metadados.
