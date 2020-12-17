@@ -54,7 +54,12 @@ paths:
         '404':
           description: Marketplace/Seller não encontrado
   /v1/marketplaces/{marketplace_id}/bank_accounts/{bank_account_id}/transfers:
-    parameters:
+
+    post:
+      tags:
+        - 'Transferência'
+      summary: 'Criar transferência para conta bancária'
+      parameters:
       - name: marketplace_id
         in: path
         description: ID do marketplace
@@ -64,17 +69,12 @@ paths:
         in: path
         description: identificador da conta bancária
         required: true
-        type: string
-    post:
-      tags:
-        - 'Transferência'
-      summary: 'Criar transferência para conta bancária'
-      parameters:
-        - in: body
-          name: body
-          description: Document object
-          required: true
-          schema:
+        type: string  
+      - in: body
+        name: body
+        description: Document object
+        required: true
+        schema:
             $ref: '#/definitions/Transfer'
       description: ''
       produces:
