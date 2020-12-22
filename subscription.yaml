@@ -911,33 +911,7 @@ definitions:
         description: moeda utilizada seguindo o padrão ISO4217
         type: string
         example: BRL
-      paid_at:
-        description: data do pagamento
-        readOnly: true
-        type: string
-        format: date-time
-      voided_at:
-        description: data do cancelamento
-        readOnly: true
-        type: integer
-        format: date-time
-      retries:
-        description: quantidade de vezes que tentou efetuar o pagamento
-        type: integer
-        format: int32
-      max_retries:
-        description: quantidade máxima de vezes que se deve tentar efetuar o pagamento
-        type: integer
-        format: int32
-      status:
-        description: status da cobrança
-        readOnly: true
-        type: string
-        enum:
-          - pending
-          - paid
-          - canceled
-          - failed
+      
 
   InvoiceResponse:
     type: object
