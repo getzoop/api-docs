@@ -578,6 +578,8 @@ paths:
         description: identificador do seller
         required: true
         type: string
+      - $ref: '#/parameters/createdAtRangeGTEParam'
+      - $ref: '#/parameters/createdAtRangeLTEParam'  
     get:
       tags:
         - 'Saldo de Conta'
@@ -595,6 +597,8 @@ paths:
     parameters:
       - $ref: '#/parameters/marketplaceId'
       - $ref: '#/parameters/buyerId'
+      - $ref: '#/parameters/createdAtRangeGTEParam'
+      - $ref: '#/parameters/createdAtRangeLTEParam'
     get:
       tags:
         - 'Saldo de Conta'
@@ -1926,3 +1930,16 @@ parameters:
     description: Retorna valores onde a data for menor ou igual que o timestamp informado
     required: false
     type: number
+  createdAtRangeGTEParam: 
+    name: created_at_range[gte]
+    in: query
+    description: Retorna valores onde a data for maior ou igual que o timestamp informado
+    required: false
+    type: number
+  createdAtRangeLTEParam: 
+    name: created_at_range[lte]
+    in: query
+    description: Retorna valores onde a data for menor ou igual que o timestamp informado
+    required: false
+    type: number
+
