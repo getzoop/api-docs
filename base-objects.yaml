@@ -597,8 +597,8 @@ paths:
     parameters:
       - $ref: '#/parameters/marketplaceId'
       - $ref: '#/parameters/buyerId'
-      - $ref: '#/parameters/createdAtRangeGTEParam'
-      - $ref: '#/parameters/createdAtRangeLTEParam'
+      - $ref: '#/parameters/createdDateRangeGTEParam'
+      - $ref: '#/parameters/createdDateRangeLTEParam'
     get:
       tags:
         - 'Saldo de Conta'
@@ -1930,7 +1930,7 @@ parameters:
     description: Retorna valores onde a data for menor ou igual que o timestamp informado
     required: false
     type: number
-  createDateRangeGTEParam: 
+  createdDateRangeGTEParam: 
     name: created_date_range[gte]
     in: query
     description: Retorna valores onde a data for maior ou igual que o timestamp informado
