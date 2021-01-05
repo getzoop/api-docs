@@ -578,8 +578,8 @@ paths:
         description: identificador do seller
         required: true
         type: string
-      - $ref: '#/parameters/createdAtRangeGTEParam'
-      - $ref: '#/parameters/createdAtRangeLTEParam'  
+      - $ref: '#/parameters/createdDateRangeGTEParam'
+      - $ref: '#/parameters/createdDateRangeLTEParam'
     get:
       tags:
         - 'Saldo de Conta'
@@ -1930,14 +1930,14 @@ parameters:
     description: Retorna valores onde a data for menor ou igual que o timestamp informado
     required: false
     type: number
-  createdAtRangeGTEParam: 
-    name: created_at_range[gte]
+  createDateRangeGTEParam: 
+    name: created_date_range[gte]
     in: query
     description: Retorna valores onde a data for maior ou igual que o timestamp informado
     required: false
     type: number
-  createdAtRangeLTEParam: 
-    name: created_at_range[lte]
+  createdDateRangeLTEParam: 
+    name: created_date_range[lte]
     in: query
     description: Retorna valores onde a data for menor ou igual que o timestamp informado
     required: false
