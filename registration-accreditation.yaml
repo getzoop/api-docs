@@ -1648,84 +1648,84 @@ definitions:
         format: dateTime
         example: "2015-04-17T06:39:52+00:00"
   CardResponse:
-      type: object
-      required:
-        - token
-        - customer
-      properties:
-        id:
-          type: string
-          description: Identificador único do cartão
-          example: 1e5ee2e290d040769806c79e6ef94ee1
-        resource:
-          type: string
-          description: Tipo de recurso
-          example: card
-        description:
-          type: string
-          description: Descrição do cartão
-          example: Cartão trabalho
-        card_brand:
-          type: string
-          description: Bandeira do cartão
-          example: Visa
-        first4_digits:
-          type: string
-          description: Primeiros 4 dígitos do cartão
-          example: "4929"
-        fingerprint:
-          type: string
-          description: Identificador de segurança da transação
-          example: 1e5ee2e290d040769806c79e6ef94ee1
-        customer:
-          type: string
-          description: Identificador do customer
-          example: 1e5ee2e290d040769806c79e6ef94ee1
-        expiration_month:
-          type: string
-          description: Mês da expiração cartão
-          example: "9"
-        expiration_year:
-          type: string
-          description: Ano da expiração cartão
-          example: "2020"
-        holder_name:
-          type: string
-          example: Joao da Silva
-        is_active:
-          type: boolean
-          example: true
-        is_valid:
-          type: boolean
-          example: true
-        is_verified:
-          type: boolean
-          example: true
-        address:
-          type: string
-        verification_checklist:
-          type: object
-          properties:
-            postal_code_check:
-              type: string
-              example: unchecked
-            security_code_check:
-              type: string
-              example: unchecked
-            address_line1_check:
-              type: string
-              example: unchecked
-        metadata:
-          type: object
-        uri:
-          type: string
-          example: /v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/02ec41795637446d805b6795b3b3331e
-        created_at:
-          type: string
-          example: 2019-05-06T12:39:27+00:00
-        updated_at:
-          type: string
-          example: 2019-05-06T12:39:34+00:00
+    type: object
+    required:
+      - token
+      - customer
+    properties:
+      id:
+        type: string
+        description: Identificador único do cartão
+        example: 1e5ee2e290d040769806c79e6ef94ee1
+      resource:
+        type: string
+        description: Tipo de recurso
+        example: card
+      description:
+        type: string
+        description: Descrição do cartão
+        example: Cartão trabalho
+      card_brand:
+        type: string
+        description: Bandeira do cartão
+        example: Visa
+      first4_digits:
+        type: string
+        description: Primeiros 4 dígitos do cartão
+        example: "4929"
+      fingerprint:
+        type: string
+        description: Identificador de segurança da transação
+        example: 1e5ee2e290d040769806c79e6ef94ee1
+      customer:
+        type: string
+        description: Identificador do customer
+        example: 1e5ee2e290d040769806c79e6ef94ee1
+      expiration_month:
+        type: string
+        description: Mês da expiração cartão
+        example: "9"
+      expiration_year:
+        type: string
+        description: Ano da expiração cartão
+        example: "2020"
+      holder_name:
+        type: string
+        example: Joao da Silva
+      is_active:
+        type: boolean
+        example: true
+      is_valid:
+        type: boolean
+        example: true
+      is_verified:
+        type: boolean
+        example: true
+      address:
+        type: string
+      verification_checklist:
+        type: object
+        properties:
+          postal_code_check:
+            type: string
+            example: unchecked
+          security_code_check:
+            type: string
+            example: unchecked
+          address_line1_check:
+            type: string
+            example: unchecked
+      metadata:
+        type: object
+      uri:
+        type: string
+        example: /v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/02ec41795637446d805b6795b3b3331e
+      created_at:
+        type: string
+        example: 2019-05-06T12:39:27+00:00
+      updated_at:
+        type: string
+        example: 2019-05-06T12:39:34+00:00
 parameters:
   marketplaceId:
     name: marketplace_id
