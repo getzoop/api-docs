@@ -1650,7 +1650,6 @@ definitions:
   CardResponse:
     type: object
     required:
-      - token
       - customer
     properties:
       id:
