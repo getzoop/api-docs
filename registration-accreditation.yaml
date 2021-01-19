@@ -1108,18 +1108,18 @@ definitions:
         type: string
         description: Código de segurança do cartão (CVC)
   CardRequest:
-      type: object
-      required:
-        - token
-        - customer
-      properties:
-        token:
-          type: string
-          description: Identificador do token de cartão a ser associado ao customer
-          example: 1e5ee2e290d040769806c79e6ef94ee1
-        customer:
-          type: string
-          description: Identificador do customer
+    type: object
+    required:
+      - token
+      - customer
+    properties:
+      token:
+        type: string
+        description: Identificador do token de cartão a ser associado ao customer
+        example: 1e5ee2e290d040769806c79e6ef94ee1
+      customer:
+        type: string
+        description: Identificador do customer
   BuyerRequest:
     type: object
     properties:
