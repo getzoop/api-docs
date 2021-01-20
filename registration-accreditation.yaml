@@ -2,7 +2,7 @@ swagger: '2.0'
 host: api.zoop.ws
 info:
   title: Cadastro e credenciamento
-  version: "1.1"
+  version: "1.2"
 
 securityDefinitions:
   basicAuth:
