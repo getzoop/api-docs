@@ -1137,7 +1137,7 @@ paths:
           description: item already exists
     get:
       tags:
-        - Faturas
+        - Fatura de Recorrência
       summary: Recuperar todas as faturas de um marketplace
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
