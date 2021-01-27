@@ -394,4 +394,3 @@ parameters:
     description: ID do estabelecimento
     required: true
     type: string
-
