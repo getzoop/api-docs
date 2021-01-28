@@ -15,10 +15,10 @@ schemes:
 
 
 tags:
-  - name: 'Antecipação sob demanda'
-    description: Solicitação antecipação sob demanda
   - name: 'Transferências'
     description: Depósitos para conta bancária e conta de cartão
+  - name: 'Antecipação sob demanda'
+    description: Solicitação antecipação sob demanda
   - name: 'Cobranças & Ajustes'
     description: Ajuste de cobrança realizados entre contas
   - name: 'Política de Recebimento'
