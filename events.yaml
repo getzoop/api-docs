@@ -5,7 +5,7 @@ info:
   title: Notificações e Eventos
   version: "1.2"
 
-securityDefinitions:
+securityDefinitions: 
   basicAuth:
     type: basic
 security:
