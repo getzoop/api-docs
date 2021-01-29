@@ -19,161 +19,15 @@ tags:
     description: Dados bancários dos estabelecimentos comerciais
   - name: 'Tokenização de cartão'
     description: Token de cartões e cartões de crédito utilizados nos pagamentos
+  - name: 'Plano de Vendas'
+    description: Plano de taxas de venda
+  - name: 'Cria acesso Minha Conta'
+    description: Possibilita criar acesso ao minhaconta (dashboard do EC)
 
 schemes:
   - https
 
 paths:
-  '/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/documents':
-    parameters:
-      - $ref: '#/parameters/marketplaceId'
-      - $ref: '#/parameters/sellerId'
-    post:
-      tags:
-        - 'Vendedores'
-      summary: Criar documento de cadastro de vendedor
-      description: ''
-      operationId: addDocument
-      consumes:
-         - multipart/form-data
-      produces:
-        - application/json
-      parameters:
-        - $ref: '#/parameters/marketplaceId'
-        - $ref: '#/parameters/sellerId'
-        - name: file
-          type: file
-          in: formData
-          required: true
-          format: binary
-          description: Documento que será cadastrado
-        - name: category
-          in: formData
-          type: string
-          required: true
-          description: Categoria do documento cadastrado que podem assumir os seguintes domínios
-                       identificacao, atividade, residencia e cnpj
-        - name: metadata
-          in: formData
-          type: string
-          description: Metadados associados ao documento
-        - name: description
-          in: formData
-          type: string
-          description: Descrição do documento
-      responses:
-        '201':
-          description: Documento criado com sucesso
-          schema:
-            $ref: '#/definitions/Document'
-        '404':
-          description: 'Marketplace/Vendedor/Documento não encontrado'
-    get:
-      tags:
-        - 'Vendedores'
-      summary: Listar documentos de um vendedor
-      description: ''
-      operationId: findSellerDocument
-      produces:
-        - application/json
-      parameters:
-        - $ref: '#/parameters/marketplaceId'
-        - $ref: '#/parameters/sellerId'
-        - $ref: '#/parameters/limitParam'
-        - $ref: '#/parameters/sortParam'
-        - $ref: '#/parameters/offsetParam'
-        - $ref: '#/parameters/dateRangeParam'
-        - $ref: '#/parameters/dateRangeGTParam'
-        - $ref: '#/parameters/dateRangeGTEParam'
-        - $ref: '#/parameters/dateRangeLTParam'
-        - $ref: '#/parameters/dateRangeLTEParam'
-      responses:
-        '200':
-          description: Documentos recuperados com sucesso
-          schema:
-            $ref: '#/definitions/Documents'
-        '404':
-          description: 'Marketplace/Vendedor não encontrado'
-  '/v1/marketplaces/{marketplace_id}/sellers/documents/{id}':
-    put:
-      tags:
-        - 'Vendedores'
-      summary: Atualiza os dados de um documento de um vendedor
-      description: ''
-      operationId: updateDocument
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - $ref: '#/parameters/marketplaceId'
-        - name: id
-          in: path
-          description: ID do documento
-          required: true
-          type: string
-        - in: body
-          name: body
-          description: Document object
-          required: true
-          schema:
-            $ref: '#/definitions/Document'
-      responses:
-        '200':
-          description: Documento alterado com sucesso
-          schema:
-            $ref: '#/definitions/Document'
-        '404':
-          description: 'Marketplace/Documento não encontrado'
-  '/v1/marketplaces/{marketplace_id}/documents/{document_id}/file':
-    parameters:
-      - $ref: '#/parameters/marketplaceId'
-      - $ref: '#/parameters/documentId'
-    get:
-      tags:
-        - 'Vendedores'
-      summary: Download documentos de um vendedor pelo ID
-      description: ''
-      operationId: getSellerDocument
-      responses:
-        '200':
-          description: Download de Imagem
-          schema:
-            $ref: '#/definitions/DocumentImage'
-        '404':
-          description: 'Marketplace/Vendedor não encontrado'
-  '/v1/merchant_category_codes':
-    get:
-      tags:
-        - 'Vendedores'
-      summary: Listar MCCs (Merchant Category Codes)
-      description: ''
-      operationId: ''
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: Operação realizada com sucesso
-          schema:
-            example: {
-                resource: "list",
-                uri: "/v1/merchant_category_codes",
-                items: [
-                            {
-                                id: "1",
-                                code: "5300",
-                                category: "Alimentação",
-                                description: "Atacado",
-                                resource: "merchant_category_code"
-                            }
-                        ],
-                        has_more: true,
-                        limit: 100,
-                        total_pages: 2,
-                        page: 1,
-                        offset: 0,
-                        total: "103"
-              }
   '/v1/marketplaces/{marketplace_id}/sellers/individuals':
     post:
       tags:
@@ -280,6 +134,93 @@ paths:
           description: 'Marketplace/Vendedor não encontrado'
         '400':
           description: 'Missing required param'
+  '/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/documents':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/sellerId'
+    post:
+      tags:
+        - 'Vendedores'
+      summary: Criar documento de cadastro de vendedor
+      description: ''
+      operationId: addDocument
+      consumes:
+         - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - $ref: '#/parameters/sellerId'
+        - name: file
+          type: file
+          in: formData
+          required: true
+          format: binary
+          description: Documento que será cadastrado
+        - name: category
+          in: formData
+          type: string
+          required: true
+          description: Categoria do documento cadastrado que podem assumir os seguintes domínios
+                       identificacao, atividade, residencia e cnpj
+        - name: metadata
+          in: formData
+          type: string
+          description: Metadados associados ao documento
+        - name: description
+          in: formData
+          type: string
+          description: Descrição do documento
+      responses:
+        '201':
+          description: Documento criado com sucesso
+          schema:
+            $ref: '#/definitions/Document'
+        '404':
+          description: 'Marketplace/Vendedor/Documento não encontrado'
+    get:
+      tags:
+        - 'Vendedores'
+      summary: Listar documentos de um vendedor
+      description: ''
+      operationId: findSellerDocument
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - $ref: '#/parameters/sellerId'
+        - $ref: '#/parameters/limitParam'
+        - $ref: '#/parameters/sortParam'
+        - $ref: '#/parameters/offsetParam'
+        - $ref: '#/parameters/dateRangeParam'
+        - $ref: '#/parameters/dateRangeGTParam'
+        - $ref: '#/parameters/dateRangeGTEParam'
+        - $ref: '#/parameters/dateRangeLTParam'
+        - $ref: '#/parameters/dateRangeLTEParam'
+      responses:
+        '200':
+          description: Documentos recuperados com sucesso
+          schema:
+            $ref: '#/definitions/Documents'
+        '404':
+          description: 'Marketplace/Vendedor não encontrado'
+  '/v1/marketplaces/{marketplace_id}/documents/{document_id}/file':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/documentId'
+    get:
+      tags:
+        - 'Vendedores'
+      summary: Download documentos de um vendedor pelo ID
+      description: ''
+      operationId: getSellerDocument
+      responses:
+        '200':
+          description: Download de Imagem
+          schema:
+            $ref: '#/definitions/DocumentImage'
+        '404':
+          description: 'Marketplace/Vendedor não encontrado'
   '/v1/marketplaces/{marketplace_id}/sellers/{seller_id}':
     parameters:
       - $ref: '#/parameters/marketplaceId'
@@ -368,6 +309,38 @@ paths:
           description: 'Vendedor não encontrado'
         '400':
           description: 'Missing required parameter'
+  '/v1/merchant_category_codes':
+    get:
+      tags:
+        - 'Vendedores'
+      summary: Listar MCCs (Merchant Category Codes)
+      description: ''
+      operationId: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Operação realizada com sucesso
+          schema:
+            example: {
+                resource: "list",
+                uri: "/v1/merchant_category_codes",
+                items: [
+                            {
+                                id: "1",
+                                code: "5300",
+                                category: "Alimentação",
+                                description: "Atacado",
+                                resource: "merchant_category_code"
+                            }
+                        ],
+                        has_more: true,
+                        limit: 100,
+                        total_pages: 2,
+                        page: 1,
+                        offset: 0,
+                        total: "103"
+              }
   '/v1/marketplaces/{marketplace_id}/buyers':
     parameters:
       - $ref: '#/parameters/marketplaceId'
@@ -516,7 +489,8 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/BankAccountRequest'
-  /v1/marketplaces/{marketplace_id}/bank_accounts:
+
+  '/v1/marketplaces/{marketplace_id}/bank_accounts':
     parameters:
       - name: marketplace_id
         in: path
@@ -733,6 +707,234 @@ paths:
           description: Cartão removido com sucesso
         "404":
           description: Marketplace/Cartão não encontrado
+
+  '/v1/marketplaces/{marketplace_id}/plans':
+    parameters:
+      - $ref: "#/parameters/marketplaceId"
+    post:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Criar plano de vendas'
+      deprecated: true
+      description: 'Planos com taxa e políticas para credito de recebíveis'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Plano de venda criado com sucesso
+        '404':
+          description: Marketplace não encontrado
+    get:
+      tags:
+        - 'Plano de Vendas'
+      description: ''
+      deprecated: false
+      summary: 'Listar plano de vendas por marketplace'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Plano de venda listado com sucesso
+        '404':
+          description: Marketplace não encontrado
+  '/v1/marketplaces/{marketplace_id}/plans/{plan_id}':
+    parameters:
+      - $ref: "#/parameters/marketplaceId"
+
+      - name: plan_id
+        in: path
+        description: identificador do plano
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Recuperar detalhes de plano de venda'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Plano de venda criado com sucesso
+        '404':
+          description: Marketplace/Plano não encontrado
+    delete:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Remover plano de venda'
+      description: ''
+      deprecated: true
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Plano de venda removido com sucesso
+        '404':
+          description: Marketplace/Plano não encontrado
+  '/v1/marketplaces/{marketplace_id}/subscriptions':
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Associar assinatura de plano de venda'
+      description: ''
+      parameters:
+        - in: body
+          name: body
+          description: Subscription object
+          required: true
+          schema:
+            $ref: '#/definitions/Subscription'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      
+      responses:
+        '200':
+          description: Assinatura de plano de venda removido com sucesso
+        '404':
+          description: Marketplace não encontrado
+    get:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Listar assinaturas de plano de venda'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Assinatura de plano de venda listado com sucesso
+        '404':
+          description: Marketplace não encontrado
+  '/v1/marketplaces/{marketplace_id}/subscriptions/{subscription_id}':
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: subscription_id
+        in: path
+        description: identificador da assinatura de plano de venda
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Recuperar detalhes de assinatura de plano de venda'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Assinatura de plano de venda recuperado com sucesso
+        '404':
+          description: Marketplace não encontrado
+    delete:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Desassociar assinatura de plano de venda'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Assinatura de plano de venda desassociado com sucesso
+        '404':
+          description: Marketplace não encontrado
+  '/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/subscriptions':
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador da seller
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Recuperar assinatura de plano de venda por seller'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Assinatura de plano de venda recuperado com sucesso
+        '404':
+          description: Marketplace não encontrado
+  /v1/marketplaces/{marketplace_id}/buyers/{buyer_id}/subscriptions:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: buyer_id
+        in: path
+        description: identificador do buyer
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Plano de Vendas'
+      summary: 'Recuperar assinatura de plano de venda por comprador'
+      description: ''
+      deprecated: true
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Assinatura de plano de venda recuperado com sucesso
+        '404':
+          description: Marketplace não encontrado
+
+  '/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/users':
+    post:
+      tags:
+        - 'Cria acesso Minha Conta'
+      summary: Conceder acesso ao minhaconta 
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - $ref: '#/parameters/sellerId'
+        - in: query
+          name: invite
+          type: string
+          description: Enviar invite
+          enum:
+          - invite&application=panel
+        - in: body
+          name: body
+          description: Dashboard object
+          required: true
+          schema:
+            $ref: '#/definitions/dashInviteRequest'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Vendedor cadastrado com sucesso
+          schema:
+            $ref: '#/definitions/dashInviteResponse'
+        '404':
+          description: 'Marketplace não encontrado'
+        '400':
+          description: 'Missing required param'
+        '409':
+          description: 'username_exists'
 
 
 definitions:
@@ -1108,18 +1310,18 @@ definitions:
         type: string
         description: Código de segurança do cartão (CVC)
   CardRequest:
-      type: object
-      required:
-        - token
-        - customer
-      properties:
-        token:
-          type: string
-          description: Identificador do token de cartão a ser associado ao customer
-          example: 1e5ee2e290d040769806c79e6ef94ee1
-        customer:
-          type: string
-          description: Identificador do customer
+    type: object
+    required:
+      - token
+      - customer
+    properties:
+      token:
+        type: string
+        description: Identificador do token de cartão a ser associado ao customer
+        example: 1e5ee2e290d040769806c79e6ef94ee1
+      customer:
+        type: string
+        description: Identificador do customer
   BuyerRequest:
     type: object
     properties:
@@ -1650,7 +1852,6 @@ definitions:
   CardResponse:
     type: object
     required:
-      - token
       - customer
     properties:
       id:
@@ -1726,6 +1927,84 @@ definitions:
       updated_at:
         type: string
         example: 2019-05-06T12:39:34+00:00
+        
+  Subscription:
+    type: object
+    properties:
+      customer:
+        type: string
+        example: 064bf90479e34865afb90cc4a0efe2cc
+        description: 'Id do seller'    
+      plan:
+        type: string
+        example: PLAN
+        description: 'Id do plano'
+        enum: [
+          "qualquer coisa",
+          "outra coisa"
+        ]
+      quantity:
+        type: integer
+        example: 1
+        description: 'Valor padrão: "1"'
+        
+  dashInviteRequest:
+    type: object
+    properties:
+      username:
+        type: string
+        description: 'Email que servirá de login'
+        example: joao@teste.com.br
+      password:
+        type: string
+        description: 'Deve ser informada somente quando não for enviado o convite (invite)'
+        example: Troca@2020
+      permissions:
+        type: object
+        properties:
+          type:
+            type: string
+            description: 'Tipo de acesso'
+            example: "model"
+          model_name:
+            description: 'Define o acesso ao minhaconta'
+            type: string
+            example: "customers"
+          customer_id:
+            type: string
+            description: 'Email que servirá de login'
+            example: "2db290ccdfc24c1b86beb72eb29ee055"
+    required:
+      - type
+      - model_name
+      - customer_id
+      - username
+  dashInviteResponse:
+    type: object
+    description: Retorno da requisição
+    properties:
+      created_at:
+        type: string
+        example: '2019-05-06T12:39:27Z'
+      fist_name:
+        type: string
+        example: ""
+      id:
+        type: string
+        example: 17d9e827664b47509f12a082b6047e7a
+      last_name:
+        type: string
+        example: ""
+      resource:
+        type: string
+        example: users
+      uri:
+        type: string
+        example: "/v1/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/users/17d9e827664b47509f12a082b6047e7a"
+      username:
+        type: string
+        example: joao@teste.com.br
+
 parameters:
   marketplaceId:
     name: marketplace_id
@@ -1807,3 +2086,4 @@ parameters:
     description: Retorna valores onde a data for menor ou igual que o timestamp informado
     required: false
     type: number
+
