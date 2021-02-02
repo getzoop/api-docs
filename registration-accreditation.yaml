@@ -1944,19 +1944,24 @@ definitions:
         
   dashInviteRequest:
     type: object
+    required:
+      - password
+      - username
     properties:
       username:
         type: string
         description: 'Email que servirá de login'
         example: joao@teste.com.br
-        required:
-          - "true"
       password:
         type: string
         description: 'Deve ser informada somente quando não for enviado o convite (invite)'
         example: Troca@2020
       permissions:
         type: object
+        required:
+          - type
+          - model_name
+          - customer_id
         properties:
           type:
             type: string
@@ -1972,10 +1977,6 @@ definitions:
             type: string
             description: 'Email que servirá de login'
             example: "2db290ccdfc24c1b86beb72eb29ee055"
-    required:
-      - model_name
-      - customer_id
-      - username
   dashInviteResponse:
     type: object
     description: Retorno da requisição
