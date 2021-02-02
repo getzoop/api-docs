@@ -908,12 +908,6 @@ paths:
       parameters:
         - $ref: '#/parameters/marketplaceId'
         - $ref: '#/parameters/sellerId'
-        - in: query
-          name: invite
-          type: string
-          description: Enviar por invite
-          enum:
-          - "invite&application=panel"
         - in: body
           name: body
           description: Dashboard object
