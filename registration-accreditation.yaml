@@ -1949,6 +1949,8 @@ definitions:
         type: string
         description: 'Email que servirá de login'
         example: joao@teste.com.br
+        required:
+          - "true"
       password:
         type: string
         description: 'Deve ser informada somente quando não for enviado o convite (invite)'
@@ -1960,6 +1962,8 @@ definitions:
             type: string
             description: 'Tipo de acesso'
             example: "model"
+            required: 
+             - "true"
           model_name:
             description: 'Define o acesso ao minhaconta'
             type: string
@@ -1969,7 +1973,6 @@ definitions:
             description: 'Email que servirá de login'
             example: "2db290ccdfc24c1b86beb72eb29ee055"
     required:
-      - type
       - model_name
       - customer_id
       - username
