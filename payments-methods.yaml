@@ -5,6 +5,8 @@ info:
 security:
   - basicAuth: []
 tags:
+  - name: Tokenização de cartão
+    description: Token de cartões e cartões de crédito utilizados nos pagamentos
   - name: Transação V2
     description: Nova versão da API de operações de pagamento com dados de cartão de crédito
   - name: Transação de cartão
@@ -33,6 +35,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
     get:
+      deprecated: true
       summary: Listar transaçoes do marketplace
       tags:
         - Transação V2
@@ -211,7 +214,88 @@ paths:
           description: Requisição/Parametros inválidos
         "404":
           description: Marketplace/Transação não encontrado
-# V1          
+# V1
+
+  '/v1/marketplaces/{marketplace_id}/cards/tokens':
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+    post:
+      tags:
+        - 'Tokenização de cartão'
+      summary: 'Criar novo token de cartão'
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenCardRequest'
+      responses:
+        '200':
+          description: Token de cartão criado com sucesso
+        '400':
+          description: Requisição/Parâmetros invalidos
+        '404':
+          description: Marketplace/ não encontrado
+  '/v1/marketplaces/{marketplace_id}/tokens/{token_id}':
+    parameters:
+      - $ref: '#/components/parameters/marketplaceID'
+      - $ref: '#/components/parameters/tokenID'
+    get:
+      tags:
+        - 'Tokenização de cartão'
+      summary: 'Recuperar detalhes de token de cartão/conta bancária'
+      description: ''
+      responses:
+        '200':
+          description: Token recuperado com sucesso
+        '404':
+          description: Marketplace/Token não encontrado
+  '/v1/marketplaces/{marketplace_id}/cards':  
+    parameters:
+      - $ref: '#/components/parameters/marketplaceID'
+    post:
+      tags:
+        - 'Tokenização de cartão'
+      summary: Associar cartão com comprador
+      description: 'Associar token de cartão com comprador'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CardRequest"
+      responses:
+        "200":
+          description: Cartão associado com sucesso
+        "400":
+          description: Requisição/Parâmetros invalidos
+        "404":
+          description: Marketplace/ não encontrado
+  '/v1/marketplaces/{marketplace_id}/cards/{card_id}':
+    parameters:
+      - $ref: '#/components/parameters/marketplaceID'
+      - $ref: '#/components/parameters/cardID'
+    get:
+      tags:
+        - 'Tokenização de cartão'
+      summary: Recuperar detalhes de cartão pelo identificador
+      description: ""
+      responses:
+        "200":
+          description: Cartão recuperado com sucesso
+          $ref: "#/components/schemas/CardResponse"
+        "404":
+          description: Marketplace/Cartão não encontrado
+    delete:
+      tags:
+        - 'Tokenização de cartão'
+      summary: Remover cartão pelo identificador
+      description: ""
+      responses:
+        "200":
+          description: Cartão removido com sucesso
+        "404":
+          description: Marketplace/Cartão não encontrado
+
   "/v1/marketplaces/{marketplace_id}/transactions":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
@@ -1323,6 +1407,20 @@ components:
       required: true
       schema:
         type: string
+    tokenID:
+      name: token_id
+      in: path
+      description: identificador do token
+      required: true
+      schema:
+        type: string
+    cardID:
+      name: card_id
+      in: path
+      description: identificador do cartão
+      required: true
+      schema:
+        type: string
 
     limitParam:
       name: limit
@@ -1390,10 +1488,13 @@ components:
       required: false
       schema:
         type: number
+
+
   securitySchemes:
     basicAuth:
       type: http
       scheme: basic
+      
   schemas:
     Card:
       type: object
@@ -2846,4 +2947,22 @@ components:
           description: tempo de duração do plano em relação à frequencia escolhida
           type: integer
           format: int32
-  
+    TokenCardRequest:
+      type: object
+      properties:
+        holder_name:
+          type: string
+          description: Nome do portador
+        expiration_month:
+          type: string
+          description: mês de expiração do cartão (MM)
+        expiration_year:
+          type: string
+          description: ano de expiração do cartão (AAAA)
+        card_number:
+          type: string
+          description: Número do cartão
+        security_code:
+          type: string
+          description: Código de segurança do cartão (CVC)
+          

@@ -17,8 +17,6 @@ tags:
     description: 'Pessoas ou empresas que compram dentro do seu marketplace'
   - name: 'Dados Bancários'
     description: Dados bancários dos estabelecimentos comerciais
-  - name: 'Tokenização de cartão'
-    description: Token de cartões e cartões de crédito utilizados nos pagamentos
   - name: 'Plano de Vendas'
     description: Plano de taxas de venda
   - name: 'Cria acesso Minha Conta'
@@ -532,7 +530,7 @@ paths:
           description: Requisição/Parâmetros invalidos
         '404':
           description: Marketplace não encontrado
-  /v1/marketplaces/{marketplace_id}/sellers/{seller_id}/bank_accounts:
+  '/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/bank_accounts':
     parameters:
       - name: marketplace_id
         in: path
@@ -556,7 +554,7 @@ paths:
           description: Conta bancária recuperada com sucesso
         '404':
           description: Marketplace não encontrado
-  /v1/marketplaces/{marketplace_id}/bank_accounts/{bank_account_id}:
+  '/v1/marketplaces/{marketplace_id}/bank_accounts/{bank_account_id}':
     parameters:
       - name: marketplace_id
         in: path
@@ -596,117 +594,6 @@ paths:
           description: Requisição/Parâmetros inválidos
         '404':
           description: Marketplace/Conta Bancária não encontrada
-
-  '/v1/marketplaces/{marketplace_id}/cards/tokens':
-    parameters:
-      - name: marketplace_id
-        in: path
-        description: ID do marketplace
-        required: true
-        type: string
-    post:
-      tags:
-        - 'Tokenização de cartão'
-      summary: 'Criar novo token de cartão'
-      description: ''
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: token data
-          required: true
-          schema:
-            $ref: '#/definitions/TokenCardRequest'
-      responses:
-        '200':
-          description: Token de cartão criado com sucesso
-        '400':
-          description: Requisição/Parâmetros invalidos
-        '404':
-          description: Marketplace/ não encontrado
-  '/v1/marketplaces/{marketplace_id}/tokens/{token_id}':
-    parameters:
-      - $ref: '#/parameters/marketplaceId'
-      - name: token_id
-        in: path
-        description: identificador do token
-        required: true
-        type: string
-    get:
-      tags:
-        - 'Tokenização de cartão'
-      summary: 'Recuperar detalhes de token de cartão/conta bancária'
-      description: ''
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: Token recuperado com sucesso
-        '404':
-          description: Marketplace/Token não encontrado
-  '/v1/marketplaces/{marketplace_id}/cards':  
-    parameters:
-      - name: marketplace_id
-        in: path
-        description: ID do marketplace
-        required: true
-        type: string
-    post:
-      tags:
-        - 'Tokenização de cartão'
-      summary: Associar cartão com comprador
-      description: 'Associar token de cartão com comprador'
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: ass
-          schema:
-            $ref: "#/definitions/CardRequest"
-          required: true
-      responses:
-        "200":
-          description: Cartão associado com sucesso
-        "400":
-          description: Requisição/Parâmetros invalidos
-        "404":
-          description: Marketplace/ não encontrado
-  '/v1/marketplaces/{marketplace_id}/cards/{card_id}':
-    parameters:
-      - $ref: "#/parameters/marketplaceId"
-      - name: card_id
-        in: path
-        description: identificador do cartão
-        required: true
-        type: string
-    get:
-      tags:
-        - 'Tokenização de cartão'
-      summary: Recuperar detalhes de cartão pelo identificador
-      description: ""
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: Cartão recuperado com sucesso
-          schema:
-            $ref: "#/definitions/CardResponse"
-        "404":
-          description: Marketplace/Cartão não encontrado
-    delete:
-      tags:
-        - 'Tokenização de cartão'
-      summary: Remover cartão pelo identificador
-      description: ""
-      responses:
-        "200":
-          description: Cartão removido com sucesso
-        "404":
-          description: Marketplace/Cartão não encontrado
 
   '/v1/marketplaces/{marketplace_id}/plans':
     parameters:
@@ -1049,54 +936,65 @@ definitions:
         type: object
   Business:
     properties:
-      fiscal_responsibility:
-        type: string
-        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
       owner:
         type: object
         properties:
           first_name:
             type: string
             example: José
+            description: Primeiro nome do proprietário.
           last_name:
             type: string
             example: Da Silva
+            description: Último nome do proprietário.
           email:
             type: string
             example: teeste@teste.com
+            description: Email do proprietário.
           phone_number:
             type: string
             example: " 12029579543"
+            description: Número do telefone do proprietário.
           taxpayer_id:
             type: string
             example: "76537741807"
+            description: CPF do proprietário.
           birthdate:
             type: string
             example: "1982-12-15"
+            description: Data de nascimento do proprietário.
       description:
         type: string
         example: Descrição da empresa
+        description: Descrição da empresa.
       business_name:
         type: string
         example: "Zoop Inc"
+        description: Nome da empresa.
       business_phone:
         type: string
         example: "12026256754"
+        description: Telefone da empresa.
       business_email:
         type: string
         example: "hello@pagzoop.com"
+        description: Email da empresa.
       business_website:
         type: string
         example: "http://getzoop.com"
+        description: Site da empresa.
       business_description:
         type: string
         example: "The open mobile payment platform"
+        description: Descrição da empresa.
       business_facebook:
         type: string
         example: "http://fb.com/getzoop"
+        description: Facebook da empresa.
       business_twitter:
         type: string
         example: "http://twitter.com/getzoop"
+        description: Twitter da empresa.
       ein:
         type: string
         example: "24742492000159"
@@ -1111,22 +1009,27 @@ definitions:
           line1:
             type: string
             example: "167 West 74th Street"
+            description: Rua.
           line2:
             type: string
             example: "543"
+            description: Número.
           line3:
             type: string
             example: "APT 601"
+            description: Complemento.
           neighborhood:
             type: string
             example: "Barra da Tijuca"
+            description: Bairro/Distrito/Comunidade dentro de uma cidade.
           city:
             type: string
             example: "Rio de Janeiro"
+            description: Cidade.
           state:
             type: string
             example: "RJ"
-            description: Código ISO 3166-2 para o estado, com duas letras
+            description: 'Código ISO 3166-2 para o estado, com duas letras. Ex.: "MG","RJ","PR"'
           postal_code:
             type: string
             example: "10023000"
@@ -1134,29 +1037,35 @@ definitions:
           country_code:
             type: string
             example: "BR"
-            description: ISO 3166-1 alpha-2 - códigos de país de duas letras.
+            description: 'ISO 3166-1 alpha-2 - códigos de país de duas letras. Valor padrão: "BR"'
       business_opening_date:
         type: string
         format: date
         example: "2015-04-17"
+        description: 'Data de abertura da empresa'
       owner_address:
         type: object
         properties:
           line1:
             type: string
             example: "167 West 74th Street"
+            description: Rua.
           line2:
             type: string
             example: "543"
+            description: Número.
           line3:
             type: string
             example: "APT 601"
+            description: Complemento.
           neighborhood:
             type: string
             example: "Barra da Tijuca"
+            description: 'Código ISO 3166-2 para o estado, com duas letras. Ex.: "MG","RJ","PR"'
           city:
             type: string
             example: "Rio de Janeiro"
+            description: Cidade.
           state:
             type: string
             example: "RJ"
@@ -1168,13 +1077,16 @@ definitions:
           country_code:
             type: string
             example: "BR"
-            description: ISO 3166-1 alpha-2 - códigos de país de duas letras.
+            description: 'ISO 3166-1 alpha-2 - códigos de país de duas letras. Valor padrão: "BR"'
       mcc:
         type: string
         example: "1"
-        description: Envie o código de atividade do negócio (MCC ID). A lista completa se encontra em /v1/merchant_category_codes
+        description: Envie o código de atividade do negócio (MCC ID). A lista completa se encontra em /v1/merchant_category_codes. Caso não se enquadre em nenhum MCC, informe o ID para o CODE 5965
       metadata:
         type: object
+      fiscal_responsibility:
+        type: string
+        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
     required:
         - owner
         - ein
@@ -1213,21 +1125,22 @@ definitions:
           $ref: '#/definitions/Individual'
   Individual:
     properties:
-      fiscal_responsibility:
-        type: string
-        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
       first_name:
         type: string
         example: José
+        description: 'Primeiro nome do vendedor'
       last_name:
         type: string
         example: Da Silva
+        description: 'Último nome do vendedor'
       email:
         type: string
         example: teeste@teste.com
+        description: 'Email do vendedor'
       phone_number:
         type: string
         example: " 12029579543"
+        description: 'Número do telefone do vendedor'
       taxpayer_id:
         type: string
         example: "76537741807"
@@ -1235,47 +1148,55 @@ definitions:
       birthdate:
         type: string
         example: "1982-12-15"
+        description: 'Data de nascimento do vendedor'
       statement_descriptor:
         type: string
         example: "NOME FANTASIA"
-      description:
-        type: string
-        example:
+        description: 'Esse é o nome que aparece na fatura associado a transação. Importante ser fácil de reconhecer para evitar chargebacks.'
       address:
         type: object
         properties:
           line1:
             type: string
             example: "167 West 74th Street"
+            description: 'Rua'
           line2:
             type: string
             example: "543"
+            description: 'Número'
           line3:
             type: string
             example: "APT 601"
+            description: 'Complemento'
           neighborhood:
             type: string
             example: "Downtown"
+            description: 'Bairro/Distrito/Comunidade dentro de uma cidade'
           city:
             type: string
             example: "Washington"
+            description: 'Cidade '
           state:
             type: string
-            example: "DC"
-            description: Código ISO 3166-2 para o estado, com duas letras
+            example: "RJ"
+            description: 'Código ISO 3166-2 para o estado, com duas letras. Ex.: "MG","RJ","PR"'
           postal_code:
             type: string
-            example: "10023"
+            example: "10023999"
+            description: 'CEP com 8 digitos sem separador'
           country_code:
             type: string
             example: "BR"
-            description: ISO 3166-1 alpha-2 - códigos de país de duas letras.
+            description: 'ISO 3166-1 alpha-2 - códigos de país de duas letras. Valor padrão: "BR"'
       mcc:
         type: string
         example: "1"
-        description: Envie o código de atividade do negócio (MCC ID). A lista completa se encontra em /v1/merchant_category_codes
+        description: Envie o código de atividade do negócio (MCC ID). A lista completa se encontra em /v1/merchant_category_codes. Caso não se enquadre em nenhum MCC, informe o ID para o CODE 5965
       metadata:
         type: object
+      fiscal_responsibility:
+        type: string
+        description: 'ID de vendedor responsável por receber os créditos pelas vendas'
     required:
       - first_name
       - last_name
@@ -1285,88 +1206,69 @@ definitions:
       - birthdate
       - address
       - mcc           
-  TokenCardRequest:
-    type: object
-    properties:
-      holder_name:
-        type: string
-        description: Nome do portador
-      expiration_month:
-        type: string
-        description: mês de expiração do cartão (MM)
-      expiration_year:
-        type: string
-        description: ano de expiração do cartão (AAAA)
-      card_number:
-        type: string
-        description: Número do cartão
-      security_code:
-        type: string
-        description: Código de segurança do cartão (CVC)
-  CardRequest:
-    type: object
-    required:
-      - token
-      - customer
-    properties:
-      token:
-        type: string
-        description: Identificador do token de cartão a ser associado ao customer
-        example: 1e5ee2e290d040769806c79e6ef94ee1
-      customer:
-        type: string
-        description: Identificador do customer
   BuyerRequest:
     type: object
     properties:
       first_name:
         type: string
         example: José
+        description: 'Primeiro nome do comprador'
       last_name:
         type: string
         example: Da Silva
+        description: 'Último nome do comprador'
       email:
         type: string
         example: teeste@teste.com
+        description: 'Email do comprador'
       phone_number:
         type: string
         example: " 12029579543"
+        description: 'Telefone do comprador'
       taxpayer_id:
         type: string
         example: "76537741807"
+        description: 'CPF/CNPJ do comprador'
       birthdate:
         type: string
         example: "1982-12-15"
-      description:
-        type: string
-        example:
+        description: 'Data de nascimento do comprador'
       address:
         type: object
         properties:
           line1:
             type: string
             example: "167 West 74th Street"
+            description: 'Rua'
           line2:
             type: string
             example: "543"
+            description: 'Número'
           line3:
             type: string
             example: "APT 601"
+            description: 'Complemento'
           neighborhood:
             type: string
             example: "Downtown"
+            description: 'Bairro/Distrito/Comunidade dentro de uma cidade'
           city:
             type: string
-            example: "Washington"
+            example: "Rio de Janeiro"
+            description: 'Cidade'
           state:
             type: string
-            example: "DC"
+            example: "RJ"
+            description: 'Código ISO 3166-2 para o estado, com duas letras. Ex.: "MG","RJ","PR"'
           postal_code:
             type: string
-            example: "10023"
+            example: "10023000"
+            description: 'CEP com 8 digitos sem separador'
           country_code:
             type: string
-            example: "US"
+            example: "BR"
+            description: 'ISO 3166-1 alpha-2 - códigos de país de duas letras. Valor padrão: "BR"'
+
   Buyer:
     type: object
     properties:
@@ -1468,7 +1370,7 @@ definitions:
         description: Nome do portador
       bank_code:
         type: number
-        description: Bank Account
+        description: Código do banco
       routing_number:
         type: number
         description: Agencia sem DV (4 digitos)
@@ -1967,15 +1869,17 @@ definitions:
             type: string
             description: 'Tipo de acesso'
             example: "model"
-            required: 
-             - "true"
+            enum:
+              - model
           model_name:
             description: 'Define o acesso ao minhaconta'
             type: string
             example: "customers"
+            enum:
+              - customers
           customer_id:
             type: string
-            description: 'Email que servirá de login'
+            description: 'ID dos seller'
             example: "2db290ccdfc24c1b86beb72eb29ee055"
   dashInviteResponse:
     type: object
