@@ -2950,7 +2950,7 @@ components:
     TokenCardRequest:
       type: object
       properties:
-        holder_name:
+        holder_name: 
           type: string
           description: Nome do portador
         expiration_month:
