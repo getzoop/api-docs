@@ -282,7 +282,10 @@ paths:
       responses:
         "200":
           description: Cartão recuperado com sucesso
-          $ref: "#/components/schemas/CardResponse"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardResponse"
         "404":
           description: Marketplace/Cartão não encontrado
     delete:
