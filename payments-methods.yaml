@@ -1999,9 +1999,6 @@ components:
           description: Identificador do customer
     CardResponse:
       type: object
-      required:
-        - token
-        - customer
       properties:
         id:
           type: string
