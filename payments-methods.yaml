@@ -241,9 +241,10 @@ paths:
       - $ref: '#/components/parameters/marketplaceID'
       - $ref: '#/components/parameters/tokenID'
     get:
+      deprecated: true
       tags:
         - 'Tokenização de cartão'
-      summary: 'Recuperar detalhes de token de cartão/conta bancária'
+      summary: 'Listar detalhes de token de cartão/conta bancária'
       description: ''
       responses:
         '200':
@@ -277,7 +278,7 @@ paths:
     get:
       tags:
         - 'Tokenização de cartão'
-      summary: Recuperar detalhes de cartão pelo identificador
+      summary: Listar detalhes de cartão pelo identificador
       description: ""
       responses:
         "200":
@@ -302,45 +303,6 @@ paths:
   "/v1/marketplaces/{marketplace_id}/transactions":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
-    get:
-      summary: Listar transaçoes do marketplace
-      tags:
-        - Transação de cartão
-      parameters:
-        - $ref: "#/components/parameters/limitParam"
-        - $ref: "#/components/parameters/sortParam"
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/dateRangeParam"
-        - $ref: "#/components/parameters/dateRangeGTParam"
-        - $ref: "#/components/parameters/dateRangeGTEParam"
-        - $ref: "#/components/parameters/dateRangeLTParam"
-        - $ref: "#/components/parameters/dateRangeLTEParam"
-        - name: reference_id
-          in: query
-          description: Retorna transações onde o reference id for igual o informado
-          required: false
-          schema:
-            type: string
-        - $ref: "#/components/parameters/transactionStatus"
-        - name: payment_type
-          in: query
-          description: Retorna transações onde o payment type for igual o informado. Para
-            busca múltipla basta concatenar com ,
-          required: false
-          schema:
-            type: string
-            enum:
-              - credit
-              - boleto
-      responses:
-        "200":
-          description: Transações recuperadas com sucesso
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Transactions"
-        "404":
-          description: Marketplace não encontrado
     post:
       summary: Criar transação de cartão
       tags:
@@ -454,6 +416,45 @@ paths:
                 $ref: "#/components/schemas/TransactionResponse"
         "404":
           description: Transação não encontrada
+    get:
+      summary: Listar transaçoes do marketplace
+      tags:
+        - Transação de cartão
+      parameters:
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/sortParam"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/dateRangeParam"
+        - $ref: "#/components/parameters/dateRangeGTParam"
+        - $ref: "#/components/parameters/dateRangeGTEParam"
+        - $ref: "#/components/parameters/dateRangeLTParam"
+        - $ref: "#/components/parameters/dateRangeLTEParam"
+        - name: reference_id
+          in: query
+          description: Retorna transações onde o reference id for igual o informado
+          required: false
+          schema:
+            type: string
+        - $ref: "#/components/parameters/transactionStatus"
+        - name: payment_type
+          in: query
+          description: Retorna transações onde o payment type for igual o informado. Para
+            busca múltipla basta concatenar com ,
+          required: false
+          schema:
+            type: string
+            enum:
+              - credit
+              - boleto
+      responses:
+        "200":
+          description: Transações recuperadas com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transactions"
+        "404":
+          description: Marketplace não encontrado
   "/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/transactions":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
@@ -490,7 +491,7 @@ paths:
         schema:
           type: string
     get:
-      summary: Recuperar detalhes de transação pelo identificador
+      summary: Listar detalhes de transação pelo identificador
       tags:
         - Transação de cartão
       responses:
@@ -631,7 +632,7 @@ paths:
     get:
       tags:
         - Source
-      summary: Recuperar detalhes de source pelo identificador
+      summary: Listar detalhes de source pelo identificador
       description: ""
       responses:
         "200":
@@ -743,7 +744,7 @@ paths:
     get:
       tags:
         - Recibo
-      summary: Recuperar detalhes do recibo
+      summary: Listar detalhes do recibo
       description: ""
       responses:
         "200":
@@ -811,7 +812,7 @@ paths:
     get:
       tags:
         - Boleto
-      summary: Recuperar detalhes de boleto
+      summary: Listar detalhes de boleto
       description: ""
       responses:
         "200":
@@ -830,7 +831,7 @@ paths:
     get:
       tags:
         - Split de transações
-      summary: Recuperar detalhes de regra de divisão por transação
+      summary: Listar detalhes de regra de divisão por transação
       description: ""
       responses:
         "200":
@@ -870,7 +871,7 @@ paths:
     get:
       tags:
         - "Recebível"
-      summary: 'Recuperar detalhes de recebível'
+      summary: 'Listar detalhes de recebível'
       description: ''
       responses:
         '200':
@@ -1095,7 +1096,7 @@ paths:
     get:
       tags:
           - Assinatura de Recorrência
-      summary: Recuperar todas as assinatura de um marketplace
+      summary: Listar todas as assinatura de um marketplace
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: '#/components/parameters/limitParam'
@@ -1122,7 +1123,7 @@ paths:
     get:
       tags:
        - Assinatura de Recorrência
-      summary: Recuperar os detalhes de uma assinatura pelo identificador
+      summary: Listar os detalhes de uma assinatura pelo identificador
       responses:
         200:
           description: search results matching criteria
@@ -1225,7 +1226,7 @@ paths:
     get:
       tags:
         - Fatura de Recorrência
-      summary: Recuperar todas as faturas de um marketplace
+      summary: Listar todas as faturas de um marketplace
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: '#/components/parameters/limitParam'
@@ -1252,9 +1253,9 @@ paths:
     get:
       tags:
           - Fatura de Recorrência
-      summary: Recuperar os detalhes de uma fatura pelo identificador
+      summary: Listar os detalhes de uma fatura pelo identificador
       description: |
-        Você pode recuperar os detalhes de uma determinada fatura através do identificador
+        Você pode listar os detalhes de uma determinada fatura através do identificador
       responses:
         200:
           description: search results matching criteria
@@ -1322,9 +1323,9 @@ paths:
     get:
       tags:
           - Fatura de Recorrência
-      summary: Recuperar faturas associadas a um vendedor pelo identificador
+      summary: Listar faturas associadas a um vendedor pelo identificador
       description: |
-        Recuperar os detalhes de todas as faturas associadas a um determinado vendedor pelo identificador
+        Listar os detalhes de todas as faturas associadas a um determinado vendedor pelo identificador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/customerID"

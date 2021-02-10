@@ -569,7 +569,7 @@ paths:
     get:
       tags:
         - 'Dados Bancários'
-      summary: 'Recuperar detalhes de conta bancária por identificador'
+      summary: 'Listar detalhes de conta bancária por identificador'
       description: ''
       produces:
         - application/json
@@ -638,7 +638,7 @@ paths:
     get:
       tags:
         - 'Plano de Vendas'
-      summary: 'Recuperar detalhes de plano de venda'
+      summary: 'Listar detalhes de plano de venda'
       description: ''
       produces:
         - application/json
@@ -716,7 +716,7 @@ paths:
     get:
       tags:
         - 'Plano de Vendas'
-      summary: 'Recuperar detalhes de assinatura de plano de venda'
+      summary: 'Listar detalhes de assinatura de plano de venda'
       description: ''
       produces:
         - application/json
@@ -752,7 +752,7 @@ paths:
     get:
       tags:
         - 'Plano de Vendas'
-      summary: 'Recuperar assinatura de plano de venda por seller'
+      summary: 'Listar assinatura de plano de venda por seller'
       description: ''
       produces:
         - application/json
@@ -776,7 +776,7 @@ paths:
     get:
       tags:
         - 'Plano de Vendas'
-      summary: 'Recuperar assinatura de plano de venda por comprador'
+      summary: 'Listar assinatura de plano de venda por comprador'
       description: ''
       deprecated: true
       produces:
