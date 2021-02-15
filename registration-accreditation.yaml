@@ -34,17 +34,19 @@ paths:
           application/json:
             schema:
               oneOf: 
-                - $ref: '#/components/schemas/BusinessHolderRequest'
                 - $ref: '#/components/schemas/IndividualHolderRequest'
+                - $ref: '#/components/schemas/BusinessHolderRequest'
                 
         required: true
       responses:
         '200':
           description: OK
           content:
-            application/json;charset=UTF-8:
+            application/json:
               schema:
-                $ref: '#/components/schemas/HolderResponseHolder'
+                oneOf:
+                  - $ref: '#/components/schemas/IndividualHolderResponse'
+                  - $ref: '#/components/schemas/BusinessHolderResponse'
             text/plain:
               schema:
                 $ref: '#/components/schemas/HolderResponseHolder'
@@ -96,7 +98,7 @@ components:
           type: string
 
   schemas:
-    HolderResponseHolder:
+    IndividualHolderResponse:
       type: object
       properties:
         id:
@@ -150,6 +152,73 @@ components:
           example: "252505"
         _links:
           $ref: '#/components/schemas/Links'
+    BusinessHolderResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "85b006901d034e18a235bd995b0d6352"
+        name:
+          type: string
+          example: "João Silva"
+        revenue:
+          type: number
+          format: double
+          example: 5500.50
+        email:
+          type: string
+          example: "joao.silva@gmail.com"
+        status:
+          type: string
+          example: waiting_info_and_documents
+        marketplace_id:
+          type: string
+          example: "f8c2bfb884e4486c8e0eee15be5c3ab1"
+        marketplace_name:
+          type: string
+          example: "Marketplace Integração Testes Banking"
+        created_at:
+          type: string
+          example: "2020-11-05T11:35:32.038494"
+        updated_at:
+          type: string
+          example: "2020-11-05T11:35:32.038497"
+        type:
+          type: string
+          example: individual
+        nationalRegistration:
+          type: string
+          example: "10057698007"
+        birthday:
+          type: string
+          example: "1982-12-15"
+        mothers_name:
+          type: string
+          example: "Maria da Silva"
+        identity_card:
+          type: string
+          example: "156032898"
+        pep:
+          type: string
+          example: "false"
+        cbo:
+          type: string
+          example: "252505"
+        legal_name:
+          type: string
+          description: Razão social da empresa (somente tipo business)
+          example: "Teste Comercio de Alimentos Ltda." 
+        establishment:
+          type: object
+          properties:
+            format: 
+              type: string
+              example: "LTDA"
+            date:
+              type: string
+              example: "2001-03-05"     
+        _links:
+           $ref: '#/components/schemas/Links'
     IndividualHolderRequest:
       required:
         - cbo
@@ -258,14 +327,18 @@ components:
           type: string
           description: Razão social da empresa (somente tipo business)
           example: "Teste Comercio de Alimentos Ltda." 
-        establishment.format:
-          type: string
-          description: "Formato de constituição da empresa. Valores possíveis: SS (Sociedade Simples), SC (Sociedade Cooperativa), SPE (Sociedade de Propósito Especifico), LTDA (Sociedade Limitada), SA (Sociedade por Ações), ME (Micro empresa) , MEI (Microempreendedor individual), EI (Empresário individual), EIRELI (Empresário Individual de Responsabilidade Limitada) , SNC (Sociedade em Nome Coletivo), SCS (Sociedade em Comandita Simples), SCA (Sociedade em Comandita por Ações (somente tipo business)"
-          example: "LTDA" 
-        establishment.date:
-          type: string
-          description: Data de constituição da empresa (somente tipo business)
-          example: "2001-03-05" 
+        establishment:
+          type: object
+          properties:
+            format: 
+              type: string
+              description: "Formato de constituição da empresa. Valores possíveis: SS (Sociedade Simples), SC (Sociedade Cooperativa), SPE (Sociedade de Propósito Especifico), LTDA (Sociedade Limitada), SA (Sociedade por Ações), ME (Micro empresa) , MEI (Microempreendedor individual), EI (Empresário individual), EIRELI (Empresário Individual de Responsabilidade Limitada) , SNC (Sociedade em Nome Coletivo), SCS (Sociedade em Comandita Simples), SCA (Sociedade em Comandita por Ações (somente tipo business)"
+              example: "LTDA"
+            date:
+              type: string
+              description: Data de constituição da empresa (somente tipo business)
+              example: "2001-03-05"     
+ 
     HolderRequestObjectPut:
       required:
         - cbo
