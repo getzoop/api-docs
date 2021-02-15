@@ -47,9 +47,6 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/IndividualHolderResponse'
                   - $ref: '#/components/schemas/BusinessHolderResponse'
-            text/plain:
-              schema:
-                $ref: '#/components/schemas/HolderResponseHolder'
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}":
     put:
       summary: Alterar portador pessoa física
@@ -62,7 +59,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/HolderRequestObjectPut'
+              OneOf:
+                - $ref: '#/components/schemas/IndividualHolderRequestPut'
+                - $ref: '#/components/schemas/BusinessHolderRequestPut'
         required: true
       responses:
         '200':
@@ -70,10 +69,9 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/HolderResponseHolder'
-            text/plain:
-              schema:
-                $ref: '#/components/schemas/HolderResponseHolder'
+                oneOf:
+                  - $ref: '#/components/schemas/IndividualHolderResponse'
+                  - $ref: '#/components/schemas/BusinessHolderResponse'
 
 
 components:
@@ -204,6 +202,10 @@ components:
         cbo:
           type: string
           example: "252505"
+        cnae:
+          type: string
+          description: Código de classificação nacional de atividades econômicas
+          example: "0111301"
         legal_name:
           type: string
           description: Razão social da empresa (somente tipo business)
@@ -323,6 +325,10 @@ components:
           description: Renda média do portador (tipo individual) da conta ou receita média da empresa (tipo business) 
           format: double
           example: "5500.00" 
+        cnae:
+          type: string
+          description: Código de classificação nacional de atividades econômicas
+          example: "0111301"
         legal_name:
           type: string
           description: Razão social da empresa (somente tipo business)
@@ -339,15 +345,7 @@ components:
               description: Data de constituição da empresa (somente tipo business)
               example: "2001-03-05"     
  
-    HolderRequestObjectPut:
-      required:
-        - cbo
-        - email
-        - name
-        - revenue
-        - type
-        - mothers_name
-        - national_registration
+    IndividualHolderRequestPut:
       type: object
       properties:
         birthday:
@@ -367,6 +365,29 @@ components:
           description: Renda média do portador da conta
           format: double
           example: "5500.00" 
+    BusinessHolderRequestPut:
+      type: object
+      properties:
+        mothers_name:
+          type: string
+          description: Nome da mãe do portador da conta 
+          example: "Maria Silva"
+        revenue:
+          type: number
+          description: Renda média do portador da conta
+          format: double
+          example: "5500.00" 
+        cnae:
+          type: string
+          description: Código de classificação nacional de atividades econômicas
+          example: "0111301"
+        establishment:
+          type: object
+          properties:
+            date:
+              type: string
+              description: Data de constituição da empresa (somente tipo business)
+              example: "2001-03-05"     
 
     Links:
       type: object
