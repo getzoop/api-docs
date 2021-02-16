@@ -1248,7 +1248,7 @@ paths:
       - $ref: "#/components/parameters/pageID"
       - $ref: "#/components/parameters/sizeID"
     get:
-      summary: Consultar CBO 
+      summary: Consultar CNAEs 
       tags:
         - Informações complementares
       responses:
@@ -1258,6 +1258,238 @@ paths:
             application/json:
               schema:
                   $ref: '#/components/schemas/IndividualHolderResponse'
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/accounts":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/holderID"
+    post:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+      summary: Criação de conta digital 
+      tags:
+        - Contas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountHolderRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DigitalAccountResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "bad_request"
+                  type:
+                    type: string
+                    example: "invalid_request"
+                  message:
+                    type: string
+                    example: "Invalid JSON"
+                  category:
+                    type: string
+                    example: "business"
+                  status_code:
+                    type: number
+                    example: 400
+    get:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/limitID"
+        - $ref: "#/components/parameters/offsetID"
+      summary: Consultar contas do portador 
+      tags:
+        - Contas
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DigitalAccountResponse'
+                  page: 
+                    type: object
+                    properties:
+                      has_more:
+                        type: boolean
+                        example: true
+                      limit:
+                        type: number
+                        example: 1
+                      total_pages:
+                        type: number
+                        example: 100
+                      page:
+                        type: number
+                        example: 0
+                      offset:
+                        type: number
+                        example: 0
+                      total:
+                        type: number
+                        example: 150
+                      query_count:
+                        type: number
+                        example: 150
+  "/v2/marketplaces/{marketplace_id}/accounts":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/offsetID"
+      - $ref: "#/components/parameters/limitID"
+    get:
+      summary: Listagem de contas digitais do marketplace
+      tags:
+        - Contas
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DigitalAccountResponse'
+                  page: 
+                    type: object
+                    properties:
+                      has_more:
+                        type: boolean
+                        example: true
+                      limit:
+                        type: number
+                        example: 1
+                      total_pages:
+                        type: number
+                        example: 100
+                      page:
+                        type: number
+                        example: 0
+                      offset:
+                        type: number
+                        example: 0
+                      total:
+                        type: number
+                        example: 150
+                      query_count:
+                        type: number
+                        example: 150
+  "/v2/marketplaces/{marketplace_id}/accounts/{account_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/accountID"
+    get:
+      summary: Recuperar detalhes de uma conta digital 
+      tags:
+        - Contas
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DigitalAccountResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "not_found"
+                  type:
+                    type: string
+                    example: "invalid_request"
+                  message:
+                    type: string
+                    example: "Account with status active and id 0162893710a6495e86542eeff192baa1 not found in marketplace ceaeaa4a-f6d6-4d2d-a22a-da2944ceead6"
+                  category:
+                    type: string
+                    example: "business"
+                  status_code:
+                    type: number
+                    example: 404
+  "/v2/marketplaces/{marketplace_id}/accounts/{account_id}/operations":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/accountID"
+      - $ref: "#/components/parameters/typeOpID"
+      - $ref: "#/components/parameters/created_date_rangeID"
+      - $ref: "#/components/parameters/created_date_rangeGTID"
+      - $ref: "#/components/parameters/created_date_rangeLTID"
+      - $ref: "#/components/parameters/created_date_rangeGTEID"
+      - $ref: "#/components/parameters/created_date_rangeLTEID"
+      - $ref: "#/components/parameters/offsetID"
+      - $ref: "#/components/parameters/limitID"
+    get:
+      summary: Extrato de operações por conta 
+      tags:
+        - Contas
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resource:
+                    type: string
+                    example: "list"
+                  uri:
+                    type: string
+                    example: "/v2/marketplaces/303102c1161c450f94d72b30f9903f89/accounts/496a00f3ab5b4fe7ac8351d449e5fd1f/operations"
+                  items:
+                    type: object
+                    properties:
+                      20209-08-14:
+                        type: array
+                        items: 
+                          $ref: '#/components/schemas/BalanceAccountResponse'
+                      
+                  has_more:
+                    type: boolean
+                    example: false
+                  limit:
+                    type: number
+                    example: 1
+                  total_pages:
+                    type: number
+                    example: 1
+                  page:
+                    type: number
+                    example: 1
+                  offset:
+                    type: number
+                    example: 0
+                  total:
+                    type: number
+                    example: 1
+                  query_count:
+                    type: number
+                    example: 1
 
 
 components:
@@ -1284,6 +1516,13 @@ components:
         name: partner_id
         in: path
         description: ID do sócio 
+        required: true
+        schema:
+          type: string
+      accountID:
+        name: account_id
+        in: path
+        description: ID da conta digital 
         required: true
         schema:
           type: string
@@ -1340,6 +1579,70 @@ components:
         schema:
           type: number
           example: 20
+      offsetID:
+        name: offset
+        in: query
+        description: Determina o ponto de inicio dos registros retornados
+        schema:
+          type: number
+          example: 0
+      limitID:
+        name: limit
+        in: query
+        description: Quantidade máxima de itens por página (<100)
+        schema:
+          type: number
+          example: 0
+      typeOpID:
+        name: type
+        in: query
+        description: "Retorna lançamentos onde o tipo da operação seja igual a um dos valores informado. O valor pode ser uma string ou uma lista de valores concatenados por ', '. (ex: charge, charge_refunded, transfer, transfer_refunded, deposit, deposit_refunded, adjustment)"
+        required: true
+        schema:
+          type: string
+          enum:
+            - charge
+            - charge_refunded
+            - transfer
+            - transfer_refunded
+            - deposit
+            - deposit_refunded
+            - adjustment
+      created_date_rangeID:
+        name: created_date_range
+        in: query
+        description: Retorna lançamentos onde a data for igual o valor informado. O valor pode ser uma string com um horário em UTC timestamp ou ISO (YYYY-DD-MM HH:MM:SS)
+        schema:
+          type: string
+          example: "2020-10-01 15:34:00"
+      created_date_rangeGTID:
+        name: created_date_range[gt]
+        in: query
+        description: Retorna lançamentos onde a data for maior o valor informado
+        schema:
+          type: string
+          example: "2020-10-01 15:34:00"
+      created_date_rangeLTID:
+        name: created_date_range[lt]
+        in: query
+        description: Retorna lançamentos onde a data for menor o valor informado
+        schema:
+          type: string
+          example: "2020-10-01 15:34:00"
+      created_date_rangeGTEID:
+        name: created_date_range[gte]
+        in: query
+        description: Retorna lançamentos onde a data for maior ou igual o valor informado
+        schema:
+          type: string
+          example: "2020-10-01 15:34:00"
+      created_date_rangeLTEID:
+        name: created_date_range[lte]
+        in: query
+        description: Retorna lançamentos onde a data for menor ou igual valor informado
+        schema:
+          type: string
+          example: "2020-10-01 15:34:00"
 
   schemas:
     IndividualHolderResponse:
@@ -2155,6 +2458,107 @@ components:
           example: "1000000" 
         _links:
           $ref: '#/components/schemas/LinksDocs'
+    DigitalAccountResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "942e0d178dd64644b2eb054705268c94"
+        holder:
+          type: string
+          example: "803b1b5a52894201b2a034caaf3f2cce"
+        balance:
+          type: string
+          example: "0.00"
+        currency:
+          type: string
+          example: "BRL"
+        routing_number:
+          type: string
+          example: "001"
+        number:
+          type: string
+          example: "80428948"
+        status:
+          type: string
+          example: "active"
+        metadata:
+          type: string
+          example: "{}"
+        created_at:
+          type: string
+          example: "2020-11-05T11:35:32.038494"
+        updated_at:
+          type: string
+          example: "2020-11-05T11:35:32.038497"
+        primary:
+          type: boolean
+          example: true
+        uri:
+          type: string
+          example: "/v2/marketplaces/303102c1161c450f94d72b30f9903f89/accounts/942e0d178dd64644b2eb054705268c94"
+        resource:
+          type: string
+          example: "payment_account"
+    AccountHolderRequest:
+      type: object
+      properties:
+        currency:
+          type: string
+          example: "BRL"
+          default: "BRL"
+          description: "moeda (default: BRL)"
+        metadata:
+          type: string
+          description: Metadados associados ao documento dono da conta.
+    BalanceAccountResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "b5f7537b76684ef4b0a4fbf91936219a"
+        date:
+          type: string
+          example: "2019-08-14T18:04:33+00:00"
+        amount:
+          type: string
+          example: "-0.01"
+        gross_amount:
+          type: string
+          example: "-0.01"
+        blocked_amount:
+          type: string
+          example: "0.00"
+        current_balance:
+          type: string
+          example: "2.09"
+        resource:
+          type: string
+          example: "entry"
+        nsu:
+          type: string
+          example: "4"
+        fee:
+          type: string
+          example: "0.00"
+        description:
+          type: string
+          example: "teste de transferência entre contas"
+        type:
+          type: string
+          example: "transfer"
+        object_id:
+          type: string
+          example: "transfer"
+        transfer:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "b5f7537b76684ef4b0a4fbf91936219a"
+            authorization_code:
+              type: string
+              example: "fba84c9292024c9f9b375998a0925b4f"
 
     MessageNotFound400:
       type: object
