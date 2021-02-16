@@ -1,6 +1,6 @@
 openapi: 3.0.2
 info:
-  title: Credenciamento
+  title: Criação de contas
   version: "1.1"
 
 security:
@@ -26,18 +26,17 @@ paths:
     post:
       summary: Cadastro portador (Option 1) - Pessoa física / (Option 2) - Pessoa jurídica
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               oneOf: 
                 - $ref: '#/components/schemas/IndividualHolderRequest'
                 - $ref: '#/components/schemas/BusinessHolderRequest'
-                
-        required: true
       responses:
         '200':
           description: OK
@@ -50,7 +49,7 @@ paths:
     get:
       summary: Consultar portadores do marketplace
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
       responses:
@@ -64,7 +63,7 @@ paths:
     put:
       summary: Alterar portador 
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
@@ -88,7 +87,7 @@ paths:
     get:
       summary: Consultar portador 
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
@@ -103,7 +102,7 @@ paths:
     post:
       summary: Cadastrar telefone do portador 
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
@@ -123,7 +122,7 @@ paths:
     get:
       summary: Consultar telefone do portador 
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
@@ -138,7 +137,7 @@ paths:
     put:
       summary: Alterar telefone do portador 
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
@@ -159,7 +158,7 @@ paths:
     delete:
       summary: Apagar telefone do portador 
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
@@ -197,7 +196,7 @@ paths:
     post:
       summary: Cadastrar endereço do portador 
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
@@ -217,7 +216,7 @@ paths:
     get:
       summary: Consultar endereço do portador 
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
@@ -232,7 +231,7 @@ paths:
     get:
       summary: Consulta endereço do portador por ID 
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
@@ -247,7 +246,7 @@ paths:
     put:
       summary: Alterar endereço do portador por ID 
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
@@ -266,9 +265,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/AddressHolderResponse'
     delete:
-      summary: Alterar endereço do portador por ID 
+      summary: Apagar endereço do portador por ID 
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
@@ -306,7 +305,7 @@ paths:
     post:
       summary: Cadastrar documento do portador 
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
@@ -328,7 +327,7 @@ paths:
     get:
       summary: Consulta documentação do portador 
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
@@ -344,7 +343,7 @@ paths:
     get:
       summary: Consultar endereço do portador 
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
@@ -359,7 +358,7 @@ paths:
     delete:
       summary: Apagar endereço do portador 
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
@@ -393,70 +392,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/MessageNotFound500"
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners":
-    post:
-      summary: Cadastrar sócio (somente tipo PJ) 
-      tags:
-        - Credenciamento
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-      requestBody:
-        content:
-          application/json:
-            schema:
-                $ref: '#/components/schemas/IndividualHolderRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json;charset=UTF-8:
-              schema:
-                  $ref: '#/components/schemas/IndividualHolderResponse'
-    put:
-      summary: Alterar sócio (somente tipo PJ) 
-      tags:
-        - Credenciamento
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-                - $ref: '#/components/schemas/IndividualHolderRequestPut'
-                - $ref: '#/components/schemas/BusinessHolderRequestPut'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json;charset=UTF-8:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/IndividualHolderResponse'
-                  - $ref: '#/components/schemas/BusinessHolderResponse'
-    get:
-      summary: Consultar sócio (somente tipo PJ) 
-      tags:
-        - Credenciamento
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json;charset=UTF-8:
-              schema:
-                  $ref: '#/components/schemas/IndividualHolderResponse'
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/approval":
     post:
       summary: Cadastrar endereço do portador 
       tags:
-        - Credenciamento
+        - Credenciamento portador
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
@@ -563,6 +503,761 @@ paths:
                   status_code:
                     type: number
                     example: 500
+  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners":
+    post:
+      summary: Cadastrar sócio (somente tipo PJ) 
+      tags:
+        - Credenciamento sócio
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/IndividualHolderPartnerRequest'
+                - $ref: '#/components/schemas/BusinessHolderPartnerRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/IndividualHolderPartnerResponse'
+                  - $ref: '#/components/schemas/BusinessHolderPartnerResponse'
+    get:
+      summary: Consultar sócio (somente tipo PJ) 
+      tags:
+        - Credenciamento sócio
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/pageID"
+        - $ref: "#/components/parameters/sizeID"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                  $ref: '#/components/schemas/PartnerResponse'
+  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}":
+    get:
+      summary: Consultar sócio por ID 
+      tags:
+        - Credenciamento sócio
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/partnerID"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                  $ref: '#/components/schemas/IndividualHolderPartnerResponse'
+  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}/phones":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/holderID"
+      - $ref: "#/components/parameters/partnerID"
+    post:
+      summary: Cadastrar telefone do socio 
+      tags:
+        - Credenciamento sócio
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhonesHolderRequest'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhonesPartnerResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound500'
+    get:
+      summary: Consultar telefones do sócio 
+      tags:
+        - Credenciamento sócio
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   _embedded:
+                     type: object
+                     properties:
+                       phones:
+                         type: array
+                         items:
+                           $ref: '#/components/schemas/PhonesPartnerResponse'
+  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}/phones/{phone_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/holderID"
+      - $ref: "#/components/parameters/partnerID"
+      - $ref: "#/components/parameters/phoneID"
+    put:
+      summary: Alterar telefone do sócio por ID 
+      tags:
+        - Credenciamento sócio
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhonesHolderRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhonesPartnerResponse'
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhonesPartnerResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "bad_request"
+                  type:
+                    type: string
+                    example: "invalid_request"
+                  message:
+                    type: string
+                    example: "Validation field error"
+                  category:
+                    type: string
+                    example: "business"
+                  status_code:
+                    type: number
+                    example: 400
+                  fields:
+                    type: object
+                    properties:
+                      state: 
+                        type: string
+                        example: "Number is required"
+                      posta_code: 
+                        type: string
+                        example: "Country code must have only number characters"
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound500'
+    get:
+      summary: Consultar telefone do sócio 
+      tags:
+        - Credenciamento sócio
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhonesPartnerResponse'
+        '201':
+          description: Created - Payload de um telefone secundário
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhonesPartnerResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound500'
+    delete:
+      summary: Apagar telefone do sócio por ID 
+      tags:
+        - Credenciamento sócio
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/adressID"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Phone removed successfully"
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageNotFound404"
+        '412':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "pre_condition_failed"
+                  type:
+                    type: string
+                    example: "invalid_request"
+                  message:
+                    type: string
+                    example: "At least one phone must be remaining"
+                  category:
+                    type: string
+                    example: "business"
+                  status_code:
+                    type: number
+                    example: 412
+        '500':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageNotFound500"
+  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}/addresses":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/holderID"
+      - $ref: "#/components/parameters/partnerID"
+    post:
+      summary: Cadastrar endereço do socio 
+      tags:
+        - Credenciamento sócio
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddressHolderRequest'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressHolderResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound500'
+    get:
+      summary: Consultar telefone do sócio 
+      tags:
+        - Credenciamento sócio
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   _embedded:
+                     type: object
+                     properties:
+                       phones:
+                         type: array
+                         items:
+                           $ref: '#/components/schemas/AddressHolderResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound500'
+  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}/addresses/{address_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/holderID"
+      - $ref: "#/components/parameters/partnerID"
+      - $ref: "#/components/parameters/adressID"
+    put:
+      summary: Alterar endereço do sócio por ID 
+      tags:
+        - Credenciamento sócio
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddressHolderRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressHolderResponse'
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressHolderResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "bad_request"
+                  type:
+                    type: string
+                    example: "invalid_request"
+                  message:
+                    type: string
+                    example: "Validation field error"
+                  category:
+                    type: string
+                    example: "business"
+                  status_code:
+                    type: number
+                    example: 400
+                  fields:
+                    type: object
+                    properties:
+                      state: 
+                        type: string
+                        example: "State is required"
+                      posta_code: 
+                        type: string
+                        example: "Postal code must have only number characters"
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound500'
+    get:
+      summary: Consultar endereço do sócio por ID 
+      tags:
+        - Credenciamento sócio
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressHolderResponse'
+        '201':
+          description: Created - Payload de um endereço secundário
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhonesPartnerResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound500'
+    delete:
+      summary: Apagar endereço do sócio por ID 
+      tags:
+        - Credenciamento sócio
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Address removed successfully"
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "not_found"
+                  type:
+                    type: string
+                    example: "invalid_request"
+                  message:
+                    type: string
+                    example: "Address not found"
+                  category:
+                    type: string
+                    example: "business"
+                  status_code:
+                    type: number
+                    example: 404
+        '412':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "pre_condition_failed"
+                  type:
+                    type: string
+                    example: "invalid_request"
+                  message:
+                    type: string
+                    example: "At least one address must be remaining"
+                  category:
+                    type: string
+                    example: "business"
+                  status_code:
+                    type: number
+                    example: 412
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound500'
+  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}/documents":
+    parameters:
+      - $ref: "#/components/parameters/type"
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/holderID"
+      - $ref: "#/components/parameters/partnerID"
+    post:
+      summary: Cadastrar endereço do socio 
+      tags:
+        - Credenciamento sócio
+      requestBody:
+        content:
+          image/jpeg:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentsHolderResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "bad_request"
+                  type:
+                    type: string
+                    example: "invalid_request"
+                  message:
+                    type: string
+                    example: "Validation document format"
+                  category:
+                    type: string
+                    example: "business"
+                  status_code:
+                    type: number
+                    example: 400
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound404'
+        '412':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "pre_condition_failed"
+                  type:
+                    type: string
+                    example: "invalid_request"
+                  message:
+                    type: string
+                    example: "It is not possible to add documents to the partner due to the holder status. Contact support to make this request."
+                  category:
+                    type: string
+                    example: "business"
+                  status_code:
+                    type: number
+                    example: 412
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound500'
+    get:
+      summary: Consultar telefone do sócio 
+      tags:
+        - Credenciamento sócio
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   _embedded:
+                     type: object
+                     properties:
+                       phones:
+                         type: array
+                         items:
+                           $ref: '#/components/schemas/PhonesPartnerResponse'
+  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}/documents/{documents_id}":
+    parameters:
+      - $ref: "#/components/parameters/type"
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/holderID"
+      - $ref: "#/components/parameters/partnerID"
+      - $ref: "#/components/parameters/documentID"
+    get:
+      summary: Consultar documentos do sócio por ID 
+      tags:
+        - Credenciamento sócio
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentsPartnerResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound500'
+    delete:
+      summary: Apagar documentos do sócio por ID 
+      tags:
+        - Credenciamento sócio
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Document removed successfully"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "bad_request"
+                  type:
+                    type: string
+                    example: "invalid_request"
+                  message:
+                    type: string
+                    example: "Invalid document owner"
+                  category:
+                    type: string
+                    example: "business"
+                  status_code:
+                    type: number
+                    example: 400
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "not_found"
+                  type:
+                    type: string
+                    example: "invalid_request"
+                  message:
+                    type: string
+                    example: "Document not found"
+                  category:
+                    type: string
+                    example: "business"
+                  status_code:
+                    type: number
+                    example: 404
+        '412':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "pre_condition_failed"
+                  type:
+                    type: string
+                    example: "invalid_request"
+                  message:
+                    type: string
+                    example: "It is not possible to add documents to the partner due to the holder status. Contact support to make this request."
+                  category:
+                    type: string
+                    example: "business"
+                  status_code:
+                    type: number
+                    example: 412
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound500'
+  "/v2/marketplaces/{marketplace_id}/banking/accreditation/cbos":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/pageID"
+      - $ref: "#/components/parameters/sizeID"
+    get:
+      summary: Consultar CBO 
+      tags:
+        - Informações complementares
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/IndividualHolderResponse'
+  "/v2/marketplaces/{marketplace_id}/banking/accreditation/cnaes":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/pageID"
+      - $ref: "#/components/parameters/sizeID"
+    get:
+      summary: Consultar CBO 
+      tags:
+        - Informações complementares
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/IndividualHolderResponse'
 
 
 components:
@@ -582,6 +1277,20 @@ components:
         name: holder_id
         in: path
         description: ID do holder (dono da conta)
+        required: true
+        schema:
+          type: string
+      partnerID:
+        name: partner_id
+        in: path
+        description: ID do sócio 
+        required: true
+        schema:
+          type: string
+      phoneID:
+        name: phone_id
+        in: path
+        description: ID do telefone 
         required: true
         schema:
           type: string
@@ -617,13 +1326,20 @@ components:
         required: true
         schema:
           type: string
-      phoneID:
-        name: phone_id
-        in: path
-        description: ID do endereço
-        required: true
+      pageID:
+        name: page_id
+        in: query
+        description: indica a página que será exibida
         schema:
-          type: string
+          type: number
+          example: 0
+      sizeID:
+        name: size_id
+        in: query
+        description: Quantidade de registros a ser retornado por página
+        schema:
+          type: number
+          example: 20
 
   schemas:
     IndividualHolderResponse:
@@ -987,6 +1703,7 @@ components:
         - number
         - complement
         - state
+        - neighborhood
         - postal_code
         - country
       type: object
@@ -1011,6 +1728,10 @@ components:
           type: string
           description: Estado
           example: "Rio de Janeiro" 
+        neighborhood:
+          type: string
+          description: Bairro
+          example: "Barra da Tijuca" 
         postal_code:
           type: string
           description: CEP
@@ -1132,7 +1853,336 @@ components:
            example: "Brasil" 
          _links:
            $ref: '#/components/schemas/LinksPhones'
+    IndividualHolderPartnerRequest:
+      required:
+        - admin
+        - percentage
+        - cbo
+        - email
+        - name
+        - revenue
+        - type
+        - mothers_name
+        - national_registration
+      type: object
+      properties:
+        type:
+          type: string
+          example: "individual"
+          description: Tipo do portador da conta. Para um holder pessoa física o valor deve ser sempre individual 
+        admin:
+          type: boolean
+          description: Indica se o sócio é o administrador da empresa.
+          example: true 
+        percentage:
+          type: number
+          description: Indica o percentual de controle da empresa pelo sócio.
+          example: 100 
+        name:
+          type: string
+          description: Nome completo do portador da conta.
+          example: "João da Silva" 
+        email:
+          type: string
+          description: email do portador da conta.
+          example: "joao.silva@gmail.com" 
+        birthday:
+          type: string
+          description: Data de nascimento do portador da conta.
+          example: "1982-12-15" 
+        identity_card:
+          type: string
+          description: RG do portador da conta (Somente para type "individual") 
+          example: 156032898
+        national_registration:
+          type: string
+          description: CPF do portador da conta.
+          example: "10057698007" 
+        cbo:
+          type: string
+          description: Código de ocupação do portador da conta. Valor disponível em Listar CBO (Somente para type "individual")
+          example: "252505"
+        pep:
+          type: boolean
+          default: false
+          description: Declaração se o portador da conta é uma pessoa exposta politicamente. 
+        mothers_name:
+          type: string
+          description: Nome da mãe do portador da conta 
+          example: "Maria Silva"
+        revenue:
+          type: number
+          description: Renda média do portador (tipo individual) da conta ou receita média da empresa (tipo business) 
+          format: double
+          example: "5500.00" 
+    BusinessHolderPartnerRequest:
+      required:
+        - admin
+        - percentage
+        - cbo
+        - email
+        - name
+        - revenue
+        - type
+        - mothers_name
+        - national_registration
+      type: object
+      properties:
+        type:
+          type: string
+          example: "business"
+          description: Tipo do portador da conta. Para um holder pessoa física o valor deve ser sempre individual 
+        admin:
+          type: boolean
+          description: Indica se o sócio é o administrador da empresa.
+          example: true 
+        percentage:
+          type: number
+          description: Indica o percentual de controle da empresa pelo sócio.
+          example: 100 
+        owner:
+          type: string
+          description: ID do sócio. Só preencher caso o portador seja um PJ que tenha como sócio outro PJ e esse sócio tenha como sócio uma PF.
+        name:
+          type: string
+          description: Nome completo do portador da conta.
+          example: "China in Box" 
+        email:
+          type: string
+          description: email do portador da conta.
+          example: "joao.silva@gmail.com" 
+        birthday:
+          type: string
+          description: Data de nascimento do portador da conta.
+          example: "1982-12-15" 
+        identity_card:
+          type: string
+          description: RG do portador da conta (Somente para type "individual") 
+          example: 156032898
+        national_registration:
+          type: string
+          description: CNPJ do portador da conta.
+          example: "67053773000107" 
+        cbo:
+          type: string
+          description: Código de ocupação do portador da conta. Valor disponível em Listar CBO (Somente para type "individual")
+          example: "252505"
+        pep:
+          type: boolean
+          default: false
+          description: Declaração se o portador da conta é uma pessoa exposta politicamente. 
+        mothers_name:
+          type: string
+          description: Nome da mãe do portador da conta 
+          example: "Maria Silva"
+        revenue:
+          type: number
+          description: Renda média do portador (tipo individual) da conta ou receita média da empresa (tipo business) 
+          format: double
+          example: "5500.00" 
+    IndividualHolderPartnerResponse:
+      type: object
+      properties:
+        type:
+          type: string
+          example: individual
+        id:
+          type: string
+          example: "85b006901d034e18a235bd995b0d6352"
+        name:
+          type: string
+          example: "João Silva"
+        revenue:
+          type: number
+          format: double
+          example: 5500.50
+        email:
+          type: string
+          example: "joao.silva@gmail.com"
+        nationalRegistration:
+          type: string
+          example: "10057698007"
+        birthday:
+          type: string
+          example: "1982-12-15"
+        mothers_name:
+          type: string
+          example: "Maria da Silva"
+        identity_card:
+          type: string
+          example: "156032898"
+        pep:
+          type: string
+          example: "false"
+        cbo:
+          type: string
+          example: "252505"
+        _links:
+          $ref: '#/components/schemas/LinksPartners'
+    BusinessHolderPartnerResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "85b006901d034e18a235bd995b0d6352"
+        name:
+          type: string
+          example: "João Silva"
+        revenue:
+          type: number
+          format: double
+          example: 5500.50
+        email:
+          type: string
+          example: "joao.silva@gmail.com"
+        status:
+          type: string
+          example: waiting_info_and_documents
+        marketplace_id:
+          type: string
+          example: "f8c2bfb884e4486c8e0eee15be5c3ab1"
+        marketplace_name:
+          type: string
+          example: "Marketplace Integração Testes Banking"
+        created_at:
+          type: string
+          example: "2020-11-05T11:35:32.038494"
+        updated_at:
+          type: string
+          example: "2020-11-05T11:35:32.038497"
+        type:
+          type: string
+          example: individual
+        nationalRegistration:
+          type: string
+          example: "10057698007"
+        birthday:
+          type: string
+          example: "1982-12-15"
+        mothers_name:
+          type: string
+          example: "Maria da Silva"
+        identity_card:
+          type: string
+          example: "156032898"
+        pep:
+          type: string
+          example: "false"
+        cbo:
+          type: string
+          example: "252505"
+        cnae:
+          type: string
+          description: Código de classificação nacional de atividades econômicas
+          example: "0111301"
+        legal_name:
+          type: string
+          description: Razão social da empresa (somente tipo business)
+          example: "Teste Comercio de Alimentos Ltda." 
+        establishment:
+          type: object
+          properties:
+            format: 
+              type: string
+              example: "LTDA"
+            date:
+              type: string
+              example: "2001-03-05"     
+        _links:
+           $ref: '#/components/schemas/LinksPartnersBusiness'
+    PartnerResponse:
+      type: object
+      properties:
+        _embedded:
+           type: object
+           properties:
+             partners:
+               type: array
+               items:
+                 $ref: '#/components/schemas/IndividualHolderPartnerResponse'
+        page: 
+          type: object
+          properties:
+            size:
+              type: number
+              example: 20
+            total_elements:
+              type: number
+              example: 1
+            total_pages:
+              type: number
+              example: 1
+            number:
+              type: number
+              example: 0
+    PhonesPartnerResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "85b006901d034e18a235bd995b0d6352"
+        area_code:
+          type: string
+          example: "21"
+        country_code:
+          type: string
+          example: "55"
+        number:
+          type: string
+          example: "33093829"
+        main:
+          type: string
+          example: True
+        _links:
+          $ref: '#/components/schemas/LinksPhonesPartners'
+    DocumentsPartnerResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "85b006901d034e18a235bd995b0d6353"
+        street:
+          type: string
+          example: "SELFIE"
+          description: Tipo do documento cadastrado 
+        format:
+          type: string
+          description: Formato do docuemento cadastrado.
+          example: "jpeg" 
+        size:
+          type: string
+          description: Tamanho do arquivo cadastrado
+          example: "1000000" 
+        _links:
+          $ref: '#/components/schemas/LinksDocs'
 
+    MessageNotFound400:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "bad_request"
+        type:
+          type: string
+          example: "invalid_request"
+        message:
+          type: string
+          example: "Validation field error"
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: number
+          example: 400
+        fields:
+          type: object
+          properties:
+            number: 
+              type: string 
+              example: "Number is required"
+            country_code:
+              type: string 
+              example: "Country code must have only number characters"
     MessageNotFound404:
       type: object
       properties:
@@ -1239,7 +2289,6 @@ components:
     LinksPhones:
       type: object
       $ref: '#/components/schemas/LinkPhone'
-
     LinkPhone:
       type: object
       properties:
@@ -1263,11 +2312,9 @@ components:
             type: 
               type: string
               example: "GET"
-              
     LinksDocs:
       type: object
       $ref: '#/components/schemas/LinksDoc'
-    
     LinksDoc:
       type: object
       properties:
@@ -1299,4 +2346,157 @@ components:
             type: 
               type: string
               example: "GET"
+            
+    LinksPartners:
+      type: object
+      $ref: '#/components/schemas/LinksPartner'
+
+    LinksPartner:
+      type: object
+      properties:
+        self:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352"
+            
+            type: 
+              type: string
+              example: "GET"
+        phones:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/phones"
+            type: 
+              type: string
+              example: "GET"
+        adresses:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/addresses"
+            type: 
+              type: string
+              example: "GET"        
+        documents:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/documents"
+            type: 
+              type: string
+              example: "GET"
+        holder:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/"
+            type: 
+              type: string
+              example: "GET"
+
+    LinksPartnersBusiness:
+      type: object
+      $ref: '#/components/schemas/LinksPartnersBusinesses'
+
+    LinksPartnersBusinesses:
+      type: object
+      properties:
+        self:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/partners/0b4a40d89e004b4bba626c50e2dd77f2"
+            
+            type: 
+              type: string
+              example: "GET"
+        phones:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/partners/0b4a40d89e004b4bba626c50e2dd77f2/phones"
+            type: 
+              type: string
+              example: "GET"
+        adresses:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352//partners/0b4a40d89e004b4bba626c50e2dd77f2addresses"
+            type: 
+              type: string
+              example: "GET"        
+        documents:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/partners/0b4a40d89e004b4bba626c50e2dd77f2/documents"
+            type: 
+              type: string
+              example: "GET"
+        owner:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/"
+            type: 
+              type: string
+              example: "GET"
+        holder:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/"
+            type: 
+              type: string
+              example: "GET"
          
+    LinksPhonesPartners:
+      type: object
+      $ref: '#/components/schemas/LinksPhonesPartner'
+      
+    LinksPhonesPartner:
+      type: object
+      properties:
+        self:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://localhost/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/partners/82a2be6013ef4b01aaa8dcb4efcd6a8e/phones/a06f744df0944111b8da58daff18d8c2"
+            
+            type: 
+              type: string
+              example: "GET"
+        partner:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://localhost/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/a391eb48b731455da7b9efe649b822ca/partners/82a2be6013ef4b01aaa8dcb4efcd6a8e"
+            type: 
+              type: string
+              example: "GET"
+        holder:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://localhost/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/a391eb48b731455da7b9efe649b822ca"
+            type: 
+              type: string
+              example: "GET"
+
