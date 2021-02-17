@@ -675,6 +675,22 @@ paths:
           description: Missing required param
         "404":
           description: Terminal não encontrado
+  "/v1/marketplaces/terminals/{indentification_number}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/identificationNumberID"
+    get:
+      tags:
+        - Mundo Físico
+      summary: Buscar informações sobre terminal
+      description: ""
+      responses:
+        "200":
+          description: Terminal alterado com sucesso
+        "400":
+          description: Missing required param
+        "404":
+          description: Terminal não encontrado
   "/v1/marketplaces/{marketplace_id}/receipts/{receipt_id}/emails":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
@@ -689,6 +705,17 @@ paths:
         - Recibo
       summary: Enviar recibo por email
       description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                to:
+                  type: string
+                  description: Informar o email para envio
+                  example: "teste@teste.com.br"
+        description: Envio de recibo por email
       responses:
         "200":
           description: Recibo enviado com sucesso
@@ -708,6 +735,17 @@ paths:
         - Recibo
       summary: Enviar recibo por SMS
       description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                to:
+                  type: string
+                  description: Informar país, código de área e o número do celular para envio
+                  example: "+55 21999099999"
+        description: Envio de recibo por sms
       responses:
         "200":
           description: Recibo enviado com sucesso
@@ -1025,7 +1063,6 @@ paths:
                 $ref: '#/components/schemas/PlanResponse'
         400:
           description: bad input parameter
-
   "/v2/marketplaces/{marketplace_id}/plans/{plan_id}":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
@@ -1074,7 +1111,6 @@ paths:
           description: invalid input, object invalid
         404:
           description: plan_id was not found
-
   "/v2/marketplaces/{marketplace_id}/subscriptions":
     post:
       parameters:
@@ -1199,7 +1235,6 @@ paths:
           description: invalid input, object invalid
         404:
           description: subscription_id not found
-
   "/v2/marketplaces/{marketplace_id}/invoices":
     post:
       parameters:
@@ -1422,6 +1457,13 @@ components:
       name: card_id
       in: path
       description: identificador do cartão
+      required: true
+      schema:
+        type: string
+    identificationNumberID:
+      name: identification_number
+      in: path
+      description: identificador do terminal
       required: true
       schema:
         type: string
