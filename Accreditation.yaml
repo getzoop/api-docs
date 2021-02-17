@@ -24,7 +24,8 @@ servers: [
 paths:
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders":
     post:
-      summary: Cadastro portador (Option 1) - Pessoa física / (Option 2) - Pessoa jurídica
+      summary: Cadastro portador
+      description: (Option 1) - Pessoa física / (Option 2) - Pessoa jurídica
       tags:
         - Credenciamento portador
       parameters:
