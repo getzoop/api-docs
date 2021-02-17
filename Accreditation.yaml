@@ -24,8 +24,8 @@ servers: [
 paths:
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders":
     post:
-      summary: Cadastro portador
-      description: (Option 1) - Pessoa física / (Option 2) - Pessoa jurídica
+      summary: Cadastrar portador
+      description: Usar (Option 1) para Pessoa física e (Option 2) para Pessoa jurídica
       tags:
         - Credenciamento portador
       parameters:
@@ -506,7 +506,8 @@ paths:
                     example: 500
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners":
     post:
-      summary: Cadastrar sócio (somente tipo PJ) 
+      summary: Cadastrar sócio 
+      description: Usar (Option 1) para Pessoa física e (Option 2) para Pessoa jurídica / Cadastrar quando o portador for Pessoa Jurídica
       tags:
         - Credenciamento sócio
       parameters:
