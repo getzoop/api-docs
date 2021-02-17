@@ -139,7 +139,7 @@ paths:
     post:
       tags:
         - 'Vendedores'
-      summary: Criar documento de cadastro de vendedor
+      summary: Enviar documento de cadastro de vendedor
       description: ''
       operationId: addDocument
       consumes:

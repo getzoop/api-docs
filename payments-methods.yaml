@@ -819,41 +819,6 @@ paths:
           description: Boleto recuperado com sucesso
         "404":
           description: Marketplace/Boleto não encontrado
-  "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/split_rules":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - name: transaction_id
-        in: path
-        description: identificador da transação
-        required: true
-        schema:
-          type: string
-    get:
-      tags:
-        - Split de transações
-      summary: Listar detalhes de regra de divisão por transação
-      description: ""
-      responses:
-        "200":
-          description: Split recuperado com sucesso
-        "404":
-          description: Marketplace/Transação não encontrado
-    post:
-      tags:
-        - Split de transações
-      summary: Criar regra de divisão por transação
-      description: ""
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/SplitRuleRequest"
-        description: Split de transações
-      responses:
-        "200":
-          description: Split criado com sucesso
-        "404":
-          description: Marketplace/Transação não encontrado
   "/v1/marketplaces/{marketplace_id}/receivables/{receivable_id}":
     parameters:
       - name: marketplace_id
@@ -938,6 +903,41 @@ paths:
                 $ref: "#/components/schemas/ReceivableResponse"
         '404':
           description: Marketplace/Seller não encontrado
+  "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/split_rules":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Split de transações
+      summary: Listar detalhes de Split por transação
+      description: ""
+      responses:
+        "200":
+          description: Split recuperado com sucesso
+        "404":
+          description: Marketplace/Transação não encontrado
+    post:
+      tags:
+        - Split de transações
+      summary: Criar Split por transação
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SplitRuleRequest"
+        description: Split de transações
+      responses:
+        "200":
+          description: Split criado com sucesso
+        "404":
+          description: Marketplace/Transação não encontrado
   "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/split_rules/{id}":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
@@ -956,7 +956,7 @@ paths:
     get:
       tags:
         - Split de transações
-      summary: Recupera detalhes de regra de divisão por transação
+      summary: Recupera detalhes de Split por ID
       description: ""
       responses:
         "200":
@@ -966,7 +966,7 @@ paths:
     put:
       tags:
         - Split de transações
-      summary: Alterar regra de divisão por transação
+      summary: Alterar Split por transação
       description: ""
       responses:
         "200":
@@ -976,7 +976,7 @@ paths:
     delete:
       tags:
         - Split de transações
-      summary: Remover regra de divisão por transação
+      summary: Remover Split por transação
       description: ""
       responses:
         "200":
@@ -1924,6 +1924,20 @@ components:
         amount:
           type: integer
           description: valor da venda a ser estornado em centavos
+        void_rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/VoidRulesResponse"
+    VoidRulesResponse:
+      type: object
+      properties:
+        recipient:
+          type: string
+          description: Identificador do seller participante do split
+          example: 1e9ee3e290d040769806c79e6ef94ee3
+        amount:
+          type: integer
+          description: valor da venda a ser estornado em centavos
     TransactionCaptureRequest:
       type: object
       required:
@@ -1938,7 +1952,7 @@ components:
           type: integer
           description: valor da venda a ser capturado em centavos. para captura parcial
             basta enviar valor a menor, sendo possível realizar somente uma
-            captura parcial por autorização
+            captura parcial por autorização 
     SplitRuleRequest:
       type: object
       required:
@@ -1956,7 +1970,18 @@ components:
         charge_processing_fee:
           type: boolean
           description: define se vai ser feito split em cima do valor bruto (0) ou do valor
-            líquido (1) da transação
+            líquido (1) da transação. Caso o split seja realizado por valor líquido, a taxa 
+            será dividida entre o recipient e o on_behalf_of.
+          default: 0
+        charge_recipient_processing_fee:
+          type: boolean
+          description: Carrega o valor da taxa da venda para o recipient quando definido como 1 ou true.
+          default: 0
+        is_gross_amount:
+          type: boolean
+          description: Quando o valor (amount) é passado exatamente igual ao valor da transação ocorre o
+           erro pois, o parceiro esquece da taxa Zoop. Para evitar esse tipo de problema, deve-se usar 
+           está opção como 1 ou true e, com isso, a API irá considerar a taxa Zoop antes do split. 
           default: 0
         percentage:
           type: integer
