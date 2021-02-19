@@ -25,7 +25,7 @@ tags:
     description: Manter source de pagamentos
   - name: Mundo Físico
     description: Pareamento de POS usando a API
-  - name: Split de transações
+  - name: Split (Regra de divisão) 
     description: Regras de divisão (split) de um pagamento
   - name: Recebível
     description: Parcelas de recebimento de uma transação
@@ -313,99 +313,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TransactionCNPRequest"
-            examples:
-              DigitalWalletSecondary: 
-                summary: Transação com cartão específico associado ao comprador
-                value:
-                  source:
-                    type: "card"
-                    card:
-                      id: "822a8bda73c546a8b2f12a5ebcce7732"
-                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7733"
-                  customer: "c07ee65cda84495787cd091fea554549"
-                  amount: 300
-                  description: "Uma descrição breve da motivação da sua transação"
-                  statement_descriptor: "Loja do Joao"
-                  payment_type: "credit"
-              DigitalWallet:
-                summary: Transação com cartão padrão associado ao comprador
-                value:
-                  customer: "c07ee65cda84495787cd091fea554549"
-                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7732"
-                  amount: 300
-                  currency: "BRL"
-                  description: "Uma descrição breve da motivação da sua transação"
-                  statement_descriptor: "Loja do Joao"
-                  payment_type: "credit"
-              NoToken:
-                summary: Transação com cartão sem tokenização
-                value:
-                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7732"
-                  amount: 300
-                  currency: "BRL"
-                  description: "Uma descrição breve da motivação da sua transação"
-                  statement_descriptor: "Loja do Joao"
-                  payment_type: "credit"
-                  source:
-                    usage: "single_use"
-                    amount: 7
-                    currency: "BRL"
-                    type: "card"
-                    card:
-                      card_number: "4539003370725497"
-                      holder_name: "João Silva"
-                      expiration_month: "03"
-                      expiration_year: "2027"
-                      security_code: "123"
-              DisposableToken:
-                summary: Transação com Token Descartável
-                value:
-                  token: "822a8bda73c546a8b2f12a5ebcce7732"
-                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7732"
-                  amount: 300
-                  currency: "BRL"
-                  description: "Uma descrição breve da motivação da sua transação"
-                  statement_descriptor: "Loja do Joao"
-                  payment_type: "credit"
-              SimpleBoletoTransaction:
-                summary: Transação com boleto simples
-                value:
-                  amount: 300
-                  currency: "BRL"
-                  description: "venda"
-                  on_behalf_of: "573e2aa71cb94ecda8dee14087327b48"
-                  customer: "573e2aa71cb94ecda8dee14087327b48"
-                  payment_type: "boleto"         
-              BoletoTransaction:
-                summary: Transação com boleto completa
-                value:
-                  amount: 300
-                  currency: "BRL"
-                  description: "Venda de ingressos para o show do dia 30"
-                  reference_id: "reference_5132"
-                  on_behalf_of: "573e2aa71cb94ecda8dee14087327b48"
-                  customer: "573e2aa71cb94ecda8dee14087327b48"
-                  payment_type: "boleto"
-                  payment_method:
-                    expiration_date: "2018-11-20"
-                    payment_limit_date: "2018-11-20"
-                    body_instructions:
-                      - "Pedido #5132"
-                    billing_instructions:
-                      late_fee:
-                        mode: "FIXED"
-                        amount: 500
-                      interest:
-                        mode: "DAILY_AMOUNT"
-                        amount: 200
-                      discount:
-                        - mode: "FIXED"
-                          limit_date: "2018-11-09"
-                          amount: 150
-                        - mode: "FIXED"
-                          limit_date: "2018-11-10"
-                          amount: 100
+              oneOf:
+                - $ref: "#/components/schemas/TransactionNoTokenRequest"
+                - $ref: "#/components/schemas/TransactionDigitalWalletSecondaryRequest"
+                - $ref: "#/components/schemas/TransactionDigitalWalletRequest"
+                - $ref: "#/components/schemas/TransactionDisposableTokenRequest"
+                - $ref: "#/components/schemas/TransactionSimpleBoletoTransactionRequest"
+                - $ref: "#/components/schemas/TransactionBoletoTransactionRequest"
         description: Transacao
       responses:
         "200":
@@ -675,7 +589,7 @@ paths:
           description: Missing required param
         "404":
           description: Terminal não encontrado
-  "/v1/marketplaces/terminals/{indentification_number}":
+  "/v1/marketplaces/card-present/terminals/{indentification_number}":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
       - $ref: "#/components/parameters/identificationNumberID"
@@ -761,6 +675,7 @@ paths:
         schema:
           type: string
     post:
+      deprecated: true
       tags:
         - Recibo
       summary: Enviar recibo por sms.email
@@ -790,6 +705,7 @@ paths:
         "404":
           description: Marketplace/Recibo não encontrada
     put:
+      deprecated: true
       tags:
         - Recibo
       summary: Alterar detalhes do recibo
@@ -952,7 +868,7 @@ paths:
           type: string
     get:
       tags:
-        - Split de transações
+        - Split (Regra de divisão)
       summary: Listar detalhes de Split por transação
       description: ""
       responses:
@@ -962,7 +878,7 @@ paths:
           description: Marketplace/Transação não encontrado
     post:
       tags:
-        - Split de transações
+        - Split (Regra de divisão)
       summary: Criar Split por transação
       description: ""
       requestBody:
@@ -993,7 +909,7 @@ paths:
           type: string
     get:
       tags:
-        - Split de transações
+        - Split (Regra de divisão)
       summary: Recupera detalhes de Split por ID
       description: ""
       responses:
@@ -1003,7 +919,7 @@ paths:
           description: Marketplace/Transação não encontrado
     put:
       tags:
-        - Split de transações
+        - Split (Regra de divisão)
       summary: Alterar Split por transação
       description: ""
       responses:
@@ -1013,7 +929,7 @@ paths:
           description: Marketplace/Transação não encontrado
     delete:
       tags:
-        - Split de transações
+        - Split (Regra de divisão)
       summary: Remover Split por transação
       description: ""
       responses:
@@ -2478,6 +2394,256 @@ components:
           example: 1e5ee2e290d040769806c79e6ef94ee1
         metadata:
           type: object
+                  
+    TransactionNoTokenRequest:
+      type: object
+      properties:
+        on_behalf_of:
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+        amount: 
+          type: string
+          example: 300
+        currency: 
+          type: string
+          example: "BRL"
+        description:
+          type: string
+          example: "Uma descrição breve da motivação da sua transação"
+        statement_descriptor:
+          type: string
+          example:  "Loja do Joao"
+        payment_type:
+          type: string
+          example: "credit"
+        source:
+          type: object
+          properties:
+            usage:
+              type: string
+              example: "single_use"
+            amount: 
+              type: number
+              example: 700
+            currency: 
+              type: string
+              example: "BRL"
+            type:
+              type: string 
+              example: "card"
+            card:
+              type: object
+              properties:
+                card_number: 
+                  type: string
+                  example: "4539003370725497"
+                holder_name: 
+                  type: string
+                  example: "João Silva"
+                expiration_month:  
+                  type: string
+                  example: "03"
+                expiration_year:  
+                  type: string
+                  example: "2027"
+                security_code:  
+                  type: string
+                  example: "123"
+    TransactionDigitalWalletSecondaryRequest: 
+      type: object
+      properties:
+        on_behalf_of: 
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7733"
+        customer: 
+          type: string
+          example: "c07ee65cda84495787cd091fea554549"
+        amount: 
+          type: string
+          example: 300
+        description:  
+          type: string
+          example: "Uma descrição breve da motivação da sua transação"
+        statement_descriptor: 
+          type: string
+          example: "Loja do Joao"
+        payment_type: 
+          type: string
+          example: "credit"
+        source:
+          type: object
+          properties:
+            type: 
+              type: string
+              example: "card"
+            card:
+              type: object
+              properties:
+                id:  
+                  type: string
+                  example: "822a8bda73c546a8b2f12a5ebcce7732"
+    
+    TransactionDigitalWalletRequest:
+      type: object
+      properties:
+        customer:  
+          type: string
+          example: "c07ee65cda84495787cd091fea554549"
+        on_behalf_of:  
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+        amount:  
+          type: number
+          example: 300
+        currency:  
+          type: string
+          example: "BRL"
+        description:  
+          type: string
+          example: "Uma descrição breve da motivação da sua transação"
+        statement_descriptor:  
+          type: string
+          example: "Loja do Joao"
+        payment_type:  
+          type: string
+          example: "credit"
+    
+    TransactionDisposableTokenRequest:
+      type: object
+      properties:
+        token:   
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+        on_behalf_of:   
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+        amount:   
+          type: string
+          example: 300
+        currency:   
+          type: string
+          example: "BRL"
+        description:   
+          type: string
+          example: "Uma descrição breve da motivação da sua transação"
+        statement_descriptor:   
+          type: string
+          example: "Loja do Joao"
+        payment_type:   
+          type: string
+          example: "credit"
+    
+    TransactionSimpleBoletoTransactionRequest:
+      type: object
+      properties:
+        amount:    
+          type: number
+          example: 300
+        currency:    
+          type: string
+          example: "BRL"
+        description:    
+          type: string
+          example: "venda"
+        on_behalf_of:    
+          type: string
+          example: "573e2aa71cb94ecda8dee14087327b48"
+        customer:    
+          type: string
+          example: "573e2aa71cb94ecda8dee14087327b48"
+        payment_type:    
+          type: string
+          example: "boleto"         
+    
+    TransactionBoletoTransactionRequest:
+      type: object
+      properties:
+        amount:     
+          type: number
+          example: 300
+        currency:     
+          type: string
+          example: "BRL"
+        description:     
+          type: string
+          example: "Venda de ingressos para o show do dia 30"
+        reference_id:     
+          type: string
+          example: "reference_5132"
+        on_behalf_of:     
+          type: string
+          example: "573e2aa71cb94ecda8dee14087327b48"
+        customer:     
+          type: string
+          example: "573e2aa71cb94ecda8dee14087327b48"
+        payment_type:     
+          type: string
+          example: "boleto"
+        payment_method:
+          type: object
+          properties:
+            expiration_date:      
+              type: string
+              example: "2018-11-20"
+            payment_limit_date:       
+              type: string
+              example: "2018-11-20"
+            body_instructions:       
+              type: array
+              items:
+                example: "Pedido #5132"
+            billing_instructions:
+              type: object
+              properties:
+                late_fee:
+                  type: object
+                  properties:
+                    mode:        
+                      type: string
+                      enum:
+                        - FIXED
+                        - PERCENTAGE
+                      default: "FIXED"
+                    amount:         
+                      type: number
+                      example: 500
+                    start_date:         
+                      type: string
+                      example: "2018-11-20"
+                interest:
+                  type: object
+                  properties:
+                    mode:        
+                      type: string
+                      enum:
+                        - DAILY_AMOUNT
+                        - DAILY_PERCENTAGE
+                        - MONTHLY_PERCENTAGE
+                      default: "DAILY_AMOUNT"
+                    amount:         
+                      type: number
+                      example: 200
+                    start_date:         
+                      type: string
+                      example: "2018-11-20"
+                discount:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      mode:        
+                        type: string
+                        enum:
+                          - FIXED
+                          - PERCENTAGE
+                        default: "FIXED"
+                      amount:         
+                        type: number
+                        example: 500
+                      limit_date:          
+                        type: string
+                        example: "2018-11-09"
+
     PlanResponse:
       type: object
       properties:
