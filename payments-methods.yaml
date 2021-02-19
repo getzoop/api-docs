@@ -2408,21 +2408,21 @@ components:
         on_behalf_of:
           type: string
           example: "822a8bda73c546a8b2f12a5ebcce7732"
-        amount: 
-          type: string
-          example: 300
-        currency: 
-          type: string
-          example: "BRL"
+          description: "Identificador do seller responsável pela venda."
         description:
           type: string
           example: "Uma descrição breve da motivação da sua transação"
         statement_descriptor:
           type: string
           example:  "Loja do Joao"
+          description: "Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor.."
         payment_type:
           type: string
-          example: "credit"
+          enum:
+            - credit
+            - boleto
+          default: "credit"
+          description: Tipo de pagamento
         source:
           type: object
           properties:
@@ -2432,9 +2432,11 @@ components:
             amount: 
               type: number
               example: 700
+              description: Valor em centavos a ser cobrado pela transação
             currency: 
               type: string
               example: "BRL"
+              description: 'Moeda do valor a ser cobrado na venda "BRL"'
             type:
               type: string 
               example: "card"
@@ -2444,18 +2446,23 @@ components:
                 card_number: 
                   type: string
                   example: "4539003370725497"
+                  description: Número do cartão
                 holder_name: 
                   type: string
                   example: "João Silva"
+                  description: Nome do portador do cartão.
                 expiration_month:  
                   type: string
                   example: "03"
+                  description: mês de expiração do cartão (MM)
                 expiration_year:  
                   type: string
                   example: "2027"
+                  description: ano de expiração do cartão (AAAA)
                 security_code:  
                   type: string
                   example: "123"
+                  description: Código de segurança do cartão (CVC)
     TransactionDigitalWalletSecondaryRequest: 
       type: object
       required:
@@ -2464,25 +2471,31 @@ components:
         - description
         - payment_type
         - on_behalf_of
+        - source
       properties:
         on_behalf_of: 
           type: string
           example: "822a8bda73c546a8b2f12a5ebcce7733"
-        customer: 
-          type: string
-          example: "c07ee65cda84495787cd091fea554549"
-        amount: 
-          type: string
-          example: 300
-        description:  
-          type: string
-          example: "Uma descrição breve da motivação da sua transação"
+          description: "Identificador do seller responsável pela venda."
         statement_descriptor: 
           type: string
           example: "Loja do Joao"
+          description: "Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor.."
+        currency: 
+          type: string
+          example: "BRL"
+          description: 'Moeda do valor a ser cobrado na venda "BRL"'
+        amount: 
+          type: number
+          example: 700
+          description: Valor em centavos a ser cobrado pela transação
         payment_type: 
           type: string
-          example: "credit"
+          enum:
+            - credit
+            - boleto
+          default: "credit"
+          description: Tipo de pagamento
         source:
           type: object
           properties:
@@ -2490,11 +2503,13 @@ components:
               type: string
               example: "card"
             card:
+              description: Objeto obrigatório no tipo card.
               type: object
               properties:
                 id:  
                   type: string
                   example: "822a8bda73c546a8b2f12a5ebcce7732"
+                  description: identificador do cartão para source tipo card
     
     TransactionDigitalWalletRequest:
       type: object
@@ -2505,28 +2520,37 @@ components:
         - payment_type
         - on_behalf_of
       properties:
-        customer:  
-          type: string
-          example: "c07ee65cda84495787cd091fea554549"
         on_behalf_of:  
           type: string
           example: "822a8bda73c546a8b2f12a5ebcce7732"
+          description: "Identificador do seller responsável pela venda."
+        customer:  
+          type: string
+          example: "c07ee65cda84495787cd091fea554549"
+          description: "identificador do comprador que será cobrado."
         amount:  
           type: number
           example: 300
+          description: Valor em centavos a ser cobrado pela transação
         currency:  
           type: string
           example: "BRL"
+          description: 'Moeda do valor a ser cobrado na venda "BRL"'
         description:  
           type: string
           example: "Uma descrição breve da motivação da sua transação"
         statement_descriptor:  
           type: string
           example: "Loja do Joao"
-        payment_type:  
-          type: string
-          example: "credit"
-    
+          description: "Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor.."
+        payment_type: 
+          type: string 
+          enum:
+            - credit
+            - boleto
+          default: "credit"
+          description: Tipo de pagamento
+  
     TransactionDisposableTokenRequest:
       type: object
       required:
@@ -2536,27 +2560,36 @@ components:
         - payment_type
         - on_behalf_of
       properties:
-        token:   
-          type: string
-          example: "822a8bda73c546a8b2f12a5ebcce7732"
         on_behalf_of:   
           type: string
           example: "822a8bda73c546a8b2f12a5ebcce7732"
+          description: "Identificador do seller responsável pela venda."
+        token:   
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+          description: "Id do token de cartão gerado. Após o uso é descartado."
         amount:   
           type: string
           example: 300
+          description: Valor em centavos a ser cobrado pela transação
         currency:   
           type: string
           example: "BRL"
+          description: 'Moeda do valor a ser cobrado na venda "BRL"'
         description:   
           type: string
           example: "Uma descrição breve da motivação da sua transação"
         statement_descriptor:   
           type: string
           example: "Loja do Joao"
+          description: "Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor.."
         payment_type:   
-          type: string
-          example: "credit"
+          type: string 
+          enum:
+            - credit
+            - boleto
+          default: "credit"
+          description: Tipo de pagamento
     
     TransactionSimpleBoletoTransactionRequest:
       type: object
@@ -2567,24 +2600,32 @@ components:
         - payment_type
         - on_behalf_of
       properties:
-        amount:    
-          type: number
-          example: 300
-        currency:    
-          type: string
-          example: "BRL"
-        description:    
-          type: string
-          example: "venda"
         on_behalf_of:    
           type: string
           example: "573e2aa71cb94ecda8dee14087327b48"
+          description: "Identificador do seller responsável pela venda."
         customer:    
           type: string
           example: "573e2aa71cb94ecda8dee14087327b48"
-        payment_type:    
+          description: "identificador do comprador que será cobrado."
+        amount:    
+          type: number
+          example: 300
+          description: Valor em centavos a ser cobrado pela transação
+        currency:    
           type: string
-          example: "boleto"         
+          example: "BRL"
+          description: 'Moeda do valor a ser cobrado na venda "BRL"'
+        description:    
+          type: string
+          example: "venda"
+        payment_type:    
+          type: string 
+          enum:
+            - credit
+            - boleto
+          default: "boleto"
+          description: Tipo de pagamento
     
     TransactionBoletoTransactionRequest:
       type: object
@@ -2595,44 +2636,54 @@ components:
         - payment_type
         - on_behalf_of
       properties:
+        on_behalf_of:     
+          type: string
+          example: "573e2aa71cb94ecda8dee14087327b48"
+          description: "Identificador do seller responsável pela venda."
+        customer:     
+          type: string
+          example: "573e2aa71cb94ecda8dee14087327b48"
+          description: "identificador do comprador que será cobrado."
         amount:     
           type: number
           example: 300
+          description: Valor em centavos a ser cobrado pela transação
         currency:     
           type: string
           example: "BRL"
+          description: 'Moeda do valor a ser cobrado na venda "BRL"'
         description:     
           type: string
           example: "Venda de ingressos para o show do dia 30"
         reference_id:     
           type: string
           example: "reference_5132"
-        on_behalf_of:     
-          type: string
-          example: "573e2aa71cb94ecda8dee14087327b48"
-        customer:     
-          type: string
-          example: "573e2aa71cb94ecda8dee14087327b48"
         payment_type:     
           type: string
-          example: "boleto"
+          enum:
+            - boleto
+          description: Tipo de pagamento
         payment_method:
           type: object
           properties:
             expiration_date:      
               type: string
               example: "2018-11-20"
+              description: Data de expiração do boleto no formato (AAAA-MM-DD)
             payment_limit_date:       
               type: string
               example: "2018-11-20"
+              description: Data limite para o pagamento do boleto (AAAA-MM-DD)
             body_instructions:       
               type: array
               items:
                 example: "Pedido #5132"
+              description: Instruções utilizadas na parte central do boleto. É possível até 5 instruções
             billing_instructions:
               type: object
               properties:
                 late_fee:
+                  description: Objeto para utilização de cobrança da multa por atraso de pagamento do boleto
                   type: object
                   properties:
                     mode:        
@@ -2641,13 +2692,21 @@ components:
                         - FIXED
                         - PERCENTAGE
                       default: "FIXED"
+                      description: "Modo de cobrança. Valores aceitos: FIXED (fixo) ou PERCENTAGE (percentual)"
                     amount:         
                       type: number
                       example: 500
+                      description: "Valor fixo para o tipo de multa FIXED (fixa)"
+                    percentage:         
+                      type: number
+                      example: 10
+                      description: "Porcentagem baseado no valor do boleto para tipo de multa PERCENTAGE (percentual)"
                     start_date:         
                       type: string
                       example: "2018-11-20"
+                      description: "A data inicial para cobrança de multa"
                 interest:
+                  description: Objeto para utilização de cobrança de juros
                   type: object
                   properties:
                     mode:        
@@ -2657,13 +2716,21 @@ components:
                         - DAILY_PERCENTAGE
                         - MONTHLY_PERCENTAGE
                       default: "DAILY_AMOUNT"
+                      description: "Modo de cobrança. Valores aceitos: DAILY_AMOUNT, DAILY_PERCENTAGE, MONTHLY_PERCENTAGE"
                     amount:         
                       type: number
                       example: 200
+                      description: "Valor fixo para o tipo de juros DAILY_AMOUNT"
+                    percentage:         
+                      type: number
+                      example: 10
+                      description: "Porcentagem baseado no valor do boleto para tipo de juros DAILY_PERCENTAGE ou MONTHLY_PERCENTAGE"
                     start_date:         
                       type: string
                       example: "2018-11-20"
+                      description: "A data inicial para cobrança dos juros"
                 discount:
+                  description: Objeto para aplicar descontos no boleto para uma ou mais datas limite
                   type: array
                   items:
                     type: object
@@ -2674,12 +2741,15 @@ components:
                           - FIXED
                           - PERCENTAGE
                         default: "FIXED"
+                        description: "Modo de cobrança. Valores aceitos: FIXED(fixo), PERCENTAGE(percentual)."
                       amount:         
                         type: number
                         example: 500
+                        description: "Valor fixo para o tipo de desconto FIXED"
                       limit_date:          
                         type: string
                         example: "2018-11-09"
+                        description: 'Data limite para o pagamento ocorrer com desconto. Deve ser anterior a data informada em "expiration date"'
 
     PlanResponse:
       type: object
