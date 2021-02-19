@@ -305,6 +305,7 @@ paths:
       - $ref: "#/components/parameters/marketplaceID"
     post:
       summary: Criar transação de cartão
+      description: Usar (Option 1) Autorização direta, (Option 2) Token descartavél, (Option 3) Custormer ID, (Option 4) Card ID, (Option 5) Boleto Simples, (Option 6) Boleto completo
       tags:
         - Transação de cartão
       parameters:
@@ -315,9 +316,9 @@ paths:
             schema:
               oneOf:
                 - $ref: "#/components/schemas/TransactionNoTokenRequest"
-                - $ref: "#/components/schemas/TransactionDigitalWalletSecondaryRequest"
-                - $ref: "#/components/schemas/TransactionDigitalWalletRequest"
                 - $ref: "#/components/schemas/TransactionDisposableTokenRequest"
+                - $ref: "#/components/schemas/TransactionDigitalWalletRequest"
+                - $ref: "#/components/schemas/TransactionDigitalWalletSecondaryRequest"
                 - $ref: "#/components/schemas/TransactionSimpleBoletoTransactionRequest"
                 - $ref: "#/components/schemas/TransactionBoletoTransactionRequest"
         description: Transacao
@@ -2397,6 +2398,12 @@ components:
                   
     TransactionNoTokenRequest:
       type: object
+      required:
+        - amount
+        - currency
+        - description
+        - payment_type
+        - on_behalf_of
       properties:
         on_behalf_of:
           type: string
@@ -2451,6 +2458,12 @@ components:
                   example: "123"
     TransactionDigitalWalletSecondaryRequest: 
       type: object
+      required:
+        - amount
+        - currency
+        - description
+        - payment_type
+        - on_behalf_of
       properties:
         on_behalf_of: 
           type: string
@@ -2485,6 +2498,12 @@ components:
     
     TransactionDigitalWalletRequest:
       type: object
+      required:
+        - amount
+        - currency
+        - description
+        - payment_type
+        - on_behalf_of
       properties:
         customer:  
           type: string
@@ -2510,6 +2529,12 @@ components:
     
     TransactionDisposableTokenRequest:
       type: object
+      required:
+        - amount
+        - currency
+        - description
+        - payment_type
+        - on_behalf_of
       properties:
         token:   
           type: string
@@ -2535,6 +2560,12 @@ components:
     
     TransactionSimpleBoletoTransactionRequest:
       type: object
+      required:
+        - amount
+        - currency
+        - description
+        - payment_type
+        - on_behalf_of
       properties:
         amount:    
           type: number
@@ -2557,6 +2588,12 @@ components:
     
     TransactionBoletoTransactionRequest:
       type: object
+      required:
+        - amount
+        - currency
+        - description
+        - payment_type
+        - on_behalf_of
       properties:
         amount:     
           type: number
