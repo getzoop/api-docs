@@ -321,6 +321,8 @@ paths:
                 - $ref: "#/components/schemas/TransactionDigitalWalletSecondaryRequest"
                 - $ref: "#/components/schemas/TransactionSimpleBoletoTransactionRequest"
                 - $ref: "#/components/schemas/TransactionBoletoTransactionRequest"
+              discriminator:
+                propertyName: transactions
         description: Transacao
       responses:
         "200":
@@ -2519,6 +2521,7 @@ components:
         - description
         - payment_type
         - on_behalf_of
+        - customer
       properties:
         on_behalf_of:  
           type: string
@@ -2599,6 +2602,7 @@ components:
         - description
         - payment_type
         - on_behalf_of
+        - customer
       properties:
         on_behalf_of:    
           type: string
@@ -2635,6 +2639,7 @@ components:
         - description
         - payment_type
         - on_behalf_of
+        - customer
       properties:
         on_behalf_of:     
           type: string
