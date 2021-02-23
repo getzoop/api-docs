@@ -2406,6 +2406,8 @@ components:
         - description
         - payment_type
         - on_behalf_of
+      discriminator:
+        propertyName: transactions
       properties:
         on_behalf_of:
           type: string
