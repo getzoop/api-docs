@@ -313,7 +313,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TransactionNoTokenRequest"
+              oneOf:
+                - $ref: "#/components/schemas/TransactionNoTokenRequest"
+                - $ref: "#/components/schemas/TransactionDisposableTokenRequest"
       responses:
         "200":
           description: Transação criada com sucesso
