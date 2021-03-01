@@ -315,10 +315,6 @@ paths:
               oneOf:
                 - $ref: "#/components/schemas/TransactionNoTokenRequest"
                 - $ref: "#/components/schemas/TransactionDisposableTokenRequest"
-                - $ref: "#/components/schemas/TransactionDigitalWalletRequest"
-                - $ref: "#/components/schemas/TransactionDigitalWalletSecondaryRequest"
-                - $ref: "#/components/schemas/TransactionSimpleBoletoTransactionRequest"
-                - $ref: "#/components/schemas/TransactionBoletoTransactionRequest"
       responses:
         "200":
           description: Transação criada com sucesso
