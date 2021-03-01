@@ -12,13 +12,13 @@ tags:
 
 servers: [
     {
-      "url": "https://api-beta.zoop.ws",
-      "description": "Produção"
-    },
-    {
       "url": "https://apigw-sandbox.zoop.ws",
       "description": "Sandbox"
-    }    
+    },    
+    {
+      "url": "https://api-beta.zoop.ws",
+      "description": "Produção"
+    }
     ]
     
 paths:
@@ -1492,6 +1492,239 @@ paths:
                   query_count:
                     type: number
                     example: 1
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/requests":
+    post:
+      summary: Realizar Pedido de Cartão
+      tags:
+        - Cartão pré-pago
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/CardHolderRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardHolderResponse'
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/activate":
+    post:
+      summary: Ativar cartão
+      tags:
+        - Cartão pré-pago
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address_id:
+                  type: string
+                  example: "1010"
+                  description: Senha do cartão a ser criado (4 dígitos não sequenciais).
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardActivationResponse'
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/block":
+    post:
+      summary: Bloquear um cartão
+      tags:
+        - Cartão pré-pago
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                observation:
+                  type: string
+                  description: Motivo do bloqueio (máximo 100 caracteres).
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardBlockedResponse'
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/unblock":
+    post:
+      summary: Desbloquear um cartão
+      tags:
+        - Cartão pré-pago
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardActivationResponse'
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/cancel":
+    post:
+      summary: Cancelar um cartão
+      tags:
+        - Cartão pré-pago
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                observation:
+                  type: string
+                  description: Motivo do bloqueio (máximo 100 caracteres).
+
+      responses:
+        '200':
+          description: OK
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/reissue":
+    post:
+      summary: Solicitar segunda via de um cartão
+      tags:
+        - Cartão pré-pago
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/CardHolderReissueRequest'
+      responses:
+        '200':
+          description: OK
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/password":
+    put:
+      summary: Troca de senha
+      tags:
+        - Cartão pré-pago
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                old_password:
+                  type: string
+                  description: Senha antiga do cartão que será trocada.
+                  example: "1010"
+                password:
+                  type: string
+                  description: Nova senha do cartão. Só pode conter valores numéricos não sequenciais no tamanho de 4 dígitos.
+                  example: "1020"
+      responses:
+        '200':
+          description: OK
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}":
+    get:
+      summary: Obter dados de um cartão
+      tags:
+        - Cartão pré-pago
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address_id:
+                  type: string
+                  example: "1010"
+                  description: Senha do cartão a ser criado (4 dígitos não sequenciais).
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardActivationResponse'
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/delivery":
+    get:
+      summary: Obter dados de um cartão
+      tags:
+        - Cartão pré-pago
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address_id:
+                  type: string
+                  example: "1010"
+                  description: Senha do cartão a ser criado (4 dígitos não sequenciais).
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardActivationResponse'
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/accounts/{account_id}/cards":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/holderID"
+      - $ref: "#/components/parameters/accountID"
+    get:
+      summary: Listar cartões de uma conta 
+      tags:
+        - Cartão pré-pago
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardActivationResponse'
 
 
 components:
@@ -1518,6 +1751,13 @@ components:
         name: partner_id
         in: path
         description: ID do sócio 
+        required: true
+        schema:
+          type: string
+      externalKEY:
+        name: externalKey
+        in: path
+        description: ID do cartão alvo
         required: true
         schema:
           type: string
@@ -2561,6 +2801,176 @@ components:
             authorization_code:
               type: string
               example: "fba84c9292024c9f9b375998a0925b4f"
+    CardHolderRequest:
+      required:
+        - address_id
+        - phone_id
+        - account_id
+        - printed_card_nam
+      type: object
+      properties:
+        address_id:
+          type: string
+          example: "9cfee57804574dd0a5de65357f69ac55"
+          description: "ID do endereço do holder."
+        phone_id:
+          type: string
+          example: "508ed1dc69fd492fb0f295ab0e73c2f4"
+          description: "ID do telefone do holder."
+        account_id:
+          type: string
+          example: "825ae4c8d132402e858bbdf5031108fd"
+          description: "ID da conta do holder."
+        printed_card_nam:
+          type: string
+          example: "Maria da Silva"
+          description: "Nome a ser impresso no cartão (máximo de 20 caracteres)."
+        password:
+          type: string
+          example: "1010"
+          description: Senha do cartão a ser criado (4 dígitos não sequenciais).
+    CardHolderResponse:
+      type: object
+      properties:
+        external_key:
+          type: string
+          example: "037d9fe32bab48ff815c26bd5deda824"
+        account_id:
+          type: string
+          example: "bc0f948a02ee452da75f51db3fc04bd0"
+        marketplace_id:
+          type: string
+          example: "f8c2bfb884e4486c8e0eee15be5c3ab1"
+        holder_id:
+          type: string
+          example: "a6d7c42c661b4e76bd6b77a9c09e82e1"
+        printed_card_nam:
+          type: string
+          example: "Maria da Silva"
+        status:
+          type: string
+          example: "PENDING"
+        created_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        updated_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        uri:
+          type: string
+          example: "/marketplaces/f8c2bfb8-84e4-486c-8e0e-ee15be5c3ab1/holders/a6d7c42c-661b-4e76-bd6b-77a9c09e82e1/cards/037d9fe3-2bab-48ff-815c-26bd5deda824"
+    CardActivationResponse:
+      type: object
+      properties:
+        external_key:
+          type: string
+          example: "037d9fe32bab48ff815c26bd5deda824"
+        account_id:
+          type: string
+          example: "bc0f948a02ee452da75f51db3fc04bd0"
+        holder_id:
+          type: string
+          example: "a6d7c42c661b4e76bd6b77a9c09e82e1"
+        marketplace_id:
+          type: string
+          example: "f8c2bfb884e4486c8e0eee15be5c3ab1"
+        pan:
+          type: string
+          example: "9999********9999"
+        expiration_date:
+          type: string
+          example: "2040-11-06"
+        status:
+          type: string
+          example: "ACTIVE"
+        created_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        updated_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        uri:
+          type: string
+          example: "//marketplaces/f8c2bfb8-84e4-486c-8e0e-ee15be5c3ab1/holders/a6d7c42c-661b-4e76-bd6b-77a9c09e82e1/cards/037d9fe3-2bab-48ff-815c-26bd5deda824"
+    CardBlockedResponse:
+      type: object
+      properties:
+        external_key:
+          type: string
+          example: "037d9fe32bab48ff815c26bd5deda824"
+        account_id:
+          type: string
+          example: "bc0f948a02ee452da75f51db3fc04bd0"
+        holder_id:
+          type: string
+          example: "a6d7c42c661b4e76bd6b77a9c09e82e1"
+        marketplace_id:
+          type: string
+          example: "f8c2bfb884e4486c8e0eee15be5c3ab1"
+        pan:
+          type: string
+          example: "9999********9999"
+        expiration_date:
+          type: string
+          example: "2040-11-06"
+        status:
+          type: string
+          example: "BLOCKED"
+        created_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        updated_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        uri:
+          type: string
+          example: "//marketplaces/f8c2bfb8-84e4-486c-8e0e-ee15be5c3ab1/holders/a6d7c42c-661b-4e76-bd6b-77a9c09e82e1/cards/037d9fe3-2bab-48ff-815c-26bd5deda824"
+    CardHolderReissueRequest:
+      required:
+        - country
+        - city
+        - street
+        - number
+        - neighborhood
+      type: object
+      properties:
+        mailing_address:
+          type: object
+          description: Endereço onde será entregue o cartão. Caso não seja informado o cartão será enviado para o endereço de entrega definido anteriormente no cartão alvo.
+          properties:
+            country:
+              type: string
+              example: "Brasil"
+              description: País do endereço. 20 caracteres. 
+            city:
+              type: string
+              description: Cidade do endereço. 20 caracteres.
+              example: "Rio de Janeiro" 
+            street:
+              type: string
+              example: "Av das Américas"
+              description: Logradouro do endereço 
+            number:
+              type: string
+              description: Número do endereço.
+              example: "100" 
+            neighborhood:
+              type: string
+              description: Bairro
+              example: "Barra da Tijuca" 
+            complement:
+              type: string
+              description: Complemento do endereço
+              example: "Do lado Citta América" 
+            state:
+              type: string
+              description: Estado
+              example: "Rio de Janeiro" 
+            postal_code:
+              type: string
+              description: CEP
+              example: "22783450" 
+
 
     MessageNotFound400:
       type: object
