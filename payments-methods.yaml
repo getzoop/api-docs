@@ -304,7 +304,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
     post:
-      summary: Criar transação de cartão
+      summary: Criar transação
       description: Usar (Option 1) Autorização direta, (Option 2) Token descartavél, (Option 3) Custormer ID, (Option 4) Card ID, (Option 5) Boleto Simples, (Option 6) Boleto completo
       tags:
         - Transação
