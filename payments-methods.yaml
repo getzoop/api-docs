@@ -1378,7 +1378,7 @@ components:
       schema:
         type: string
     identificationNumberID:
-      name: identification_number
+      name: indentification_number
       in: path
       description: identificador do terminal
       required: true
@@ -2395,7 +2395,6 @@ components:
           example: 1e5ee2e290d040769806c79e6ef94ee1
         metadata:
           type: object
-                  
     TransactionNoTokenRequest:
       type: object
       required:
@@ -2512,7 +2511,6 @@ components:
                   type: string
                   example: "822a8bda73c546a8b2f12a5ebcce7732"
                   description: identificador do cartão para source tipo card
-    
     TransactionDigitalWalletRequest:
       type: object
       required:
@@ -2553,7 +2551,6 @@ components:
             - boleto
           default: "credit"
           description: Tipo de pagamento
-  
     TransactionDisposableTokenRequest:
       type: object
       required:
@@ -2593,7 +2590,6 @@ components:
             - boleto
           default: "credit"
           description: Tipo de pagamento
-    
     TransactionSimpleBoletoTransactionRequest:
       type: object
       required:
@@ -2630,7 +2626,6 @@ components:
             - boleto
           default: "boleto"
           description: Tipo de pagamento
-    
     TransactionBoletoTransactionRequest:
       type: object
       required:
@@ -2755,7 +2750,6 @@ components:
                         type: string
                         example: "2018-11-09"
                         description: 'Data limite para o pagamento ocorrer com desconto. Deve ser anterior a data informada em "expiration date"'
-
     PlanResponse:
       type: object
       properties:
@@ -2781,7 +2775,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PlanResponseItem'
-            
     PlanResponseItem:
       type: object
       required:
@@ -2902,8 +2895,6 @@ components:
           description: moeda utilizada, no formato ISO4217
           type: string
           example: BRL
-
-
     SubscriptionResponse:
       type: object
       properties:
@@ -3013,7 +3004,6 @@ components:
         uri:
           type: string
           example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/subscription/73c0789594c1470cb10cc957f2435c00"
-
     InvoiceRequest:
       type: object
       properties:
@@ -3087,7 +3077,6 @@ components:
             - paid
             - canceled
             - failed
-
     InvoiceResponse:
       type: object
       properties:
@@ -3116,7 +3105,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/InvoiceResponseItem'
-    
     InvoiceResponseItem:
       type: object
       properties:
@@ -3215,7 +3203,6 @@ components:
         uri:
           type: string
           example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/invoice/73c0789594c1470cb10cc957f2435c00"
-
     InvoiceCustomer:
       type: object
       properties:
@@ -3241,7 +3228,6 @@ components:
           description: endereço de email
           type: string
           format: email
-          
     PlanRequest:
       type: object
       required:
