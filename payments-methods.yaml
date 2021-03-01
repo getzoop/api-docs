@@ -7,8 +7,10 @@ security:
 tags:
   - name: Tokenização de cartão
     description: Token de cartões e cartões de crédito utilizados nos pagamentos
-  - name: Transação
-    description: Operações de pagamento com dados de cartão de crédito e boleto
+  - name: Transação V2
+    description: Nova versão da API de operações de pagamento com dados de cartão de crédito
+  - name: Transação de cartão
+    description: Operações de pagamento com dados de cartão de crédito
   - name: Boleto
     description: Operações de pagamento via boleto bancário registrado
   - name: Planos de Recorrência
@@ -18,7 +20,7 @@ tags:
   - name: Fatura de Recorrência
     description: Verificação de Faturas de recorrência
   - name: Recibo
-    description: Recibos de pagamentos realizados com sucesso
+    description: Recibos de pagamentos realizados com sucesso 
   - name: Source
     description: Manter source de pagamentos
   - name: Mundo Físico
@@ -29,6 +31,191 @@ tags:
     description: Parcelas de recebimento de uma transação
     
 paths:
+  "/v2/marketplaces/{marketplace_id}/transactions":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+    get:
+      deprecated: true
+      summary: Listar transaçoes do marketplace
+      tags:
+        - Transação V2
+      parameters:
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/sortParam"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/dateRangeParam"
+        - $ref: "#/components/parameters/dateRangeGTParam"
+        - $ref: "#/components/parameters/dateRangeGTEParam"
+        - $ref: "#/components/parameters/dateRangeLTParam"
+        - $ref: "#/components/parameters/dateRangeLTEParam"
+        - name: reference_id
+          in: query
+          description: Retorna transações onde o reference id for igual o informado
+          required: false
+          schema:
+            type: string
+        - $ref: "#/components/parameters/transactionStatus"
+        - name: payment_type
+          in: query
+          description: Retorna transações onde o payment type for igual o informado. Para
+            busca múltipla basta concatenar com ,
+          required: false
+          schema:
+            type: string
+            enum:
+              - credit
+              - wallet
+              - boleto
+      responses:
+        "200":
+          description: Transações recuperadas com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transactions"
+        "404":
+          description: Marketplace não encontrado
+    post:
+      deprecated: true
+      summary: Criar transação Cartão Não Presente
+      tags:
+        - Transação V2
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              title: Transação API V2
+              allOf:
+              - $ref: "#/components/schemas/TransactionV2"
+            examples:
+              DisposableToken:
+                summary: Transação com Token Descartável
+                value:
+                  token: "822a8bda73c546a8b2f12a5ebcce7732"
+                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7732"
+                  amount: 300
+                  capture: true
+                  description: "Uma descrição breve da motivação da sua transação"
+                  reference_id: "822a8bda73c546a8b2f12a5ebcce7732"
+                  statement_descriptor: "Loja do Joao"
+              DigitalWallet: 
+                summary: Cartão padrão da carteira digital do comprador
+                value:
+                  customer: "822a8bda73c546a8b2f12a5ebcce7732"
+                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7733"
+                  amount: 300
+                  capture: true
+                  description: "Uma descrição breve da motivação da sua transação"
+                  reference_id: "822a8bda73c546a8b2f12a5ebcce7732"
+                  statement_descriptor: "Loja do Joao"
+              DigitalWalletSecondary: 
+                summary: Cobrando de outros cartões da carteira digital do comprador
+                value:
+                  source:
+                    type: "card"
+                    card:
+                      id: "822a8bda73c546a8b2f12a5ebcce7732"
+                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7733"
+                  amount: 300
+                  capture: true
+                  description: "Uma descrição breve da motivação da sua transação"
+                  reference_id: "822a8bda73c546a8b2f12a5ebcce7732"
+                  statement_descriptor: "Loja do Joao"
+              NoToken: 
+                summary: Cobrando de um cartão não tokenizado previamente
+                value:
+                  source:
+                    type: "card"
+                    card:
+                      holder_name: "Fulano de Tal"
+                      expiration_month: "09"
+                      expiration_year: "2027"
+                      card_number: "2027202720272027"
+                      security_code: "223"
+                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7733"
+                  amount: 300
+                  capture: true
+                  description: "Uma descrição breve da motivação da sua transação"
+                  reference_id: "822a8bda73c546a8b2f12a5ebcce7732"
+                  statement_descriptor: "Loja do Joao"
+      responses:
+        "200":
+          description: Transação criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionResponse"
+        "404":
+          description: Transação não encontrada
+  "/v2/marketplaces/{marketplace_id}/transactions/{transaction_id}/void":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        schema:
+          type: string
+    post:
+      deprecated: true
+      tags:
+        - Transação V2
+      summary: Estornar transação cartão não presente
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionVoidRequest"
+        description: Transacao
+      responses:
+        "200":
+          description: Transação estornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionResponse"
+        "400":
+          description: Requisição/Parametros inválidos
+        "404":
+          description: Marketplace/Transação não encontrado
+  "/v2/marketplaces/{marketplace_id}/transactions/{transaction_id}/capture":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        schema:
+          type: string
+    post:
+      deprecated: true
+      tags:
+        - Transação V2
+      summary: Capturar transação cartão não presente
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionCaptureRequest"
+        description: Transacao
+      responses:
+        "200":
+          description: Transação capturada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionResponse"
+        "400":
+          description: Requisição/Parametros inválidos
+        "404":
+          description: Marketplace/Transação não encontrado
+# V1
+
   '/v1/marketplaces/{marketplace_id}/cards/tokens':
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
@@ -114,15 +301,16 @@ paths:
           description: Marketplace/Cartão não encontrado
 
   "/v1/marketplaces/{marketplace_id}/transactions":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
     post:
-      summary: Criar transação
+      summary: Criar transação de cartão
       description: Usar (Option 1) Autorização direta, (Option 2) Token descartavél, (Option 3) Custormer ID, (Option 4) Card ID, (Option 5) Boleto Simples, (Option 6) Boleto completo
       tags:
-        - Transação
+        - Transação de cartão
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
       requestBody:
-        required: true
         content:
           application/json:
             schema:
@@ -133,6 +321,7 @@ paths:
                 - $ref: "#/components/schemas/TransactionDigitalWalletSecondaryRequest"
                 - $ref: "#/components/schemas/TransactionSimpleBoletoTransactionRequest"
                 - $ref: "#/components/schemas/TransactionBoletoTransactionRequest"
+        description: Transacao
       responses:
         "200":
           description: Transação criada com sucesso
@@ -145,9 +334,8 @@ paths:
     get:
       summary: Listar transaçoes do marketplace
       tags:
-        - Transação
+        - Transação de cartão
       parameters:
-        - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/sortParam"
         - $ref: "#/components/parameters/offsetParam"
@@ -162,6 +350,7 @@ paths:
           required: false
           schema:
             type: string
+        - $ref: "#/components/parameters/transactionStatus"
         - name: payment_type
           in: query
           description: Retorna transações onde o payment type for igual o informado. Para
@@ -188,7 +377,7 @@ paths:
     get:
       summary: Listar transaçoes por vendedor
       tags:
-        - Transação
+        - Transação de cartão
       parameters:
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/sortParam"
@@ -219,7 +408,7 @@ paths:
     get:
       summary: Listar detalhes de transação pelo identificador
       tags:
-        - Transação
+        - Transação de cartão
       responses:
         "200":
           description: Transação recuperada com sucesso
@@ -232,7 +421,7 @@ paths:
     put:
       summary: Alterar detalhes de transação pelo identificador
       tags:
-        - Transação
+        - Transação de cartão
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - name: transaction_id
@@ -268,7 +457,7 @@ paths:
           type: string
     post:
       tags:
-        - Transação
+        - Transação de cartão
       summary: Estornar transação cartão não presente
       description: ""
       requestBody:
@@ -299,7 +488,7 @@ paths:
           type: string
     post:
       tags:
-        - Transação
+        - Transação de cartão
       summary: Capturar transação cartão não presente
       description: ""
       requestBody:
@@ -1189,7 +1378,7 @@ components:
       schema:
         type: string
     identificationNumberID:
-      name: indentification_number
+      name: identification_number
       in: path
       description: identificador do terminal
       required: true
@@ -2206,6 +2395,7 @@ components:
           example: 1e5ee2e290d040769806c79e6ef94ee1
         metadata:
           type: object
+                  
     TransactionNoTokenRequest:
       type: object
       required:
@@ -2214,8 +2404,6 @@ components:
         - description
         - payment_type
         - on_behalf_of
-      discriminator:
-        propertyName: transactions
       properties:
         on_behalf_of:
           type: string
@@ -2322,6 +2510,7 @@ components:
                   type: string
                   example: "822a8bda73c546a8b2f12a5ebcce7732"
                   description: identificador do cartão para source tipo card
+    
     TransactionDigitalWalletRequest:
       type: object
       required:
@@ -2330,7 +2519,6 @@ components:
         - description
         - payment_type
         - on_behalf_of
-        - customer
       properties:
         on_behalf_of:  
           type: string
@@ -2362,6 +2550,7 @@ components:
             - boleto
           default: "credit"
           description: Tipo de pagamento
+  
     TransactionDisposableTokenRequest:
       type: object
       required:
@@ -2401,6 +2590,7 @@ components:
             - boleto
           default: "credit"
           description: Tipo de pagamento
+    
     TransactionSimpleBoletoTransactionRequest:
       type: object
       required:
@@ -2409,7 +2599,6 @@ components:
         - description
         - payment_type
         - on_behalf_of
-        - customer
       properties:
         on_behalf_of:    
           type: string
@@ -2437,6 +2626,7 @@ components:
             - boleto
           default: "boleto"
           description: Tipo de pagamento
+    
     TransactionBoletoTransactionRequest:
       type: object
       required:
@@ -2445,7 +2635,6 @@ components:
         - description
         - payment_type
         - on_behalf_of
-        - customer
       properties:
         on_behalf_of:     
           type: string
@@ -2561,6 +2750,7 @@ components:
                         type: string
                         example: "2018-11-09"
                         description: 'Data limite para o pagamento ocorrer com desconto. Deve ser anterior a data informada em "expiration date"'
+
     PlanResponse:
       type: object
       properties:
@@ -2586,6 +2776,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PlanResponseItem'
+            
     PlanResponseItem:
       type: object
       required:
@@ -2706,6 +2897,8 @@ components:
           description: moeda utilizada, no formato ISO4217
           type: string
           example: BRL
+
+
     SubscriptionResponse:
       type: object
       properties:
@@ -2815,6 +3008,7 @@ components:
         uri:
           type: string
           example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/subscription/73c0789594c1470cb10cc957f2435c00"
+
     InvoiceRequest:
       type: object
       properties:
@@ -2888,6 +3082,7 @@ components:
             - paid
             - canceled
             - failed
+
     InvoiceResponse:
       type: object
       properties:
@@ -2916,6 +3111,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/InvoiceResponseItem'
+    
     InvoiceResponseItem:
       type: object
       properties:
@@ -3014,6 +3210,7 @@ components:
         uri:
           type: string
           example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/invoice/73c0789594c1470cb10cc957f2435c00"
+
     InvoiceCustomer:
       type: object
       properties:
@@ -3039,6 +3236,7 @@ components:
           description: endereço de email
           type: string
           format: email
+          
     PlanRequest:
       type: object
       required:
