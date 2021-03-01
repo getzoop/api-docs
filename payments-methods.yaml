@@ -9,8 +9,8 @@ tags:
     description: Token de cartões e cartões de crédito utilizados nos pagamentos
   - name: Transação V2
     description: Nova versão da API de operações de pagamento com dados de cartão de crédito
-  - name: Transação de cartão
-    description: Operações de pagamento com dados de cartão de crédito
+  - name: Transação
+    description: Operações de pagamento com dados de cartão de crédito e boleto
   - name: Boleto
     description: Operações de pagamento via boleto bancário registrado
   - name: Planos de Recorrência
@@ -307,7 +307,7 @@ paths:
       summary: Criar transação de cartão
       description: Usar (Option 1) Autorização direta, (Option 2) Token descartavél, (Option 3) Custormer ID, (Option 4) Card ID, (Option 5) Boleto Simples, (Option 6) Boleto completo
       tags:
-        - Transação de cartão
+        - Transação
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
       requestBody:
@@ -321,8 +321,6 @@ paths:
                 - $ref: "#/components/schemas/TransactionDigitalWalletSecondaryRequest"
                 - $ref: "#/components/schemas/TransactionSimpleBoletoTransactionRequest"
                 - $ref: "#/components/schemas/TransactionBoletoTransactionRequest"
-              discriminator:
-                propertyName: transactions
         description: Transacao
       responses:
         "200":
@@ -336,7 +334,7 @@ paths:
     get:
       summary: Listar transaçoes do marketplace
       tags:
-        - Transação de cartão
+        - Transação
       parameters:
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/sortParam"
@@ -379,7 +377,7 @@ paths:
     get:
       summary: Listar transaçoes por vendedor
       tags:
-        - Transação de cartão
+        - Transação
       parameters:
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/sortParam"
@@ -410,7 +408,7 @@ paths:
     get:
       summary: Listar detalhes de transação pelo identificador
       tags:
-        - Transação de cartão
+        - Transação
       responses:
         "200":
           description: Transação recuperada com sucesso
@@ -423,7 +421,7 @@ paths:
     put:
       summary: Alterar detalhes de transação pelo identificador
       tags:
-        - Transação de cartão
+        - Transação
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - name: transaction_id
@@ -459,7 +457,7 @@ paths:
           type: string
     post:
       tags:
-        - Transação de cartão
+        - Transação
       summary: Estornar transação cartão não presente
       description: ""
       requestBody:
@@ -490,7 +488,7 @@ paths:
           type: string
     post:
       tags:
-        - Transação de cartão
+        - Transação
       summary: Capturar transação cartão não presente
       description: ""
       requestBody:
