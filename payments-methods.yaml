@@ -308,6 +308,8 @@ paths:
       description: Usar (Option 1) Autorização direta, (Option 2) Token descartavél, (Option 3) Custormer ID, (Option 4) Card ID, (Option 5) Boleto Simples, (Option 6) Boleto completo
       tags:
         - Transação
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
       requestBody:
         required: true
         content:
