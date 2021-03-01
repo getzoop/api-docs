@@ -321,7 +321,6 @@ paths:
                 - $ref: "#/components/schemas/TransactionDigitalWalletSecondaryRequest"
                 - $ref: "#/components/schemas/TransactionSimpleBoletoTransactionRequest"
                 - $ref: "#/components/schemas/TransactionBoletoTransactionRequest"
-        description: Transacao
       responses:
         "200":
           description: Transação criada com sucesso
