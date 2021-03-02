@@ -27,7 +27,10 @@ tags:
     description: Saldo de conta 
   - name: 'Lançamentos Futuros'
     description: Lançamentos Futuros 
-
+  - name: Cartões pré-pago
+    description: Operações de cartão pré-pago pelo marketplace
+  - name: Cartões pré-pago - Gerenciamento
+    description: Operações de cartão pré-pago pelo estabelecimento
 
 
 paths:
@@ -820,6 +823,206 @@ paths:
         '404':
           description: Marketplace/Seller não encontrado
 
+  "/v1/marketplaces/{marketplace_id}/prepaid-cards":
+    get:
+      tags:
+      - Cartões pré-pago
+      summary: Lista de cartões pré-pagos associados pelo marketplace
+      description: A listagem é feita pelo marketplace, trazendo todos os cartões
+        associados a ele a qualquer estabelecimento
+      operationId: get_all_cards
+      parameters:
+        - $ref: '#/parameters/marketplaceID'
+      responses:
+        '200':
+          description: Listagem efetuada com sucesso
+          schema:
+            "$ref": "#/definitions/Cards"
+        '401':
+          description: Solicitação não autorizada
+    post:
+      tags:
+      - Cartões pré-pago
+      summary: Adicionando cartão pré-pago a um estabelecimento.
+      description: Com essa operação, é possível para o marketplace, adicionar os
+        cartões pré-pagos de sua rede aos respectivos estabelecimentos.
+      operationId: associate_card
+      parameters:
+      - $ref: '#/parameters/marketplaceID'
+      - in: body
+        name: body
+        description: Dados do cartão necessário para associação com o estabelecimento
+        required: true
+        schema:
+          "$ref": "#/definitions/CardAssociation"
+      responses:
+        '200':
+          description: A adiçào foi feita com sucesso!
+          schema:
+            "$ref": "#/definitions/Card"
+        '400':
+          description: Dados informados são inválidos
+        '401':
+          description: Solicitação não autorizada
+    delete:
+      tags:
+      - Cartões pré-pago
+      summary: Excluir um cartão associado
+      description: Exclui um cartão associado a um estabelecimento, essa ação bloqueia
+        e desassocia o cartão para a sua devida exclusão
+      operationId: delete_card_by_bank_account
+      parameters:
+      - $ref: '#/parameters/marketplaceID'
+      - name: bank_account_id
+        in: query
+        description: ID do cartão a ser excluído
+        required: true
+        type: string
+      responses:
+        '200':
+          description: Exclusão feita com sucesso!
+          schema:
+            "$ref": "#/definitions/Card"
+        '400':
+          description: ID informado é inválido
+        '401':
+          description: Solicitação não autorizada
+        '404':
+          description: Cartão não encontrado
+  "/v1/marketplaces/{marketplace_id}/prepaid-cards/{card_id}":
+    get:
+      tags:
+      - Cartões pré-pago
+      summary: Procura um cartão pelo ID
+      description: Retorna um cartão associado a um estabelecimento procurando pelo
+        ID informado
+      operationId: get_card_detail
+      parameters:
+      - $ref: '#/parameters/marketplaceID'
+      - $ref: '#/parameters/cardID'
+      responses:
+        '200':
+          description: Detalhe do cartão encontrado.
+          schema:
+            "$ref": "#/definitions/CardDetail"
+        '400':
+          description: ID informado é inválido
+        '401':
+          description: Solicitação não autorizada
+        '404':
+          description: Cartão não encontrado
+  "/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/prepaid-cards":
+    get:
+      tags:
+      - Cartões pré-pago - Gerenciamento
+      summary: Lista de cartões pré-pagos de um estabelecimento
+      description: A listagem é feita pelo estabelecimento, trazendo todos os cartões
+        associados a ele
+      operationId: get_all_cards_by_seller
+      parameters:
+      - $ref: '#/parameters/marketplaceID'
+      - $ref: '#/parameters/sellerID'
+      responses:
+        '200':
+          description: Listagem efetuada com sucesso
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/Card"
+        '400':
+          description: ID informado é inválido
+        '401':
+          description: Solicitação não autorizada
+        '404':
+          description: Estabelecimento não encontrado
+  "/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/prepaid-cards/{card_id}/activate":
+    put:
+      tags:
+      - Cartões pré-pago - Gerenciamento
+      summary: Habilita um cartão pré-pago
+      description: É possível Habilitar um cartão pré-pago. No processo de ativação
+        do cartão uma URL será informada para redirecionamento para a operadora.
+      operationId: activate_card
+      parameters:
+      - $ref: '#/parameters/marketplaceID'
+      - $ref: '#/parameters/sellerID'
+      - $ref: '#/parameters/cardID'
+      - in: body
+        name: body
+        description: Senha de 4 dígitos
+        required: true
+        schema:
+          "$ref": "#/definitions/CardActivate"
+      responses:
+        '200':
+          description: Cartão ativado com sucesso!
+          schema:
+            "$ref": "#/definitions/Card"
+        '400':
+          description: ID do cartão inválido
+        '401':
+          description: Solicitação não autorizada
+  "/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/prepaid-cards/{card_id}/block":
+    put:
+      tags:
+      - Cartões pré-pago - Gerenciamento
+      summary: Bloqueia um cartão pré-pago
+      description: É possível bloquear um cartão pré-pago.
+      operationId: block_card
+      parameters:
+      - $ref: '#/parameters/marketplaceID'
+      - $ref: '#/parameters/sellerID'
+      - $ref: '#/parameters/cardID'
+      responses:
+        '200':
+          description: Bloqueio efetuado com sucesso!
+          schema:
+            "$ref": "#/definitions/Card"
+        '400':
+          description: ID do cartão inválido
+        '401':
+          description: Solicitação não autorizada
+  "/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/prepaid-cards/{card_id}/lock":
+    put:
+      tags:
+      - Cartões pré-pago - Gerenciamento
+      summary: Bloqueia um cartão pré-pago temporariamente
+      description: É possível bloquear um cartão pré-pago de forma temporária.
+      operationId: lock_card
+      parameters:
+      - $ref: '#/parameters/marketplaceID'
+      - $ref: '#/parameters/sellerID'
+      - $ref: '#/parameters/cardID'
+      responses:
+        '200':
+          description: Bloqueio efetuado com sucesso!
+          schema:
+            "$ref": "#/definitions/Card"
+        '400':
+          description: ID do cartão inválido
+        '401':
+          description: Solicitação não autorizada
+  "/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/prepaid-cards/{card_id}/unlock":
+    put:
+      tags:
+      - Cartões pré-pago - Gerenciamento
+      summary: Desbloqueia um cartão pré-pago
+      description: É possível desbloquear um cartão pré-pago
+      operationId: unlock_card
+      parameters:
+      - $ref: '#/parameters/marketplaceID'
+      - $ref: '#/parameters/sellerID'
+      - $ref: '#/parameters/cardID'
+      responses:
+        '200':
+          description: Bloqueio efetuado com sucesso!
+          schema:
+            "$ref": "#/definitions/Card"
+        '400':
+          description: ID do cartão inválido
+        '401':
+          description: Solicitação não autorizada
+
 parameters:
   limitParam:
     name: limit
@@ -902,6 +1105,25 @@ parameters:
       "pending",
       "failed"
       ]    
+  marketplaceID:
+    name: marketplace_id
+    in: path
+    description: ID do marketplace
+    required: true
+    type: string
+  sellerID:
+    name: seller_id
+    in: path
+    description: ID do estabelecimento
+    required: true
+    type: string
+  cardID:
+    name: card_id
+    in: path
+    description: ID do cartão pré-pago
+    required: true
+    type: integer
+    format: int64
     
 definitions:
   Transfer:
@@ -928,8 +1150,6 @@ definitions:
       description:
         type: string
         example: Cobrança de mensalidade
-
-
   CreateAdjustmentRequest:
     type: object
     properties:
@@ -946,8 +1166,6 @@ definitions:
         format: date
         example: Data para agendamento do ajuste
         description: 'Data para agendamento do ajuste'
-        
-        
   ReceivingPolicy:
     type: object
     properties:
@@ -993,7 +1211,6 @@ definitions:
         type: integer
         example: 1
         description: 'Valor padrão: "1"'
-
   Prepayment:
     type: "object"
     required:
@@ -1152,7 +1369,6 @@ definitions:
         description: "Indica se o recebivel foi antecipado ou não"
         type: "boolean"
         example: "false"
-        
   PrepaymentRequest:
     type: "object"
     required:
@@ -1241,7 +1457,6 @@ definitions:
         type: "boolean"
         example: "true|false"
         default: "false"
-        
   PrepaymentInfoResponse:
     type: "object"
     properties:
@@ -1291,3 +1506,143 @@ definitions:
       query_count:
         type: string
 
+  CardAssociation:
+    type: object
+    properties:
+      card_id:
+        type: integer
+        description: ID do cartão exibido na parte de trás do cartão
+      seller_document:
+        type: string
+        description: CPF ou CNPJ do solicitante.
+      mothers_name:
+        type: string
+        description: Nome da mãe da pessoa portadora do cartão
+      resource:
+        type: string
+      uri:
+        type: string
+    example:
+      seller_document: 6
+      resource: resource
+      uri: uri
+      card_id: 0
+  CardActivate:
+    type: object
+    properties:
+      pin_code:
+        type: integer
+        description: Senha de 4 dígitos
+    example:
+      pin_code: 1234
+  Card:
+    type: object
+    properties:
+      bank_account_id:
+        type: string
+        description: Bank account associado ao cartão
+      card_id:
+        type: integer
+        description: Número do cartão exibido no verso do cartão
+      card_mask_number:
+        type: string
+        description: Os números do cartão de forma mascarada
+      card_name:
+        type: string
+        description: Nome do (a) Holder no cartão
+      balance:
+        type: string
+        description: Saldo do cartão
+      status:
+        type: string
+        description: Status do cartão pré-pago
+        enum:
+        - pending
+        - active
+        - blocked
+      resource:
+        type: string
+      uri:
+        type: string
+    example:
+      bank_account_id: bankaccountid
+      balance: balance
+      resource: resource
+      card_name: card_name
+      uri: uri
+      card_id: 123456
+      card_mask_number: card_mask_number
+      status: pending
+  CardDetail:
+    type: object
+    properties:
+      card_id:
+        type: integer
+        description: Número do cartão exibido no verso do cartão
+      card_mask_number:
+        type: string
+        description: Os números do cartão de forma mascarada
+      holder_name:
+        type: string
+        description: Nome do (a) Holder no cartão
+      document:
+        type: object
+        description: Documento do portador
+        properties: {}
+      valid_date:
+        type: string
+        description: Data de validade do cartão
+      last_4_digit:
+        type: string
+        description: Últimos 4 digitos do cartão
+      status:
+        type: string
+        description: Status do cartão pré-pago
+        enum:
+        - inactive
+        - active
+        - blocked
+      resource:
+        type: string
+      uri:
+        type: string
+    example:
+      valid_date: valid_date
+      last_4_digit: last_4_digit
+      resource: resource
+      document: "{}"
+      uri: uri
+      card_id: 0
+      card_mask_number: card_mask_number
+      holder_name: holder_name
+      status: inactive
+  Cards:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          "$ref": "#/definitions/Card"
+      resource:
+        type: string
+      uri:
+        type: string
+      limit:
+        type: integer
+      offset:
+        type: integer
+      has_more:
+        type: boolean
+      query_count:
+        type: integer
+      total:
+        type: integer
+    example:
+      card_number_first: 1
+      resource: resource
+      id: 0
+      card_number_last: 5
+      uri: uri
+      card_id: 6
+      establishment_name: establishment_name
+      status: pending
