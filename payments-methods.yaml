@@ -7,10 +7,8 @@ security:
 tags:
   - name: Tokenização de cartão
     description: Token de cartões e cartões de crédito utilizados nos pagamentos
-  - name: Transação V2
-    description: Nova versão da API de operações de pagamento com dados de cartão de crédito
-  - name: Transação de cartão
-    description: Operações de pagamento com dados de cartão de crédito
+  - name: Transações
+    description: Operações de pagamento com dados de cartão de crédito e boleto
   - name: Boleto
     description: Operações de pagamento via boleto bancário registrado
   - name: Planos de Recorrência
@@ -31,189 +29,6 @@ tags:
     description: Parcelas de recebimento de uma transação
     
 paths:
-  "/v2/marketplaces/{marketplace_id}/transactions":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-    get:
-      deprecated: true
-      summary: Listar transaçoes do marketplace
-      tags:
-        - Transação V2
-      parameters:
-        - $ref: "#/components/parameters/limitParam"
-        - $ref: "#/components/parameters/sortParam"
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/dateRangeParam"
-        - $ref: "#/components/parameters/dateRangeGTParam"
-        - $ref: "#/components/parameters/dateRangeGTEParam"
-        - $ref: "#/components/parameters/dateRangeLTParam"
-        - $ref: "#/components/parameters/dateRangeLTEParam"
-        - name: reference_id
-          in: query
-          description: Retorna transações onde o reference id for igual o informado
-          required: false
-          schema:
-            type: string
-        - $ref: "#/components/parameters/transactionStatus"
-        - name: payment_type
-          in: query
-          description: Retorna transações onde o payment type for igual o informado. Para
-            busca múltipla basta concatenar com ,
-          required: false
-          schema:
-            type: string
-            enum:
-              - credit
-              - wallet
-              - boleto
-      responses:
-        "200":
-          description: Transações recuperadas com sucesso
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Transactions"
-        "404":
-          description: Marketplace não encontrado
-    post:
-      deprecated: true
-      summary: Criar transação Cartão Não Presente
-      tags:
-        - Transação V2
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              title: Transação API V2
-              allOf:
-              - $ref: "#/components/schemas/TransactionV2"
-            examples:
-              DisposableToken:
-                summary: Transação com Token Descartável
-                value:
-                  token: "822a8bda73c546a8b2f12a5ebcce7732"
-                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7732"
-                  amount: 300
-                  capture: true
-                  description: "Uma descrição breve da motivação da sua transação"
-                  reference_id: "822a8bda73c546a8b2f12a5ebcce7732"
-                  statement_descriptor: "Loja do Joao"
-              DigitalWallet: 
-                summary: Cartão padrão da carteira digital do comprador
-                value:
-                  customer: "822a8bda73c546a8b2f12a5ebcce7732"
-                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7733"
-                  amount: 300
-                  capture: true
-                  description: "Uma descrição breve da motivação da sua transação"
-                  reference_id: "822a8bda73c546a8b2f12a5ebcce7732"
-                  statement_descriptor: "Loja do Joao"
-              DigitalWalletSecondary: 
-                summary: Cobrando de outros cartões da carteira digital do comprador
-                value:
-                  source:
-                    type: "card"
-                    card:
-                      id: "822a8bda73c546a8b2f12a5ebcce7732"
-                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7733"
-                  amount: 300
-                  capture: true
-                  description: "Uma descrição breve da motivação da sua transação"
-                  reference_id: "822a8bda73c546a8b2f12a5ebcce7732"
-                  statement_descriptor: "Loja do Joao"
-              NoToken: 
-                summary: Cobrando de um cartão não tokenizado previamente
-                value:
-                  source:
-                    type: "card"
-                    card:
-                      holder_name: "Fulano de Tal"
-                      expiration_month: "09"
-                      expiration_year: "2027"
-                      card_number: "2027202720272027"
-                      security_code: "223"
-                  on_behalf_of: "822a8bda73c546a8b2f12a5ebcce7733"
-                  amount: 300
-                  capture: true
-                  description: "Uma descrição breve da motivação da sua transação"
-                  reference_id: "822a8bda73c546a8b2f12a5ebcce7732"
-                  statement_descriptor: "Loja do Joao"
-      responses:
-        "200":
-          description: Transação criada com sucesso
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TransactionResponse"
-        "404":
-          description: Transação não encontrada
-  "/v2/marketplaces/{marketplace_id}/transactions/{transaction_id}/void":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - name: transaction_id
-        in: path
-        description: identificador da transação
-        required: true
-        schema:
-          type: string
-    post:
-      deprecated: true
-      tags:
-        - Transação V2
-      summary: Estornar transação cartão não presente
-      description: ""
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/TransactionVoidRequest"
-        description: Transacao
-      responses:
-        "200":
-          description: Transação estornada com sucesso
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TransactionResponse"
-        "400":
-          description: Requisição/Parametros inválidos
-        "404":
-          description: Marketplace/Transação não encontrado
-  "/v2/marketplaces/{marketplace_id}/transactions/{transaction_id}/capture":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - name: transaction_id
-        in: path
-        description: identificador da transação
-        required: true
-        schema:
-          type: string
-    post:
-      deprecated: true
-      tags:
-        - Transação V2
-      summary: Capturar transação cartão não presente
-      description: ""
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/TransactionCaptureRequest"
-        description: Transacao
-      responses:
-        "200":
-          description: Transação capturada com sucesso
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TransactionResponse"
-        "400":
-          description: Requisição/Parametros inválidos
-        "404":
-          description: Marketplace/Transação não encontrado
 # V1
 
   '/v1/marketplaces/{marketplace_id}/cards/tokens':
@@ -307,7 +122,7 @@ paths:
       summary: Criar transação de cartão
       description: Usar (Option 1) Autorização direta, (Option 2) Token descartavél, (Option 3) Custormer ID, (Option 4) Card ID, (Option 5) Boleto Simples, (Option 6) Boleto completo
       tags:
-        - Transação de cartão
+        - Transações
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
       requestBody:
@@ -334,7 +149,7 @@ paths:
     get:
       summary: Listar transaçoes do marketplace
       tags:
-        - Transação de cartão
+        - Transações
       parameters:
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/sortParam"
@@ -377,7 +192,7 @@ paths:
     get:
       summary: Listar transaçoes por vendedor
       tags:
-        - Transação de cartão
+        - Transações
       parameters:
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/sortParam"
@@ -408,7 +223,7 @@ paths:
     get:
       summary: Listar detalhes de transação pelo identificador
       tags:
-        - Transação de cartão
+        - Transações
       responses:
         "200":
           description: Transação recuperada com sucesso
@@ -421,7 +236,7 @@ paths:
     put:
       summary: Alterar detalhes de transação pelo identificador
       tags:
-        - Transação de cartão
+        - Transações
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - name: transaction_id
@@ -457,7 +272,7 @@ paths:
           type: string
     post:
       tags:
-        - Transação de cartão
+        - Transações
       summary: Estornar transação cartão não presente
       description: ""
       requestBody:
@@ -488,7 +303,7 @@ paths:
           type: string
     post:
       tags:
-        - Transação de cartão
+        - Transações
       summary: Capturar transação cartão não presente
       description: ""
       requestBody:
@@ -590,7 +405,7 @@ paths:
           description: Missing required param
         "404":
           description: Terminal não encontrado
-  "/v1/marketplaces/card-present/terminals/{indentification_number}":
+  "/v1/marketplaces/card-present/terminals/{identification_number}":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
       - $ref: "#/components/parameters/identificationNumberID"
@@ -938,7 +753,6 @@ paths:
           description: Split criado com sucesso
         "404":
           description: Marketplace/Transação não encontrado
-          
   "/v2/marketplaces/{marketplace_id}/plans":
     post:
       parameters:
@@ -1109,7 +923,7 @@ paths:
       tags:
         - Assinatura de Recorrência
       summary: Remover uma assinatura pelo identificador
-      description: |
+      description: 
         Assinatura é a relação entre um plano e um cliente. Possui uma data de início e representa um contrato de recorrência firmado entre o cliente e o parceiro.
       responses:
         200:
@@ -2876,11 +2690,6 @@ components:
           default: 'credit'
         due_date:
           description: data da próxima cobrança
-          type: string
-          format: date
-          example: 2017-07-21
-        due_since_date:
-          description: data da primeira cobrança da assinatura
           type: string
           format: date
           example: 2017-07-21
