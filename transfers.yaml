@@ -779,6 +779,8 @@ paths:
         description: identificador do seller
         required: true
         type: string
+      - $ref: '#/parameters/createdDateRangeGTEParam'
+      - $ref: '#/parameters/createdDateRangeLTEParam'
     get:
       tags:
         - 'Saldo de Conta'
@@ -803,6 +805,8 @@ paths:
         description: identificador do buyer
         required: true
         type: string
+      - $ref: '#/parameters/createdDateRangeGTEParam'
+      - $ref: '#/parameters/createdDateRangeLTEParam'
     get:
       tags:
         - 'Saldo de Conta'
@@ -873,6 +877,18 @@ parameters:
     description: Retorna valores onde a data for menor ou igual que o timestamp informado
     required: false
     type: number
+  createdDateRangeGTEParam: 
+    name: created_date_range[gte]
+    in: query
+    description: Retorna valores onde a data for maior ou igual que o timestamp informado
+    required: false
+    type: number
+  createdDateRangeLTEParam: 
+    name: created_date_range[lte]
+    in: query
+    description: Retorna valores onde a data for menor ou igual que o timestamp informado
+    required: false
+    type: number
   transferStatus:
     name: status
     in: query
@@ -897,6 +913,7 @@ definitions:
         description: 'Valor'
       statement_descriptor:
         type: string
+        description: Identificação de quem está enviando a transferência.
         example: Zoop Tecnologia
       description:
         type: string
