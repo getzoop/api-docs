@@ -31,30 +31,6 @@ tags:
 
 
 paths:
-  /v1/marketplaces/{marketplace_id}/sellers/{seller_id}/transfers:
-    parameters:
-      - name: marketplace_id
-        in: path
-        description: ID do marketplace
-        required: true
-        type: string
-      - name: seller_id
-        in: path
-        description: identificador do seller
-        required: true
-        type: string
-    get:
-      tags:
-        - 'Transferências'
-      summary: 'Listar transferências por seller'
-      description: ''
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: Transferências encontradas
-        '404':
-          description: Marketplace/Seller não encontrado
   /v1/marketplaces/{marketplace_id}/bank_accounts/{bank_account_id}/transfers:
     parameters:
       - name: marketplace_id
@@ -86,6 +62,30 @@ paths:
           description: Transferências recuperadas com sucesso
         '404':
           description: Marketplace/Conta bancária não encontrado
+  /v1/marketplaces/{marketplace_id}/sellers/{seller_id}/transfers:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador do seller
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Transferências'
+      summary: 'Listar transferências por seller'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transferências encontradas
+        '404':
+          description: Marketplace/Seller não encontrado
   /v1/marketplaces/{marketplace_id}/transfers:
     parameters:
       - name: marketplace_id
@@ -368,6 +368,7 @@ paths:
         required: true
         type: string
     post:
+      deprecated: true
       tags:
         - "Transferências"
       summary: 'Criar transferência P2P'
@@ -446,7 +447,6 @@ paths:
           description: "Requisição inválida"
         404:
           description: "Marketplace não encontrado"
-
   /v1/marketplaces/{marketplaceId}/sellers/{sellerId}/prepayments:
     get:
       tags:
@@ -695,7 +695,6 @@ paths:
           description: "Requisição inválida"
         404:
           description: "Marketplace ou Seller não encontrado"
-
   /v1/marketplaces/{marketplaceId}/sellers/{seller_id}/balances:
     parameters:
       - name: "marketplaceId"
