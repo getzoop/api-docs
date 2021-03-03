@@ -143,7 +143,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TransactionResponse"
+                oneOf:
+                  - $ref: "#/components/schemas/TransactionResponse"
+                  - $ref: "#/components/schemas/TransactionResponse"
+                  - $ref: "#/components/schemas/TransactionResponse"
+                  - $ref: "#/components/schemas/TransactionResponse"
+                  - $ref: "#/components/schemas/TransactionBoletoResponse"
+                  - $ref: "#/components/schemas/TransactionBoletoResponse"
         "404":
           description: Transação não encontrada
     get:
@@ -587,6 +593,30 @@ paths:
       responses:
         "200":
           description: Boleto recuperado com sucesso
+        "404":
+          description: Marketplace/Boleto não encontrado
+  "/v1/marketplaces/{marketplace_id}/transactions/{transactions_id}/approve":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+        - Boleto
+      summary: Aprovar boleto (somente sandbox)
+      description: ""
+      responses:
+        "200": 
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transactions"
+
         "404":
           description: Marketplace/Boleto não encontrado
   "/v1/marketplaces/{marketplace_id}/receivables/{receivable_id}":
@@ -1676,6 +1706,235 @@ components:
           type: string
           format: dateTime
           example: 2015-04-17T06:39:52+00:00
+    TransactionBoletoResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 0009462369b14ee596aabfd27faa97f7
+        resource:
+          type: string
+          example: transaction
+        status:
+          description: Retorna transações onde o status for igual o informado. Para busca múltipla basta concatenar com ,
+          type: string
+          example: pending
+        amount:
+          type: string
+          example: "3.00"
+        original_amount:
+          type: string
+          example: "3.00"
+        currency:
+          type: string
+          example: BRL
+        description:
+          type: string
+          example: Venda
+        payment_type:
+          type: string
+          example: boleto
+        transaction_number:
+          type: string
+          example: null
+        gateway_authorizer:
+          type: string
+          example: ITAU
+        app_transaction_uid:
+          type: string
+          example: null
+        refunds:
+          type: string
+          example: null
+        rewards:
+          type: string
+          example: null
+        discounts:
+          type: string
+          example: null
+        pre_authorization:
+          type: string
+          example: null
+        sales_receipt:
+          type: string
+          example: 00d5ce5086c84c0f824cf660b020881a
+        on_behalf_of:
+          type: string
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        customer:
+          type: string
+          example: 3d5ccfdfcdc74918982276c933842a98
+        statement_descriptor:
+          type: string
+          example: SuaMarcaAqui
+        payment_method:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 0195470428304b368e98bede3316ac5d
+            zoop_boleto_id:
+              type: string
+              example: null
+            resource:
+              type: string
+              example: boleto
+            description:
+              type: string
+              example: venda
+            reference_number:
+              type: string
+              example: "10672107"
+            document_number:
+              type: string
+              example: "10672107"
+            expiration_date:
+              type: string
+              format: dateTime
+              example: 2021-03-06T00:00:00+00:00
+            payment_limit_date:
+              type: string
+              format: dateTime
+              example: null
+            recipient:
+              type: string
+              example: "Estabelecimento L P Silva"
+            bank_code:
+              type: string
+              example: "109"
+            customer:
+              type: string
+              example: "3d5ccfdfcdc74918982276c933842a98"
+            address:
+              type: string
+              example: null
+            sequence:
+              type: string
+              example: "148824"
+            url:
+              type: string
+              example: "https://api-boleto-production.s3.amazonaws.com/4efbad0e595343fbbe9f9725d6fc5769/047cf3697440496fa588672f76c0e3db/603fc5b4cb2de307ddda3ca1.html"
+            barcode:
+              type: string
+              example: "34191091076721074893431977690002185510000000300"
+            created_at:
+              type: string
+              format: dateTime
+              example: 2015-04-17T06:39:52+00:00
+            updated_at:
+              type: string
+              format: dateTime
+              example: 2015-04-17T06:39:52+00:00
+            status:
+              type: string
+              example: "not_paid"
+        source:
+          type: string
+          example: null
+        point_of_sale:
+          type: object
+          properties:
+            entry_mode:
+              type: string
+              enum:
+                - manually_keyed
+                - magstripe
+                - barcode
+                - ocr
+                - chip
+                - contactless_chip
+                - magstripe_fallback
+                - manually_keyed_fallback
+                - contactless_magstripe
+              example: barcode
+            identification_number:
+              type: string
+              example: null
+        installment_plan:
+          type: string
+          example: null
+        refunded:
+          type: boolean
+          example: false
+        voided:
+          type: boolean
+          example: false
+        captured:
+          type: boolean
+          example: true
+        fees:
+          type: string
+          example: "0.00"
+        fee_details:
+          type: object
+          example: null
+        uri:
+          type: string
+          example: >
+            /v1/marketplaces/4efbad0e595343fbbe9f9725d6fc9769/transactions/f851cc9e5d724e2780d53d46b78a7c1c
+        metadata:
+          type: object
+        expected_on:
+          type: string
+          format: dateTime
+          example: null
+        created_at:
+          type: string
+          format: dateTime
+          example: 2021-03-03T17:21:55+00:00
+        updated_at:
+          type: string
+          format: dateTime
+          example: 2021-03-03T17:21:55+00:00
+        payment_authorization:
+          type: string
+          example: null
+        history:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: 754e145a117949228e79a99773e46d60
+              transaction:
+                type: string
+                example: 0009462369b14ee596aabfd27faa97f7
+              amount:
+                type: string
+                example: "3.00"
+              operation_type:
+                type: string
+                example: "created"
+              status:
+                type: string
+                example: "succeeded"
+              response_code:
+                type: string
+                example: "null"
+              response_message:
+                type: string
+                example: "null"
+              authorization_code:
+                type: string
+                example: "null"
+              authorizer_id:
+                type: string
+                example: "null"
+              authorization_nsu:
+                type: string
+                example: "null"
+              gatewayResponseTime:
+                type: string
+                example: "null"
+              authorizer:
+                type: string
+                example: "null"
+              created_at:
+                type: string
+                format: dateTime
+                example: 2021-03-03T17:21:55+00:00
+
     TransactionUpdateRequest:
       type: object
       properties:
@@ -2706,8 +2965,6 @@ components:
           description: moeda utilizada, no formato ISO4217
           type: string
           example: BRL
-
-
     SubscriptionResponse:
       type: object
       properties:
@@ -2891,7 +3148,6 @@ components:
             - paid
             - canceled
             - failed
-
     InvoiceResponse:
       type: object
       properties:
@@ -2920,7 +3176,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/InvoiceResponseItem'
-    
+  
     InvoiceResponseItem:
       type: object
       properties:
