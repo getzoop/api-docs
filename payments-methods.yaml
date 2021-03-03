@@ -150,6 +150,12 @@ paths:
                   - $ref: "#/components/schemas/TransactionResponse"
                   - $ref: "#/components/schemas/TransactionBoletoResponse"
                   - $ref: "#/components/schemas/TransactionBoletoResponse"
+        "201":
+          description: Transação criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionBoletoResponse"
         "404":
           description: Transação não encontrada
     get:
@@ -2672,6 +2678,7 @@ components:
         - description
         - payment_type
         - on_behalf_of
+        - customer
       properties:
         on_behalf_of:    
           type: string
@@ -2708,6 +2715,7 @@ components:
         - description
         - payment_type
         - on_behalf_of
+        - customer
       properties:
         on_behalf_of:     
           type: string
