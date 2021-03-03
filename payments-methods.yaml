@@ -136,6 +136,12 @@ paths:
                 - $ref: "#/components/schemas/TransactionDigitalWalletSecondaryRequest"
                 - $ref: "#/components/schemas/TransactionSimpleBoletoTransactionRequest"
                 - $ref: "#/components/schemas/TransactionBoletoTransactionRequest"
+              discriminator:
+                propertyName: objectType
+                mapping:
+                  TransacaoSemToken: '#/components/schemas/TransactionNoTokenRequest'
+                  TransacaoComToken: '#/components/schemas/TransactionDisposableTokenRequest'
+
         description: Transacao
       responses:
         "200":
@@ -601,7 +607,7 @@ paths:
           description: Boleto recuperado com sucesso
         "404":
           description: Marketplace/Boleto não encontrado
-  "/v1/marketplaces/{marketplace_id}/transactions/{transactions_id}/approve":
+  "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/approve":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
       - name: transaction_id
