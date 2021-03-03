@@ -136,11 +136,6 @@ paths:
                 - $ref: "#/components/schemas/TransactionDigitalWalletSecondaryRequest"
                 - $ref: "#/components/schemas/TransactionSimpleBoletoTransactionRequest"
                 - $ref: "#/components/schemas/TransactionBoletoTransactionRequest"
-              discriminator:
-                propertyName: objectType
-                mapping:
-                  TransacaoSemToken: '#/components/schemas/TransactionNoTokenRequest'
-                  TransacaoComToken: '#/components/schemas/TransactionDisposableTokenRequest'
 
         description: Transacao
       responses:
@@ -2489,10 +2484,7 @@ components:
         - description
         - payment_type
         - on_behalf_of
-        - objectType
       properties:
-        objectType:
-          type: string        
         on_behalf_of:
           type: string
           example: "822a8bda73c546a8b2f12a5ebcce7732"
@@ -2647,10 +2639,7 @@ components:
         - description
         - payment_type
         - on_behalf_of
-        - objectType
       properties:
-        objectType:
-          type: string        
         on_behalf_of:   
           type: string
           example: "822a8bda73c546a8b2f12a5ebcce7732"
