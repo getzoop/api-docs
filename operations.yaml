@@ -1,0 +1,665 @@
+openapi: 3.0.2
+info:
+  title: Operações
+  version: "1.1"
+
+security:
+ - basicAuth: []
+
+tags:
+ - name: Pagamentos
+   description: Pagamentos de contas  
+ - name: Transferências entre contas
+   description: Realiza a transferências entre contas  
+
+servers: [
+    {
+      "url": "https://apigw-sandbox.zoop.ws",
+      "description": "Sandbox"
+    },    
+    {
+      "url": "https://api-beta.zoop.ws",
+      "description": "Produção"
+    }
+    ]
+    
+paths:
+  "/v2/marketplaces/{marketplace_id}/accounts/{account_id}/payments":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/accountID"
+    post:
+      summary: Pagamento de contas
+      tags:
+        - Pagamentos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/billPaymentRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/billPaymentResponse'
+  "/v2/marketplaces/{marketplace_id}/accounts/{account_id}/payments/{payment_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/accountID"
+      - $ref: "#/components/parameters/paymentID"
+    get:
+      summary: Busca de detalhes do pagamento pelo ID do pagamento
+      tags:
+        - Pagamentos
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/billPaymentResponse'
+  "/v2/marketplaces/{marketplace_id}/accounts/{account_id}/payments/barcode/{barcode}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/accountID"
+      - $ref: "#/components/parameters/barcodeID"
+    get:
+      summary: Busca de detalhes do pagamento pelo código de barras
+      tags:
+        - Pagamentos
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/billPaymentResponse'
+  "/v2/marketplaces/{marketplace_id}/accounts/{account_id}/payments/validation/{barcode}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/accountID"
+      - $ref: "#/components/parameters/barcodeID"
+    get:
+      summary: Validação de código de barras para pagamento
+      tags:
+        - Pagamentos
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/billPaymentResponse'
+
+  "/v2/marketplaces/{marketplace_id}/accounts/{account_id}/p2p_transfers":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/accountID"
+    post:
+      summary: Criação de transferência interna entre contas
+      tags:
+        - Transferências entre contas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/billTransferRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/billTransferResponse'
+
+components:
+  securitySchemes:
+     basicAuth:
+       type: http
+       scheme: basic 
+  parameters:
+      marketplaceID:
+        name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        schema:
+          type: string
+      holderID:
+        name: holder_id
+        in: path
+        description: ID do holder (dono da conta)
+        required: true
+        schema:
+          type: string
+      paymentID:
+        name: payment_id
+        in: path
+        description: ID do pagamento 
+        required: true
+        schema:
+          type: string
+      barcodeID:
+        name: barcode
+        in: path
+        description: Identificacao do barcode
+        required: true
+        schema:
+          type: string
+      accountID:
+        name: account_id
+        in: path
+        description: ID da conta digital 
+        required: true
+        schema:
+          type: string
+      phoneID:
+        name: phone_id
+        in: path
+        description: ID do telefone 
+        required: true
+        schema:
+          type: string
+      type:
+        name: type_id
+        in: query
+        description: Tipo do arquivo a ser enviado
+        required: true
+        schema:
+          type: string
+          enum:
+            - SELFIE
+            - RG_FRENTE
+            - RG_VERSO
+            - CNH_FRENTE
+            - CNH-VERSO
+            - CCMEI
+            - PAGINA_CONTRATO_SOCIAL
+            - PAGINA_ESTATUTO_SOCIAL
+            - PAGINA_ATA_ELEICAO_DIRETORES
+            - PAGINA_PROCURACAO
+      documentID:
+        name: documents_id
+        in: path
+        description: ID do documento
+        required: true
+        schema:
+          type: string
+      adressID:
+        name: address_id
+        in: path
+        description: ID do endereço
+        required: true
+        schema:
+          type: string
+      pageID:
+        name: page_id
+        in: query
+        description: indica a página que será exibida
+        schema:
+          type: number
+          example: 0
+      sizeID:
+        name: size_id
+        in: query
+        description: Quantidade de registros a ser retornado por página
+        schema:
+          type: number
+          example: 20
+      offsetID:
+        name: offset
+        in: query
+        description: Determina o ponto de inicio dos registros retornados
+        schema:
+          type: number
+          example: 0
+      limitID:
+        name: limit
+        in: query
+        description: Quantidade máxima de itens por página (<100)
+        schema:
+          type: number
+          example: 0
+      typeOpID:
+        name: type
+        in: query
+        description: "Retorna lançamentos onde o tipo da operação seja igual a um dos valores informado. O valor pode ser uma string ou uma lista de valores concatenados por ', '. (ex: charge, charge_refunded, transfer, transfer_refunded, deposit, deposit_refunded, adjustment)"
+        required: true
+        schema:
+          type: string
+          enum:
+            - charge
+            - charge_refunded
+            - transfer
+            - transfer_refunded
+            - deposit
+            - deposit_refunded
+            - adjustment
+      created_date_rangeID:
+        name: created_date_range
+        in: query
+        description: Retorna lançamentos onde a data for igual o valor informado. O valor pode ser uma string com um horário em UTC timestamp ou ISO (YYYY-DD-MM HH:MM:SS)
+        schema:
+          type: string
+          example: "2020-10-01 15:34:00"
+      created_date_rangeGTID:
+        name: created_date_range[gt]
+        in: query
+        description: Retorna lançamentos onde a data for maior o valor informado
+        schema:
+          type: string
+          example: "2020-10-01 15:34:00"
+      created_date_rangeLTID:
+        name: created_date_range[lt]
+        in: query
+        description: Retorna lançamentos onde a data for menor o valor informado
+        schema:
+          type: string
+          example: "2020-10-01 15:34:00"
+      created_date_rangeGTEID:
+        name: created_date_range[gte]
+        in: query
+        description: Retorna lançamentos onde a data for maior ou igual o valor informado
+        schema:
+          type: string
+          example: "2020-10-01 15:34:00"
+      created_date_rangeLTEID:
+        name: created_date_range[lte]
+        in: query
+        description: Retorna lançamentos onde a data for menor ou igual valor informado
+        schema:
+          type: string
+          example: "2020-10-01 15:34:00"
+
+  schemas:
+    billPaymentRequest:
+      type: object
+      properties:
+        interest:
+          type: integer
+          description: Valor discriminado de juros pela operação utilizado no calculo no valor
+          example: 0
+        discount:
+          type: integer
+          description: Valor discriminado de desconto utilizado no calculo do valor
+          example: 0
+        bar_code:
+          type: string
+          description: Dados do código de barras do pagamento a ser realizado
+        amount:
+          type: integer
+          description: Valor total a ser repassado ao banco incluindo taxa e juros em centavos do pagamento a ser realizado
+        statement_descriptor:
+          type: integer
+          description: Descrição a ser exibida no extrato de lançamentos da conta debitada
+        reference_id:
+          type: string
+          description: Valor de referência do pagamento no seu sistema
+        metadata:
+          type: object
+          description: Metadados associados ao pagamento
+    billPaymentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "942e0d178dd64644b2eb054705268c94"
+        account_id:
+          type: string
+          example: "942e0d178dd64644b2eb054705268c94"
+        marketplace_id:
+          type: string
+          example: "f8c2bfb884e4486c8e0eee15be5c3ab1"
+        amount:
+          type: integer
+          description: Valor total a ser repassado ao banco incluindo taxa e juros em centavos do pagamento a ser realizado
+        discount:
+          type: integer
+          description: Valor discriminado de desconto utilizado no calculo do valor
+          example: 0
+        interest:
+          type: integer
+          description: Valor discriminado de juros pela operação utilizado no calculo no valor
+          example: 0
+        fine:
+          type: integer
+          example: 0
+        bar_code:
+          type: string
+          description: Dados do código de barras do pagamento a ser realizado
+        status:
+          type: string
+          example: created
+        payment_id:
+          type: string
+          example: 579e68359d7b4af0bc625bb61699d69a
+        resource:
+          type: string
+          example: billing_payment
+        recipient:
+          type: integer
+          description: Company
+        recipient_document:
+          type: string
+        referenc_id:
+          type: object
+        operation:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "b9602ec221a64f8897eb883eed72592e"
+            amount:
+              type: string
+              description: "-3.50"
+            gross_amount:
+              type: string
+              example: "-3.50"
+            nsu:
+              type: integer
+              example: 11
+            date:
+              type: string
+              example: "2019-08-15T15:04:29.848403"
+            fee:
+              type: string
+              example: "0.00"
+            current_balance:
+              type: string
+              example: "1.06"
+            object_type:
+              type: string
+              example: "payment"
+            object_id:
+              type: string
+              example: "442b0729ff874c0d84deb905dbb18745"
+            type:
+              type: string
+              example: "payment"
+            created_at:
+              type: string
+              example: "2020-11-06T12:54:11.336975"
+            updated_at:
+              type: string
+              example: "2020-11-06T12:54:11.336975"
+            dflag:
+              type: string
+              example: "active"
+            authorization:
+              type: object
+              properties:
+                external_key:
+                  type: string
+                  example: "2ed672d431054261913d0e16daf6024a"
+                type:
+                  type: string
+                  example: "payment"
+                status:
+                  type: string
+                  example: "payment"
+            resource:
+              type: string
+              example: "payment_account.payment"
+
+    billTransferRequest:
+      type: object
+      properties:
+        to:
+          type: string
+          description: ID da conta de destino a ser creditada pela transferência
+          example: 0
+        amount:
+          type: integer
+          description: Valor em centavos a ser transferidoo
+        description:
+          type: string
+          description: Descrição da transferência
+          example: 0
+        statement_descriptor:
+          type: integer
+          description: Descrição a ser exibida no extrato de lançamentos das contas
+        reference_id:
+          type: string
+          description: Valor de referência da transferência no seu sistema
+        metadata:
+          type: object
+          description: 'Metadados associados a transferência, no formato objeto "chave": "valor"'
+    billTransferResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "942e0d178dd64644b2eb054705268c94"
+        resource:
+          type: string
+          example: "p2p_transfer"
+        type:
+          type: string
+          example: "payment"
+        status:
+          type: string
+          example: "payment"
+        confirmed:
+          type: string
+          example: "1"
+        recipient:
+          type: string
+          example: "2c42a9b1dea541b5a12aacd32b0fdb4d"
+        sender:
+          type: string
+          description: "800bcd574b7743078dedb5e2c9414ae7"
+        amount:
+          type: string
+          example: 0.01
+        fee:
+          type: string
+          example: 0.00
+        net_amount:
+          type: string
+          example: 0.01
+        currency:
+          type: string
+          description: "BRL"
+        description:
+          type: string
+          example: "use com moderacao"
+        statement_descriptor:
+          type: string
+          example: null
+        bank_account:
+          type: string
+          example: null
+        transfer_date:
+          type: string
+          description: "2019-08-14T18:25:22+00:00"
+        created_at:
+          type: string
+          example: "2019-08-14T18:25:22+00:00"
+        updated_at:
+          type: string
+          example: "2019-08-14T18:25:22+00:00"
+        metadata:
+          type: object
+        from:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "b9602ec221a64f8897eb883eed72592e"
+            account: 
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "cb2a0ed4ead9473c9b304d560ab83107"
+                holder: 
+                  type: string
+                  example: "b8c7cce7618e41618170cf45948b7af0"
+                balance:
+                  type: string
+                  description: "1.06"
+                currency:
+                  type: string
+                  example: "BRL"
+                routing_number:
+                  type: string
+                  example: 001
+                number:
+                  type: string
+                  example: "72925596"
+                status:
+                  type: string
+                  example: "active"
+                metadata:
+                  type: object
+                object_type:
+                  type: string
+                  example: "payment"
+                created_at:
+                  type: string
+                  example: "2020-11-06T12:54:11.336975"
+                updated_at:
+                  type: string
+                  example: "2020-11-06T12:54:11.336975"
+                primary:
+                  type: boolean
+                  enum:
+                    - true
+                    - false
+                  default: true
+                resource:
+                  type: string
+                  example: "payment_account"
+            amount: 
+                type: string
+                example: "-0.13"
+            gross_amount: 
+                type: string
+                example: "-0.13"
+            nsu: 
+                type: integer
+                example: 11
+            date: 
+                type: string
+                example: "2019-08-15T15:04:29.848403"
+            fee: 
+                type: string
+                example: "0.00"
+            object_type: 
+                type: string
+                example: "transfer"
+            object_id: 
+                type: string
+                example: "442b0729ff874c0d84deb905dbb18745"
+            type: 
+                type: string
+                example: "transfer"
+            created_at: 
+                type: string
+                example: "2019-08-15T15:04:29.729921"
+            dflag: 
+                type: string
+                example: "active"
+            authorization: 
+                type: object
+                properties:
+                  external_key:
+                    type: string
+                    example: "2ed672d431054261913d0e16daf6024a"
+                  type:
+                    type: string
+                    example: "transfer"
+                  status:
+                    type: string
+                    example: "active"
+            transfer: 
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "b9602ec221a64f8897eb883eed72592e"
+                  authorization_code:
+                    type: string
+                    example: "ec68f18543aa45a3b88aaddbb6be616e"
+            resource:
+              type: string
+              example: "payment_account.entry"
+        to:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "b9602ec221a64f8897eb883eed72592e"
+            account: 
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "cb2a0ed4ead9473c9b304d560ab83107"
+                holder: 
+                  type: string
+                  example: "b8c7cce7618e41618170cf45948b7af0"
+            amount: 
+                type: string
+                example: "0.13"
+            gross_amount: 
+                type: string
+                example: "0.13"
+            nsu: 
+                type: integer
+                example: 9
+            date: 
+                type: string
+                example: "2019-08-15T15:04:29.848403"
+            fee: 
+                type: string
+                example: "0.00"
+            current_balance: 
+                type: string
+                example: "2.04"
+            object_type: 
+                type: string
+                example: "transfer"
+            object_id: 
+                type: string
+                example: "b4137edf22724c1bbb902e0e40669260"
+            type: 
+                type: string
+                example: "transfer"
+            created_at: 
+                type: string
+                example: "2019-08-15T15:04:29.729921"
+            dflag: 
+                type: string
+                example: "active"
+            authorization: 
+                type: object
+                properties:
+                  external_key:
+                    type: string
+                    example: "2ed672d431054261913d0e16daf6024a"
+                  type:
+                    type: string
+                    example: "transfer"
+                  status:
+                    type: string
+                    example: "active"
+            transfer: 
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "e513ba702e2648c9b8fb5772c028ff90"
+                  authorization_code:
+                    type: string
+                    example: "ec68f18543aa45a3b88aaddbb6be616e"
+            resource:
+              type: string
+              example: "payment_account.entry"
+              
+
+

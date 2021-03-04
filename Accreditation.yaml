@@ -2829,6 +2829,9 @@ components:
           type: string
           example: "1010"
           description: Senha do cartão a ser criado (4 dígitos não sequenciais).
+        embossing_policy_id:
+          type: string
+          example: 037d9fe32bab48ff815c34bd5deda824
     CardHolderResponse:
       type: object
       properties:
