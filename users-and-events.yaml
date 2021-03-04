@@ -18,12 +18,8 @@ tags:
     description: Usuários de acesso a API
   - name: 'API Key'
     description: Chaves de acesso a API
-  - name: 'Marketplace'
-    description: Criação de marketplaces
-  - name: 'Notificações de Webhook'
-    description: Gerenciar notificações (webhook)
-  - name: 'Eventos'
-    description: Consultar eventos e reenviar webhook 
+  - name: 'Notificações e eventos'
+    description: Gerenciar notificações e eventos
 
 paths:
   '/users/{user_id}/permissions':
@@ -491,7 +487,7 @@ paths:
       - $ref: '#/parameters/marketplaceId'
     post:
       tags:
-        - 'Notificações de Webhook'
+        - 'Notificações e eventos'
       summary: 'Criar webhook por marketplace'
       description: ''
       parameters:
@@ -517,7 +513,7 @@ paths:
           description: Marketplace não encontrado
     get:
       tags:
-        - 'Notificações de Webhook'
+        - 'Notificações e eventos'
       summary: 'Listar webhooks por marketplace'
       description: ''
       produces:
@@ -529,14 +525,13 @@ paths:
             $ref: '#/definitions/WebhookListResponse'
         '404':
           description: Marketplace não encontrado
-
   '/v1/marketplaces/{marketplace_id}/webhooks/{webhook_id}':
     parameters:
       - $ref: '#/parameters/marketplaceId'
       - $ref: '#/parameters/webhookId'
     get:
       tags:
-        - 'Notificações de Webhook'
+        - 'Notificações e eventos'
       summary: 'Recuperar detalhes de webhook'
       description: ''
       produces:
@@ -554,7 +549,7 @@ paths:
           description: Marketplace/Webhook não encontrado
     delete:
       tags:
-        - 'Notificações de Webhook'
+        - 'Notificações e eventos'
       summary: 'Remover webhook'
       description: ''
       produces:
@@ -564,7 +559,6 @@ paths:
           description: Webhook removido com sucesso
         '404':
           description: Marketplace/Webhook não encontrado
-
   '/v1/marketplaces/{marketplace_id}/events/{event_id}':
     parameters:
       - $ref: '#/parameters/marketplaceId'
@@ -575,7 +569,7 @@ paths:
         type: string
     get:
       tags:
-        - 'Eventos'
+        - 'Notificações e eventos'
       summary: 'Recuperar detalhes de evento pelo identificador'
       description: ''
       produces:
@@ -585,7 +579,6 @@ paths:
           description: Evento recuperado com sucesso
         '404':
           description: Marketplace/Evento não encontrado
-
   '/v1/marketplaces/{marketplace_id}/events':
     get:
       parameters:
@@ -597,7 +590,7 @@ paths:
       - $ref: '#/parameters/eventTypeParam'
       - $ref: '#/parameters/eventStatusParam'
       tags:
-        - 'Eventos'
+        - 'Notificações e eventos'
       summary: 'Listar eventos por marketplace'
       description: ''
       produces:
@@ -614,7 +607,7 @@ paths:
       - $ref: '#/parameters/dateRangeLTEParam'
     post:
       tags:
-        - 'Eventos'
+        - 'Notificações e eventos'
       summary: 'Redisparo de eventos'
       description: 'Uma solicitação de replay (ou reenvio) de eventos irá notificar no máximo os 100 primeiros eventos encontrados em sua filtragem. Portanto, caso haja um número maior do que 100 eventos a serem solicitados, o solicitante deverá ajustar o range de timestamps de forma que este comporte 100 eventos.'
       parameters:
@@ -638,9 +631,8 @@ paths:
       - $ref: '#/parameters/dateRangeLTEParam'
     post:
       tags:
-        - 'Eventos'
+        - 'Notificações e eventos'
       summary: 'Redisparo de eventos por ID'
-      description: 'Uma solicitação de replay (ou reenvio) de eventos irá notificar no máximo os 100 primeiros eventos encontrados em sua filtragem. Portanto, caso haja um número maior do que 100 eventos a serem solicitados, o solicitante deverá ajustar o range de timestamps de forma que este comporte 100 eventos.'
       parameters:
         - $ref: '#/parameters/marketplaceId'
       consumes:
