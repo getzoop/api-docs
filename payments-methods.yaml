@@ -316,7 +316,7 @@ paths:
         schema:
           type: string
     get:
-      summary: Disponibilizar link para baixar carta de cancelamento
+      summary: Disponibilizar link carta de cancelamento
       tags:
         - Transações
       responses:
