@@ -250,6 +250,7 @@ paths:
       summary: Alterar detalhes de transação pelo identificador
       tags:
         - Transações
+      deprecated: true
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - name: transaction_id
@@ -305,6 +306,28 @@ paths:
           description: Requisição/Parametros inválidos
         "404":
           description: Marketplace/Transação não encontrado
+  "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/cancelled-letter":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Disponibilizar link para baixar carta de cancelamento
+      tags:
+        - Transações
+      responses:
+        "200":
+          description: Transação recuperada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LetterCancelResponse"
+        "404":
+          description: Transação não encontrada
   "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/capture":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
@@ -3380,4 +3403,11 @@ components:
         security_code:
           type: string
           description: Código de segurança do cartão (CVC)
+    LetterCancelResponse:
+      type: object
+      properties:
+            url:
+              type: string
+              example: "https://zoop-cancelled-letters-prod.s3.amazonaws.com/Carta_Cancelamento_Venda_fe39ddda9b384ddc91c6efab6b74dc8e_2021-02-27T14%3A03%3A54.pdf?AWSAccessKeyId=AKIAUYSUHOIR5WKLRRHD&Expires=1614866804&Signature=qN0EzTrPqOV8Iov%2BMwVjxb3q4AY%3D"
+
           
