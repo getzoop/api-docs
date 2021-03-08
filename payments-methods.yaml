@@ -9,22 +9,22 @@ tags:
     description: Token de cartões e cartões de crédito utilizados nos pagamentos
   - name: Transações
     description: Operações de pagamento com dados de cartão de crédito e boleto
+  - name: Source
+    description: Manter source de pagamentos
   - name: Boleto
     description: Operações de pagamento via boleto bancário registrado
+  - name: Mundo Físico
+    description: Pareamento de POS usando a API
   - name: Planos de Recorrência
     description: Criação de planos de recorrência
   - name: Assinatura de Recorrência
     description: Criação de assinaturas de recorrência
   - name: Fatura de Recorrência
     description: Verificação de Faturas de recorrência
-  - name: Recibo
-    description: Recibos de pagamentos realizados com sucesso 
-  - name: Source
-    description: Manter source de pagamentos
-  - name: Mundo Físico
-    description: Pareamento de POS usando a API
   - name: Split (Regra de divisão) 
     description: Regras de divisão (split) de um pagamento
+  - name: Recibo
+    description: Recibos de pagamentos realizados com sucesso 
   - name: Recebível
     description: Parcelas de recebimento de uma transação
     
@@ -419,174 +419,6 @@ paths:
           description: Source removido com sucesso
         "404":
           description: Marketplace/Source não encontrado
-  "/v1/marketplaces/{marketplace_id}/terminals/pairing":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-    post:
-      tags:
-        - Mundo Físico
-      summary: Parear terminal POS
-      description: ""
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/TerminalRequest"
-        description: Split de transações
-
-      responses:
-        "200":
-          description: Terminal alterado com sucesso
-        "400":
-          description: Missing required param
-        "404":
-          description: Terminal não encontrado
-  "/v1/marketplaces/card-present/terminals/{identification_number}":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/identificationNumberID"
-    get:
-      tags:
-        - Mundo Físico
-      summary: Buscar informações sobre terminal
-      description: ""
-      responses:
-        "200":
-          description: Terminal alterado com sucesso
-        "400":
-          description: Missing required param
-        "404":
-          description: Terminal não encontrado
-  "/v1/marketplaces/{marketplace_id}/receipts/{receipt_id}/emails":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - name: receipt_id
-        in: path
-        description: identificador do recibo
-        required: true
-        schema:
-          type: string
-    post:
-      tags:
-        - Recibo
-      summary: Enviar recibo por email
-      description: ""
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                to:
-                  type: string
-                  description: Informar o email para envio
-                  example: "teste@teste.com.br"
-        description: Envio de recibo por email
-      responses:
-        "200":
-          description: Recibo enviado com sucesso
-        "404":
-          description: Marketplace/Recibo não encontrada
-  "/v1/marketplaces/{marketplace_id}/receipts/{receipt_id}/texts":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - name: receipt_id
-        in: path
-        description: identificador do recibo
-        required: true
-        schema:
-          type: string
-    post:
-      tags:
-        - Recibo
-      summary: Enviar recibo por SMS
-      description: ""
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                to:
-                  type: string
-                  description: Informar país, código de área e o número do celular para envio
-                  example: "+55 21999099999"
-        description: Envio de recibo por sms
-      responses:
-        "200":
-          description: Recibo enviado com sucesso
-        "404":
-          description: Marketplace/Recibo não encontrada
-  "/v1/marketplaces/{marketplace_id}/receipts/{receipt_id}/send":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - name: receipt_id
-        in: path
-        description: identificador do recibo
-        required: true
-        schema:
-          type: string
-    post:
-      deprecated: true
-      tags:
-        - Recibo
-      summary: Enviar recibo por sms.email
-      description: ""
-      responses:
-        "200":
-          description: Recibo enviado com sucesso
-        "404":
-          description: Marketplace/Recibo não encontrada
-  "/v1/marketplaces/{marketplace_id}/receipts/{receipt_id}":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - name: receipt_id
-        in: path
-        description: identificador do recibo
-        required: true
-        schema:
-          type: string
-    get:
-      tags:
-        - Recibo
-      summary: Listar detalhes do recibo
-      description: ""
-      responses:
-        "200":
-          description: Recibo recuperado com sucesso
-        "404":
-          description: Marketplace/Recibo não encontrada
-    put:
-      deprecated: true
-      tags:
-        - Recibo
-      summary: Alterar detalhes do recibo
-      description: ""
-      responses:
-        "200":
-          description: Recibo alteardo com sucesso
-        "404":
-          description: Marketplace/Recibo não encontrada
-  "/v1/receipts/{marketplace_id}/{receipt_id}":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - name: receipt_id
-        in: path
-        description: identificador do recibo
-        required: true
-        schema:
-          type: string
-    get:
-      tags:
-        - Recibo
-      summary: Renderizar template de recibo HTML
-      description: ""
-      security: []
-      responses:
-        "200":
-          description: Recibo renderizado com sucesso
-        "404":
-          description: Marketplace/Recibo não encontrada
   "/v1/marketplaces/{marketplace_id}/boletos/{boleto_id}/emails":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
@@ -649,90 +481,46 @@ paths:
 
         "404":
           description: Marketplace/Boleto não encontrado
-  "/v1/marketplaces/{marketplace_id}/receivables/{receivable_id}":
+
+  "/v1/marketplaces/{marketplace_id}/terminals/pairing":
     parameters:
-      - name: marketplace_id
-        in: path
-        description: ID do marketplace
-        required: true
-        schema:
-          type: string
-      - name: receivable_id
-        in: path
-        description: identificador do recebível
-        required: true
-        schema:
-          type: string
+      - $ref: "#/components/parameters/marketplaceID"
+    post:
+      tags:
+        - Mundo Físico
+      summary: Parear terminal POS
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TerminalRequest"
+        description: Split de transações
+
+      responses:
+        "200":
+          description: Terminal alterado com sucesso
+        "400":
+          description: Missing required param
+        "404":
+          description: Terminal não encontrado
+  "/v1/marketplaces/card-present/terminals/{identification_number}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/identificationNumberID"
     get:
       tags:
-        - "Recebível"
-      summary: 'Listar detalhes de recebível'
-      description: ''
+        - Mundo Físico
+      summary: Buscar informações sobre terminal
+      description: ""
       responses:
-        '200':
-          description: Recebível recuperado com sucesso
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ReceivableResponse"
-        '404':
-          description: Marketplace/Recebível não encontrado
-  "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/receivables":
-    parameters:
-      - name: marketplace_id
-        in: path
-        description: ID do marketplace
-        required: true
-        schema:
-          type: string
-      - name: transaction_id
-        in: path
-        description: identificador da transação
-        required: true
-        schema:
-          type: string
-    get:
-      tags:
-        - "Recebível"
-      summary: 'Listar recebíveis por transação'
-      description: 'Listar todas as parcelas de recebimento por transação'
-      responses:
-        '200':
-          description: Recebível listado com sucesso
-          content:
-           application/json:
-             schema:
-               $ref: "#/components/schemas/ReceivableResponse"
-        '404':
-          description: Marketplace/Transação não encontrado
-  "/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/receivables":
-    parameters:
-      - name: marketplace_id
-        in: path
-        description: ID do marketplace
-        required: true
-        schema:
-          type: string
-      - name: seller_id
-        in: path
-        description: Id do seller
-        required: true
-        schema:
-          type: string
-    get:
-      tags:
-        - "Recebível"
-      summary: 'Listar recebíveis por seller'
-      description: 'Listar todas as parcelas de recebimento por seller'
-      responses:
-        '200':
-          description: Recebível listado com sucesso
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ReceivableResponse"
-        '404':
-          description: Marketplace/Seller não encontrado
+        "200":
+          description: Terminal alterado com sucesso
+        "400":
+          description: Missing required param
+        "404":
+          description: Terminal não encontrado
+
   "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/split_rules":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
@@ -813,6 +601,7 @@ paths:
           description: Split criado com sucesso
         "404":
           description: Marketplace/Transação não encontrado
+
   "/v2/marketplaces/{marketplace_id}/plans":
     post:
       parameters:
@@ -1172,6 +961,221 @@ paths:
                 $ref: '#/components/schemas/InvoiceResponse'
         400:
           description: bad input parameter
+
+  "/v1/marketplaces/{marketplace_id}/receipts/{receipt_id}/emails":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: receipt_id
+        in: path
+        description: identificador do recibo
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+        - Recibo
+      summary: Enviar recibo por email
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                to:
+                  type: string
+                  description: Informar o email para envio
+                  example: "teste@teste.com.br"
+        description: Envio de recibo por email
+      responses:
+        "200":
+          description: Recibo enviado com sucesso
+        "404":
+          description: Marketplace/Recibo não encontrada
+  "/v1/marketplaces/{marketplace_id}/receipts/{receipt_id}/texts":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: receipt_id
+        in: path
+        description: identificador do recibo
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+        - Recibo
+      summary: Enviar recibo por SMS
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                to:
+                  type: string
+                  description: Informar país, código de área e o número do celular para envio
+                  example: "+55 21999099999"
+        description: Envio de recibo por sms
+      responses:
+        "200":
+          description: Recibo enviado com sucesso
+        "404":
+          description: Marketplace/Recibo não encontrada
+  "/v1/marketplaces/{marketplace_id}/receipts/{receipt_id}/send":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: receipt_id
+        in: path
+        description: identificador do recibo
+        required: true
+        schema:
+          type: string
+    post:
+      deprecated: true
+      tags:
+        - Recibo
+      summary: Enviar recibo por sms.email
+      description: ""
+      responses:
+        "200":
+          description: Recibo enviado com sucesso
+        "404":
+          description: Marketplace/Recibo não encontrada
+  "/v1/marketplaces/{marketplace_id}/receipts/{receipt_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: receipt_id
+        in: path
+        description: identificador do recibo
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Recibo
+      summary: Listar detalhes do recibo
+      description: ""
+      responses:
+        "200":
+          description: Recibo recuperado com sucesso
+        "404":
+          description: Marketplace/Recibo não encontrada
+    put:
+      deprecated: true
+      tags:
+        - Recibo
+      summary: Alterar detalhes do recibo
+      description: ""
+      responses:
+        "200":
+          description: Recibo alteardo com sucesso
+        "404":
+          description: Marketplace/Recibo não encontrada
+  "/v1/receipts/{marketplace_id}/{receipt_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: receipt_id
+        in: path
+        description: identificador do recibo
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Recibo
+      summary: Renderizar template de recibo HTML
+      description: ""
+      security: []
+      responses:
+        "200":
+          description: Recibo renderizado com sucesso
+        "404":
+          description: Marketplace/Recibo não encontrada
+  "/v1/marketplaces/{marketplace_id}/receivables/{receivable_id}":
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        schema:
+          type: string
+      - name: receivable_id
+        in: path
+        description: identificador do recebível
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - "Recebível"
+      summary: 'Listar detalhes de recebível'
+      description: ''
+      responses:
+        '200':
+          description: Recebível recuperado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReceivableResponse"
+        '404':
+          description: Marketplace/Recebível não encontrado
+  "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/receivables":
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        schema:
+          type: string
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - "Recebível"
+      summary: 'Listar recebíveis por transação'
+      description: 'Listar todas as parcelas de recebimento por transação'
+      responses:
+        '200':
+          description: Recebível listado com sucesso
+          content:
+           application/json:
+             schema:
+               $ref: "#/components/schemas/ReceivableResponse"
+        '404':
+          description: Marketplace/Transação não encontrado
+  "/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/receivables":
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        schema:
+          type: string
+      - name: seller_id
+        in: path
+        description: Id do seller
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - "Recebível"
+      summary: 'Listar recebíveis por seller'
+      description: 'Listar todas as parcelas de recebimento por seller'
+      responses:
+        '200':
+          description: Recebível listado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReceivableResponse"
+        '404':
+          description: Marketplace/Seller não encontrado
 servers:
   - url: https://api.zoop.ws
   
