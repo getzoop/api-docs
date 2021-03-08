@@ -15,7 +15,7 @@ schemes:
   - https
 
 tags:
-  - name: 'Notificações (Webhook)'
+  - name: 'Webhook'
     description: Gerenciar notificações (webhook)
   - name: 'Eventos'
     description: Consultar eventos e reenviar webhook 
@@ -71,7 +71,7 @@ paths:
       - $ref: '#/parameters/webhookId'
     get:
       tags:
-        - 'Notificações (Webhook)'
+        - 'Webhook'
       summary: 'Recuperar detalhes de webhook'
       description: ''
       produces:
@@ -89,7 +89,7 @@ paths:
           description: Marketplace/Webhook não encontrado
     delete:
       tags:
-        - 'Notificações (Webhook)'
+        - 'Webhook'
       summary: 'Remover webhook'
       description: ''
       produces:
@@ -173,7 +173,7 @@ paths:
       - $ref: '#/parameters/dateRangeLTEParam'
     post:
       tags:
-        - 'Notificações e eventos'
+        - 'Eventos'
       summary: 'Redisparo de eventos por ID'
       parameters:
         - $ref: '#/parameters/marketplaceId'
