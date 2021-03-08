@@ -11,6 +11,8 @@ tags:
    description: Pagamentos de contas  
  - name: Transferências entre contas
    description: Realiza a transferências entre contas  
+ - name: TED
+   description: Realiza a transferências para outros bancos  
 
 servers: [
     {
@@ -99,7 +101,7 @@ paths:
       - $ref: "#/components/parameters/marketplaceID"
       - $ref: "#/components/parameters/accountID"
     post:
-      summary: Criação de transferência interna entre contas
+      summary: Criação de transferência
       tags:
         - Transferências entre contas
       requestBody:
@@ -115,6 +117,149 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/billTransferResponse'
+        '402':
+          description: Payment Required - Erro em caso de falta de saldo na conta de origem a ser debitada pela transferência.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/billTransferError402Response'
+    get:
+      summary: Listagem de transferências entre contas
+      tags:
+        - Transferências entre contas
+      responses:
+        '200':
+          description: OK - Serviço que lista de maneira paginada transferências entre contas digitais do mesmo marketplace
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/billPaymentResponse'
+  "/v2/marketplaces/{marketplace_id}/accounts/{account_id}/p2p_transfers/{p2p_transfer_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/accountID"
+      - $ref: "#/components/parameters/p2p_transferID"
+    get:
+      summary: Recuperar detalhes de uma transferência entre contas
+      tags:
+        - Transferências entre contas
+      responses:
+        '200':
+          description: OK - Serviço que recupera os detalhes de uma transferência entre contas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/billPaymentResponse'
+
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/accounts/{account_id}/external-transfer-send":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/holderID"
+      - $ref: "#/components/parameters/accountID"
+    post:
+      summary: Envio de TED
+      tags:
+        - TED
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/TedTransferRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TedTransferResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TedTransferError400Response'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TedTransferError403Response'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TedTransferError404Response'
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/accounts/{account_id}/external-transfer-send/reference-id/{reference_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/holderID"
+      - $ref: "#/components/parameters/accountID"
+      - $ref: "#/components/parameters/referenceID"
+    get:
+      summary: Envio de TED
+      tags:
+        - TED
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TedTransferResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TedTransferError404Response'
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/accounts/{account_id}/external-transfer-send/{externalTransfer_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/holderID"
+      - $ref: "#/components/parameters/accountID"
+      - $ref: "#/components/parameters/externalTransferID"
+    get:
+      summary: Envio de TED
+      tags:
+        - TED
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TedTransferResponse'
+        '400':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "bad_request"
+                  type:
+                    type: string
+                    example: "invalid_request"
+                  message:
+                    type: string
+                    example: "Invalid value for the path variable externalTransfer_id."
+                  category:
+                    type: string
+                    example: "business"
+                  status_code:
+                    type: number
+                    example: 400
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TedTransferError404Response'
+
 
 components:
   securitySchemes:
@@ -136,6 +281,20 @@ components:
         required: true
         schema:
           type: string
+      referenceID:
+        name: reference_id
+        in: path
+        description: Id de referencia informado na solicitação da TED
+        required: true
+        schema:
+          type: string
+      externalTransferID:
+        name: externalTransfer_id
+        in: path
+        description: Id gerado da transferência quando bem sucedida
+        required: true
+        schema:
+          type: string
       paymentID:
         name: payment_id
         in: path
@@ -154,6 +313,13 @@ components:
         name: account_id
         in: path
         description: ID da conta digital 
+        required: true
+        schema:
+          type: string
+      p2p_transferID:
+        name: p2p_transfer_id
+        in: path
+        description: ID da transferência entre contas 
         required: true
         schema:
           type: string
@@ -661,5 +827,274 @@ components:
               type: string
               example: "payment_account.entry"
               
+    billTransferError402Response:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "payment_required"
+        type:
+          type: string
+          example: "invalid_state"
+        message:
+          type: string
+          example: "Insufficient funds"
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: number
+          example: 402
 
+    TedTransferRequest:
+      type: object
+      required:
+        - amount
+        - recipient
+      properties:
+        amount: 
+          type: number
+          description: Valor em centavos a ser transferido
+          example: 400
+        recipient:
+          description: Conjunto referente ao recebedor da transferência
+          type: object
+          properties:
+            bank_code:
+              type: string
+              description: Código do banco de destino - parâmetro pertencente ao objeto recipient (utilizar 208 para TED com destino Zoop)
+              example: "208"
+            routing_number: 
+              type: string 
+              description: 'Número da agencia da conta de destino - parâmetro pertencente ao objeto recipient (Utilizar 0025 para TED com destino Zoop)'           
+              example: "0025"
+            routing_check_digit:
+              type: string
+              description: Digito verificador da agencia da conta de destino - parâmetro pertencente ao objeto recipient
+              example: "01"
+            account_number:
+              type: integer
+              description: Número da conta de destino - parâmetro pertencente ao objeto recipient
+              example: "10101010"
+            account_check_digit:
+              type: string
+              description: Digito verificador da conta de destino - parâmetro pertencente ao objeto recipient
+              example: "01"
+            document:
+              type: string
+              description: CPF/CNPJ da conta de destino - parâmetro pertencente ao objeto recipient
+              example: 99467256000170
+            name:
+              type: object
+              description: Nome do beneficiário do TED - parâmetro pertencente ao objeto recipient
+              example: "Zoop"
+        description: 
+          type: string
+          description: Descrição da transferência
+          example: "Transferência Bancária"
+        reference_id: 
+          type: string
+          description: Identificador único para a transferência
+          example: "7acb2cec-0f18-482c-a508-3eade9367ba3"
+        purpose_code: 
+          type: object
+          description: Código do propósito do envio da TED. Se não informado, o valor considerado será 10 (crédito em conta)
+          additionalProperties:
+            type: string
+          example:
+            99999: Outros
+            1: Pagamento de Impostos, Tributos e Taxas
+            2: Pagamento à Concessionárias de Serviço Público
+            3: Pagamentos de Dividendos
+            4: Pagamento de Salários
+            5: Pagamento de Fornecedores
+            6: Pagamento de Honorários
+            7: Pagamento de Aluguéis e Taxas de Condomínio
+            8: Pagamento de Duplicatas e Títulos
+            9: Pagamento de Mensalidade Escolar
+            10: Crédito em Conta
+            11: Pagamento a Corretoras
+            12: Pagamento de Boleto Bancário em Cartório
+            13: Pagamento de Tarifas pela Prestação de Serviços de Arrecadação de Convênios
+            14: Repasse de Valores Referentes a Títulos Liquidados em Cartórios de Protesto
+            15: Liquidação Financeira de Operadora de Cartão
+            16: Crédito em Conta de Investimento mantida na IF destinatária
+            18: Operações Seguro Habitacional - SFH
+            19: Operações do FDS - Caixa
+            23: Taxa de Administração
+            27: Pagamento de Acordo / Execução Judicial
+            28: Liquidação de Empréstimos Consignados
+            29: Pagamento de bolsa auxílio
+            30: Remuneração a cooperado
+            31: Pagamento de prebenda (Remuneração a padres e sacerdotes)
+            33: Pagamento de juros sobre capital próprio
+            34: Pagamento de rendimentos ou amortização s/ cotas e/ou debêntures
+            35: Taxa de Serviço
+            37: Pagamento de juros e/ou amortização de títulos depositados em garantia nas Câmaras
+            38: Estorno ou Restituição - Diversos
+            39: Pagamento de Vale Transporte
+            40: Simples Nacional
+            41: Repasse de valores para o FUNDEB
+            42: Repasse de Valores de Convênio Centralizado
+            43: Lei Rouanet - Patrocínio
+            44: Lei Rouanet - Doação
+            45: Transferência de conta corrente de instituição não bancária para sua Conta de Liquidação
+            47: Pagamento de Rescisão de Contrato de Trabalho
+            50: Reembolso de despesas com estruturação de operações de renda fixa e variável
+            100: Depósito Judicial
+            101: Pensão Alimentícia
+            103: Cessão de créditos - Liquid.principal por aquis.créditos ou direitos creditórios ou fluxo de caixa garant.por créditos, por ordem cliente PJ financ.
+            104: Cessão de créditos - Liquidação principal por aquisição de créditos ou direitos creditórios, por ordem de FIDC ou cia securitizadora
+            107: Cessão de créditos - Repasse contratual de fluxo de caixa ou de recebíveis pagos, por ordem de cliente PJ financeira
+            108: Cessão de créditos - Repasse contratual de fluxo de caixa ou de recebíveis pagos antecipadamente, por ordem de cliente PJ financeira
+            109: Cessão de créditos - Ajustes diversos
+            110: Transferência entre contas de mesma titularidade (CC 3493)
+            111: Crédito para investidor em cliente da IF Creditada
+            112: Débito de investidor em cliente da IF Debitada
+            113: Pagamento de Operações de Crédito por Cliente
+            114: Resgate de investimento de cliente
+            123: Cessão de créditos - Liquid.princ.por recompra de créditos ou direitos creditórios ou fluxo de caixa garant.por créditos, por ordem cliente PJ financ.
+            124: Cessão de créditos - Liquidação principal por recompra de créditos ou direitos creditórios, por ordem de FIDC ou cia securitizadora
+            200: Transferência Internacional em Reais
+            201: Ajuste Posição Mercado Futuro
+            202: Repasse de Valores do BNDES
+            203: Liquidação de Compromissos Junto ao BNDES
+            204: Operações de Compra e Venda de Ações - Bolsas de Valores e Mercado de Balcão
+            205: Contratos Referenciados em Ações ou Índices de Ações - Bolsas de Valores, de Mercadorias e de futuros
+            206: Operação de Câmbio - Não Interbancária
+            207: Operações no Mercado de Renda Fixa e de Renda Variável com Utilização de Intermediário
+            208: Operação de Câmbio - Mercado Interbancário - Instituições sem conta Reservas Bancárias
+            209: Pagamento de Operações com identificação de destinatário final
+            300: Restituição de Imposto de Renda
+            301: Ordem Bancária do Tesouro - OBT
+            302: Pagamento de multas ao BACEN por atrasos de importação
+            303: Restituição de tributos - RFB
+            500: Restituição de Prêmios de Seguros
+            501: Pagamento de Indenização de Sinistro de Seguro
+            502: Pagamento de Prêmio de Co-Seguro
+            504: Pagamento de Indenização de Sinistro de Co-Seguro
+            505: Pagamento de Prêmio de Resseguro
+            507: Pagamento de Indenização de Sinistro de Resseguro
+            508: Restituição de Indenização de Sinistro de Resseguro
+            509: Pagamento de Despesas com Sinistros
+            510: Pagamento de Inspeções/Vistorias Prévias
+            511: Pagamento de Resgate de Título da Capitalização
+            512: Pagamento de Sorteio de Título de Capitalização
+            513: Pagamento de Devolução de Mensalidade de Título de Capitalização
+            514: Restituição de Contribuição de Plano Previdenciário
+            515: Pagamento de Benefício Previdenciário de Pecúlio
+            516: Pagamento de Benefício Previdenciário de Pensão
+            517: Pagamento de Benefício Previdenciário de Aposentadoria
+            518: Pagamento de Resgate Previdenciário
+            519: Pagamento de Comissão de Corretagem
+            520: Pagamento de Transferências/Portabilidade de Reserva de Seguro/Previdência  
+    TedTransferResponse:
+      type: object
+      properties:
+        external_transfer_id:
+          type: object
+          example: 2a53965957814b30a065a2bb5d25bf67
+        amount: 
+          type: number
+          description: Valor em centavos a ser transferido
+          example: 400
+        formated_amount: 
+          type: string
+          description: Valor em centavos a ser transferido
+          example: "4.00"
+        description: 
+          type: string
+          example: "Transferência Bancária"
+        reference_id: 
+          type: string
+          example: "7acb2cec-0f18-482c-a508-3eade9367ba3"
+        status: 
+          type: string
+          example: "AUTHORIZED"
+        recipient:
+          description: Conjunto referente ao recebedor da transferência
+          type: object
+          properties:
+            bank_code:
+              type: string
+              description: Código do banco de destino - parâmetro pertencente ao objeto recipient (utilizar 208 para TED com destino Zoop)
+              example: "208"
+            routing_number: 
+              type: string 
+              description: 'Número da agencia da conta de destino - parâmetro pertencente ao objeto recipient (Utilizar 0025 para TED com destino Zoop)'           
+              example: "0025"
+            routing_check_digit:
+              type: string
+              description: Digito verificador da agencia da conta de destino - parâmetro pertencente ao objeto recipient
+              example: "01"
+            account_number:
+              type: integer
+              description: Número da conta de destino - parâmetro pertencente ao objeto recipient
+              example: "10101010"
+            account_check_digit:
+              type: string
+              description: Digito verificador da conta de destino - parâmetro pertencente ao objeto recipient
+              example: "01"
+            document:
+              type: string
+              description: CPF/CNPJ da conta de destino - parâmetro pertencente ao objeto recipient
+              example: 99467256000170
+            name:
+              type: object
+              description: Nome do beneficiário do TED - parâmetro pertencente ao objeto recipient
+              example: "Zoop"
 
+    TedTransferError400Response:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "bad_request"
+        type:
+          type: string
+          example: "invalid_request"
+        message:
+          type: string
+          example: "Reference id already exists for this account."
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: number
+          example: 400
+    TedTransferError403Response:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "Forbidden"
+        type:
+          type: string
+          example: "invalid_request"
+        message:
+          type: string
+          example: "Transfer window is not valid"
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: number
+          example: 403
+    TedTransferError404Response:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "bad_request"
+        type:
+          type: string
+          example: "invalid_request"
+        message:
+          type: string
+          example: "TED not found"
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: number
+          example: 404
