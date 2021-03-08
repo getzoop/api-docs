@@ -165,6 +165,32 @@ paths:
           description: Requisição inválida
         '404':
           description: Marketplace não encontrado
+  '/v1/marketplaces/{marketplace_id}/events/{event_id}/actions/replay':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/eventId'
+      - $ref: '#/parameters/dateRangeGTEParam'
+      - $ref: '#/parameters/dateRangeLTEParam'
+    post:
+      tags:
+        - 'Notificações e eventos'
+      summary: 'Redisparo de eventos por ID'
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Replay solicitado com sucesso
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Marketplace não encontrado
+
+
+
 definitions:
   Webhook:
     properties:
@@ -363,3 +389,9 @@ parameters:
     in: query
     type: string
     description: "Status do evento. Ex: failed"
+  eventId:
+    name: event_id
+    in: path
+    description: ID do evento disparado
+    required: true
+    type: string
