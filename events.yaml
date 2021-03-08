@@ -26,7 +26,7 @@ paths:
       - $ref: '#/parameters/marketplaceId'
     post:
       tags:
-        - 'Notificações (Webhook)'
+        - 'Webhook'
       summary: 'Criar webhook por marketplace'
       description: ''
       parameters:
@@ -52,7 +52,7 @@ paths:
           description: Marketplace não encontrado
     get:
       tags:
-        - 'Notificações (Webhook)'
+        - 'Webhook'
       summary: 'Listar webhooks por marketplace'
       description: ''
       produces:
