@@ -30,6 +30,106 @@ tags:
 
 
 paths:
+  '/v1/marketplaces/{marketplaceId}/buyers/{buyer_id}/balances':
+    parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: buyer_id
+        in: path
+        description: identificador do buyer
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Saldo de Conta'
+      summary: 'Lista contas por buyer'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Saldo recuperado com sucesso
+        '404':
+          description: Marketplace/Buyer não encontrado
+  '/v1/marketplaces/{marketplaceId}/balances/{balance_id}/history':
+    parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: balance_id
+        in: path
+        description: identificador da conta
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Saldo de Conta'
+      summary: 'Listar histórico de lançamentos pelo identificador da conta'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Histórico recuperado com sucesso
+        '404':
+          description: Marketplace/Saldo não encontrado
+  '/v1/marketplaces/{marketplaceId}/sellers/{seller_id}/balances/history':
+    parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: seller_id
+        in: path
+        description: identificador do seller
+        required: true
+        type: string
+      - $ref: '#/parameters/createdDateRangeGTEParam'
+      - $ref: '#/parameters/createdDateRangeLTEParam'
+    get:
+      tags:
+        - 'Saldo de Conta'
+      summary: 'Listar histórico de lançamentos de conta por seller'
+      description: 'Listagem de histórico da conta principal do seller'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Histórico recuperado com sucesso
+        '404':
+          description: Marketplace/Seller não encontrado
+  '/v1/marketplaces/{marketplaceId}/buyers/{buyer_id}/balances/history':
+    parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: buyer_id
+        in: path
+        description: identificador do buyer
+        required: true
+        type: string
+      - $ref: '#/parameters/createdDateRangeGTEParam'
+      - $ref: '#/parameters/createdDateRangeLTEParam'
+    get:
+      tags:
+        - 'Saldo de Conta'
+      summary: 'Listar histórico de lançamentos de conta por buyer'
+      description: 'Listagem de histórico da conta principal do buyer'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Histórico recuperado com sucesso
+        '404':
+          description: Marketplace/Seller não encontrado
   /v1/marketplaces/{marketplace_id}/bank_accounts/{bank_account_id}/transfers:
     parameters:
       - name: marketplace_id
@@ -716,106 +816,6 @@ paths:
       responses:
         '200':
           description: Saldo recuperado com sucesso
-        '404':
-          description: Marketplace/Seller não encontrado
-  '/v1/marketplaces/{marketplaceId}/buyers/{buyer_id}/balances':
-    parameters:
-      - name: "marketplaceId"
-        in: "path"
-        description: "ID do Marketplace"
-        required: true
-        type: "string"
-      - name: buyer_id
-        in: path
-        description: identificador do buyer
-        required: true
-        type: string
-    get:
-      tags:
-        - 'Saldo de Conta'
-      summary: 'Lista contas por buyer'
-      description: ''
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: Saldo recuperado com sucesso
-        '404':
-          description: Marketplace/Buyer não encontrado
-  '/v1/marketplaces/{marketplaceId}/balances/{balance_id}/history':
-    parameters:
-      - name: "marketplaceId"
-        in: "path"
-        description: "ID do Marketplace"
-        required: true
-        type: "string"
-      - name: balance_id
-        in: path
-        description: identificador da conta
-        required: true
-        type: string
-    get:
-      tags:
-        - 'Saldo de Conta'
-      summary: 'Listar histórico de lançamentos pelo identificador da conta'
-      description: ''
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: Histórico recuperado com sucesso
-        '404':
-          description: Marketplace/Saldo não encontrado
-  '/v1/marketplaces/{marketplaceId}/sellers/{seller_id}/balances/history':
-    parameters:
-      - name: "marketplaceId"
-        in: "path"
-        description: "ID do Marketplace"
-        required: true
-        type: "string"
-      - name: seller_id
-        in: path
-        description: identificador do seller
-        required: true
-        type: string
-      - $ref: '#/parameters/createdDateRangeGTEParam'
-      - $ref: '#/parameters/createdDateRangeLTEParam'
-    get:
-      tags:
-        - 'Saldo de Conta'
-      summary: 'Listar histórico de lançamentos de conta por seller'
-      description: 'Listagem de histórico da conta principal do seller'
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: Histórico recuperado com sucesso
-        '404':
-          description: Marketplace/Seller não encontrado
-  '/v1/marketplaces/{marketplaceId}/buyers/{buyer_id}/balances/history':
-    parameters:
-      - name: "marketplaceId"
-        in: "path"
-        description: "ID do Marketplace"
-        required: true
-        type: "string"
-      - name: buyer_id
-        in: path
-        description: identificador do buyer
-        required: true
-        type: string
-      - $ref: '#/parameters/createdDateRangeGTEParam'
-      - $ref: '#/parameters/createdDateRangeLTEParam'
-    get:
-      tags:
-        - 'Saldo de Conta'
-      summary: 'Listar histórico de lançamentos de conta por buyer'
-      description: 'Listagem de histórico da conta principal do buyer'
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: Histórico recuperado com sucesso
         '404':
           description: Marketplace/Seller não encontrado
 
