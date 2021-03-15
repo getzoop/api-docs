@@ -35,7 +35,7 @@ paths:
         content:
           application/json:
             schema:
-              oneOf: 
+              anyOf: 
                 - $ref: '#/components/schemas/IndividualHolderRequest'
                 - $ref: '#/components/schemas/BusinessHolderRequest'
       responses:
@@ -2013,6 +2013,7 @@ components:
         _links:
            $ref: '#/components/schemas/Links'
     IndividualHolderRequest:
+      title: Individual
       required:
         - cbo
         - email
@@ -2065,6 +2066,7 @@ components:
           format: double
           example: "5500.00" 
     BusinessHolderRequest:
+      title: Businesses
       required:
         - cbo
         - email

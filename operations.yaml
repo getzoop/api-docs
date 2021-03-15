@@ -157,7 +157,7 @@ paths:
       - $ref: "#/components/parameters/holderID"
       - $ref: "#/components/parameters/accountID"
     post:
-      summary: Consulta de Envio de TED pelo referenceId
+      summary: Envio de TED
       tags:
         - TED
       requestBody:
@@ -198,7 +198,7 @@ paths:
       - $ref: "#/components/parameters/accountID"
       - $ref: "#/components/parameters/referenceID"
     get:
-      summary: Consulta de Envio de TED por externalTransfer ID
+      summary: Consultar por reference ID
       tags:
         - TED
       responses:
@@ -221,7 +221,7 @@ paths:
       - $ref: "#/components/parameters/accountID"
       - $ref: "#/components/parameters/externalTransferID"
     get:
-      summary: Envio de TED
+      summary: Consultar por externalTransfer ID
       tags:
         - TED
       responses:

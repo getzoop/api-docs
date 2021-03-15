@@ -7,7 +7,7 @@ security:
 tags:
   - name: Tokenização de cartão
     description: Token de cartões e cartões de crédito utilizados nos pagamentos
-  - name: Transações
+  - name: Transacoes
     description: Operações de pagamento com dados de cartão de crédito e boleto
   - name: Source
     description: Manter source de pagamentos
@@ -119,7 +119,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
     post:
-      summary: Criar transação de cartão
+      summary: Criar transação
       description: Usar (Option 1) Autorização direta, (Option 2) Token descartavél, (Option 3) Custormer ID, (Option 4) Card ID, (Option 5) Boleto Simples, (Option 6) Boleto completo
       tags:
         - Transações
@@ -162,7 +162,7 @@ paths:
     get:
       summary: Listar transaçoes do marketplace
       tags:
-        - Transações
+        - Transacoes
       parameters:
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/sortParam"

@@ -9,7 +9,7 @@ security:
 tags:
  - name: Dict
    description: Diretório de Identificadores de Contas Transacionais  
- - name: Reivindicação e Portabilidade
+ - name: Reivindicação/Portabilidade
    description: Reivindicar ou solicitar a portabilidade de uma chave   
  - name: Pix
    description: Realiza pagamentos e transferências por Pix  
@@ -181,6 +181,201 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DictKeyResponse412'
+  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/entries/{entry_id}/ownership/resend":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/entryID"
+        - $ref: "#/components/parameters/XAuthTokenReading"
+        - $ref: "#/components/parameters/XSessionToken"
+      summary: Reenvio de código de verificação de propriedade de chave de endereçamento
+      tags:
+        - Dict
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Ownership verification code recreated and sent successfully
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictKeyResponse400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictKeyResponse404'
+        '412':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictKeyResponse412'
+  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/entries/{entry_id}":
+    get:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/entryID"
+      summary: Buscar vinculo com chave de endereçamento
+      tags:
+        - Dict
+      responses:
+        '200':
+          description: OK - Vinculo com a chave de endereçamento encontrado
+                  
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/DictKeyResponse400'
+                  - $ref: '#/components/schemas/DictKeyResponse404'
+    put:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/entryID"
+        - $ref: "#/components/parameters/XAuthTokenReading"
+        - $ref: "#/components/parameters/XSessionToken"
+      summary: Alterar vínculo da chave de endereçamento
+      tags:
+        - Dict
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code: 
+                  type: string
+                  description: Código de verificação de propriedade enviado para o usuário de acordo com o tipo de chave escolhido. Campo alfanumérico de 4 caracteres.
+                  example: 4040
+                  required:
+                    - "code"
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/DictKeyResponse400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictKeyResponse404'
+        '412':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictKeyResponse412'
+    delete:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/entryID"
+        - $ref: "#/components/parameters/XAuthTokenReading"
+        - $ref: "#/components/parameters/XSessionToken"
+      summary: Excluir vínculo com chave de endereçamento
+      tags:
+        - Dict
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Entry removed successfully
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Entry removal scheduled successfully
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/DictKeyResponse400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictKeyResponse404'
+        '412':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictKeyResponse412'
+
+  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/claims":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/XAuthTokenReading"
+        - $ref: "#/components/parameters/XSessionToken"
+      summary: Criar reivindicação
+      tags:
+        - Reivindicação/Portabilidade
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/ClaimRequest'
+      responses:
+        '200':
+          description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/DictKeyResponse400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictKeyResponse404'
     get:
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
@@ -188,9 +383,9 @@ paths:
         - $ref: "#/components/parameters/accountID"
         - $ref: "#/components/parameters/offsetID"
         - $ref: "#/components/parameters/sizeID"
-      summary: Listar vínculos com chaves de endereçamento
+      summary: Listar reivindicações
       tags:
-        - Dict
+        - Reivindicação/Portabilidade
       responses:
         '200':
           description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
@@ -202,7 +397,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/DictKeyResponse'
+                      $ref: '#/components/schemas/ClaimResponse'
                   has_more: 
                     type: boolean
                     example: false
@@ -232,7 +427,341 @@ paths:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/DictKeyResponse400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictKeyResponse404'
+  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/claims/{claim_id}":
+    get:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/claimID"
+      summary: Buscar reivindicação
+      tags:
+        - Reivindicação/Portabilidade
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/DictKeyResponse400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictKeyResponse404'
+  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/claims/{claim_id}/cancel":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/claimID"
+        - $ref: "#/components/parameters/XAuthTokenReading"
+        - $ref: "#/components/parameters/XSessionToken"
+      summary: Cancelar reivindicação
+      tags:
+        - Reivindicação/Portabilidade
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: "Claim cancelled successfully"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/DictKeyResponse400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictKeyResponse404'
+  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/claims/{claim_id}/confirm":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/claimID"
+        - $ref: "#/components/parameters/XAuthTokenReading"
+        - $ref: "#/components/parameters/XSessionToken"
+      summary: Confirmar reivindicação
+      tags:
+        - Reivindicação/Portabilidade
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: "Claim confirmed successfully"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/DictKeyResponse400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictKeyResponse404'
+  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/entries/{entry_id}/claims/":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/entryID"
+        - $ref: "#/components/parameters/XAuthTokenReading"
+        - $ref: "#/components/parameters/XSessionToken"
+      summary: Criar reivindicação a partir de uma entry
+      tags:
+        - Reivindicação/Portabilidade
+      responses:
+        '201':
+          description: Created - Reivindicação criada com sucesso.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/DictKeyResponse400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictKeyResponse404'
+        '412':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictKeyResponse412'
 
+  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/payments":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/XAuthTokenReading"
+        - $ref: "#/components/parameters/XSessionToken"
+      summary: Criar pagamento Pix 
+      tags:
+        - Pix
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               anyOf:
+                 - $ref: '#/components/schemas/pixRequest'
+                 - $ref: '#/components/schemas/pixAccountRequest'
+      responses:
+        '200':
+          description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pixResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/PixTransferError400Response'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PixTransferError404Response'
+        '412':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PixTransferError412Response'
+  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/payments/{payment_id}":
+    get:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/paymentID"
+        - $ref: "#/components/parameters/pageID"
+        - $ref: "#/components/parameters/sizeID"
+        - $ref: "#/components/parameters/XAuthTokenReading"
+        - $ref: "#/components/parameters/XSessionToken"
+      summary: Consultar pagamento Pix 
+      tags:
+        - Pix
+      responses:
+        '200':
+          description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pixResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/PixTransferError400Response'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PixTransferError404Response'
+  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/payments/{payment_id}/confirm":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/paymentID"
+        - $ref: "#/components/parameters/XAuthTokenReading"
+        - $ref: "#/components/parameters/XSessionToken"
+      summary: Confirmar pagamento Pix 
+      tags:
+        - Pix
+      responses:
+        '200':
+          description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pixResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/PixTransferError400Response'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PixTransferError404Response'
+        '412':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PixTransferError412Response'
+  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/payments/{payment_id}/cancel":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/paymentID"
+        - $ref: "#/components/parameters/XAuthTokenReading"
+        - $ref: "#/components/parameters/XSessionToken"
+      summary: Cancelar pagamento Pix 
+      tags:
+        - Pix
+      responses:
+        '200':
+          description: OK 
+  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/payments/{transaction_id}/refunds":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/transactionID"
+        - $ref: "#/components/parameters/XAuthTokenReading"
+        - $ref: "#/components/parameters/XSessionToken"
+      summary: Devolver pagamento Pix 
+      tags:
+        - Pix
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/pixRefundRequest'
+      responses:
+        '200':
+          description: OK 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pixRefundResponse'
+    get:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/transactionID"
+        - $ref: "#/components/parameters/pageID"
+        - $ref: "#/components/parameters/sizeID"
+      summary: Listar devoluções Pix 
+      tags:
+        - Pix
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/pixRefundRequest'
+      responses:
+        '200':
+          description: OK 
+  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/payments/{transaction_id}/refunds/{refunds_id}":
+    get:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/transactionID"
+        - $ref: "#/components/parameters/refundID"
+        - $ref: "#/components/parameters/pageID"
+        - $ref: "#/components/parameters/sizeID"
+        - $ref: "#/components/parameters/XAuthTokenReading"
+        - $ref: "#/components/parameters/XSessionToken"
+      summary: Consultar devolução Pix 
+      tags:
+        - Pix
+      responses:
+        '200':
+          description: OK 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pixRefundResponse'
 
 
 components:
@@ -251,7 +780,7 @@ components:
       holderID:
         name: holder_id
         in: path
-        description: Token de leitura do 2FA
+        description: ID do holder
         required: true
         schema:
           type: string
@@ -269,13 +798,6 @@ components:
         required: true
         schema:
           type: string
-      paymentID:
-        name: payment_id
-        in: path
-        description: ID do pagamento 
-        required: true
-        schema:
-          type: string
       barcodeID:
         name: barcode
         in: path
@@ -287,6 +809,27 @@ components:
         name: account_id
         in: path
         description: ID da conta digital 
+        required: true
+        schema:
+          type: string
+      paymentID:
+        name: payment_id
+        in: path
+        description: Id do pagamento que será confirmado 
+        required: true
+        schema:
+          type: string
+      transactionID:
+        name: transaction_id
+        in: path
+        description: Representa o id da transação PIX de crédito que sofrerá a devolução 
+        required: true
+        schema:
+          type: string
+      refundID:
+        name: refund_id
+        in: path
+        description: Id da devolução 
         required: true
         schema:
           type: string
@@ -382,7 +925,16 @@ components:
       entryID:
         name: entry_id
         in: path
+        description: Id da reivindicação
+        required: true
+        schema:
+          type: number
+          example: 0
+      claimID:
+        name: claim_id
+        in: path
         description: Id da chave de endereçamento
+        required: true
         schema:
           type: number
           example: 0
@@ -657,393 +1209,457 @@ components:
           type: string
           example: "Maximum entry count allowed reached"
 
-    billTransferRequest:
+    ClaimRequest:
       type: object
       properties:
-        to:
+        claim_type:
           type: string
-          description: ID da conta de destino a ser creditada pela transferência
-          example: 0
-        amount:
-          type: integer
-          description: Valor em centavos a ser transferidoo
-        description:
-          type: string
-          description: Descrição da transferência
-          example: 0
-        statement_descriptor:
-          type: integer
-          description: Descrição a ser exibida no extrato de lançamentos das contas
-        reference_id:
-          type: string
-          description: Valor de referência da transferência no seu sistema
-        metadata:
+          description: Utilize ownership para reinvindicar uma chave e portability para realizar a portabilidade de chave. 
+          enum:
+           - ownership 
+           - portability
+        key:
           type: object
-          description: 'Metadados associados a transferência, no formato objeto "chave": "valor"'
-    billTransferResponse:
+          properties:
+            type:
+              type: string
+              description: "Indica o tipo de chave de endereçamento. Os tipos de chave são: phone, email, evp e national_registration."
+              enum:
+              - email
+              - phone 
+              - evp 
+              - national_registration
+            value:
+              type: string
+              description: "Indica o valor da chave de endereçamento"
+              example: "fulano@gmail.com"
+    ClaimResponse:
       type: object
       properties:
         id:
           type: string
-          example: "942e0d178dd64644b2eb054705268c94"
-        resource:
+          example: "76d1f0c3772f45899b3025481a79967d"
+        marketplace_id:
           type: string
-          example: "p2p_transfer"
-        type:
-          type: string
-          example: "payment"
-        status:
-          type: string
-          example: "payment"
-        confirmed:
-          type: string
-          example: "1"
-        recipient:
-          type: string
-          example: "2c42a9b1dea541b5a12aacd32b0fdb4d"
-        sender:
-          type: string
-          description: "800bcd574b7743078dedb5e2c9414ae7"
-        amount:
-          type: string
-          example: 0.01
-        fee:
-          type: string
-          example: 0.00
-        net_amount:
-          type: string
-          example: 0.01
-        currency:
-          type: string
-          description: "BRL"
-        description:
-          type: string
-          example: "use com moderacao"
-        statement_descriptor:
-          type: string
-          example: null
-        bank_account:
-          type: string
-          example: null
-        transfer_date:
-          type: string
-          description: "2019-08-14T18:25:22+00:00"
+          example: "6c237bf9932840ccada92ac629a05d39"
         created_at:
           type: string
-          example: "2019-08-14T18:25:22+00:00"
+          example: "2020-11-06T12:54:11.336975"
         updated_at:
           type: string
-          example: "2019-08-14T18:25:22+00:00"
-        metadata:
-          type: object
-        from:
-          type: object
-          properties:
-            id:
-              type: string
-              example: "b9602ec221a64f8897eb883eed72592e"
-            account: 
-              type: object
-              properties:
-                id:
-                  type: string
-                  example: "cb2a0ed4ead9473c9b304d560ab83107"
-                holder: 
-                  type: string
-                  example: "b8c7cce7618e41618170cf45948b7af0"
-                balance:
-                  type: string
-                  description: "1.06"
-                currency:
-                  type: string
-                  example: "BRL"
-                routing_number:
-                  type: string
-                  example: 001
-                number:
-                  type: string
-                  example: "72925596"
-                status:
-                  type: string
-                  example: "active"
-                metadata:
-                  type: object
-                object_type:
-                  type: string
-                  example: "payment"
-                created_at:
-                  type: string
-                  example: "2020-11-06T12:54:11.336975"
-                updated_at:
-                  type: string
-                  example: "2020-11-06T12:54:11.336975"
-                primary:
-                  type: boolean
-                  enum:
-                    - true
-                    - false
-                  default: true
-                resource:
-                  type: string
-                  example: "payment_account"
-            amount: 
-                type: string
-                example: "-0.13"
-            gross_amount: 
-                type: string
-                example: "-0.13"
-            nsu: 
-                type: integer
-                example: 11
-            date: 
-                type: string
-                example: "2019-08-15T15:04:29.848403"
-            fee: 
-                type: string
-                example: "0.00"
-            object_type: 
-                type: string
-                example: "transfer"
-            object_id: 
-                type: string
-                example: "442b0729ff874c0d84deb905dbb18745"
-            type: 
-                type: string
-                example: "transfer"
-            created_at: 
-                type: string
-                example: "2019-08-15T15:04:29.729921"
-            dflag: 
-                type: string
-                example: "active"
-            authorization: 
-                type: object
-                properties:
-                  external_key:
-                    type: string
-                    example: "2ed672d431054261913d0e16daf6024a"
-                  type:
-                    type: string
-                    example: "transfer"
-                  status:
-                    type: string
-                    example: "active"
-            transfer: 
-                type: object
-                properties:
-                  id:
-                    type: string
-                    example: "b9602ec221a64f8897eb883eed72592e"
-                  authorization_code:
-                    type: string
-                    example: "ec68f18543aa45a3b88aaddbb6be616e"
-            resource:
-              type: string
-              example: "payment_account.entry"
-        to:
-          type: object
-          properties:
-            id:
-              type: string
-              example: "b9602ec221a64f8897eb883eed72592e"
-            account: 
-              type: object
-              properties:
-                id:
-                  type: string
-                  example: "cb2a0ed4ead9473c9b304d560ab83107"
-                holder: 
-                  type: string
-                  example: "b8c7cce7618e41618170cf45948b7af0"
-            amount: 
-                type: string
-                example: "0.13"
-            gross_amount: 
-                type: string
-                example: "0.13"
-            nsu: 
-                type: integer
-                example: 9
-            date: 
-                type: string
-                example: "2019-08-15T15:04:29.848403"
-            fee: 
-                type: string
-                example: "0.00"
-            current_balance: 
-                type: string
-                example: "2.04"
-            object_type: 
-                type: string
-                example: "transfer"
-            object_id: 
-                type: string
-                example: "b4137edf22724c1bbb902e0e40669260"
-            type: 
-                type: string
-                example: "transfer"
-            created_at: 
-                type: string
-                example: "2019-08-15T15:04:29.729921"
-            dflag: 
-                type: string
-                example: "active"
-            authorization: 
-                type: object
-                properties:
-                  external_key:
-                    type: string
-                    example: "2ed672d431054261913d0e16daf6024a"
-                  type:
-                    type: string
-                    example: "transfer"
-                  status:
-                    type: string
-                    example: "active"
-            transfer: 
-                type: object
-                properties:
-                  id:
-                    type: string
-                    example: "e513ba702e2648c9b8fb5772c028ff90"
-                  authorization_code:
-                    type: string
-                    example: "ec68f18543aa45a3b88aaddbb6be616e"
-            resource:
-              type: string
-              example: "payment_account.entry"
-              
-    billTransferError402Response:
-      type: object
-      properties:
-        status:
-          type: string
-          example: "payment_required"
+          example: "2020-11-06T12:54:11.336975"
         type:
           type: string
-          example: "invalid_state"
-        message:
+          example: "ownership"
+        status:
           type: string
-          example: "Insufficient funds"
-        category:
+          example: "open"
+        key:
+          type: object
+          properties:
+            type:
+              type: string
+              description: "Indica o tipo de chave de endereçamento. Os tipos de chave são: phone, email, evp e national_registration."
+              enum:
+              - email
+              - phone 
+              - evp 
+              - national_registration
+            value:
+              type: string
+              description: "Indica o valor da chave de endereçamento"
+              example: "fulano@gmail.com"
+        claimer:
+          type: object
+          properties:
+            name:
+              type: string
+              example: João da Silva
+            national_registration:
+              type: string
+              example: "33580667033"
+            type:
+              type: string
+              example: "individual"
+            marketplace_id:
+              type: string
+              example: "6c237bf9932840ccada92ac629a05d39"
+            holder_id:
+              type: string
+              example: "d83a1a81caa243d2a10bc414ae406bd3"
+            account:
+              type: object
+              properties:
+                digital_account_id:
+                  type: string
+                  example: "cf27477574e04d4584ac75ef6ca5ec3f"
+                routing_number:
+                  type: string
+                  example: "001"
+                number:
+                  type: string
+                  example: "456123"
+                type:
+                  type: string
+                  example: "cacc"
+            psp:
+              type: object
+              properties:
+                code: 
+                  type: string
+                  example: "3001155"
+        donor:
+          type: object
+          properties:
+            code:
+              type: string
+              example: 30011455
+            name:
+              type: string
+              example: "Zoop"
+        completion_period_end:
           type: string
-          example: "business"
-        status_code:
-          type: number
-          example: 402
+          example: "2020-01-17T10:00:00Z"
+        resolution_periodo_end:
+          type: string
+          example: "2020-01-17T10:00:00Z"
 
-    TedTransferRequest:
-      type: object
+    pixRequest:
+      title: Pix por Chave
       required:
         - amount
-        - recipient
-      properties:
-        amount: 
-          type: number
-          description: Valor em centavos a ser transferido
-          example: 400
-        recipient:
-          description: Conjunto referente ao recebedor da transferência
-          type: object
-          properties:
-            bank_code:
-              type: string
-              description: Código do banco de destino - parâmetro pertencente ao objeto recipient (utilizar 208 para TED com destino Zoop)
-              example: "208"
-            routing_number: 
-              type: string 
-              description: 'Número da agencia da conta de destino - parâmetro pertencente ao objeto recipient (Utilizar 0025 para TED com destino Zoop)'           
-              example: "0025"
-            routing_check_digit:
-              type: string
-              description: Digito verificador da agencia da conta de destino - parâmetro pertencente ao objeto recipient
-              example: "01"
-            account_number:
-              type: integer
-              description: Número da conta de destino - parâmetro pertencente ao objeto recipient
-              example: "10101010"
-            account_check_digit:
-              type: string
-              description: Digito verificador da conta de destino - parâmetro pertencente ao objeto recipient
-              example: "01"
-            document:
-              type: string
-              description: CPF/CNPJ da conta de destino - parâmetro pertencente ao objeto recipient
-              example: 99467256000170
-            name:
-              type: object
-              description: Nome do beneficiário do TED - parâmetro pertencente ao objeto recipient
-              example: "Zoop"
-        description: 
-          type: string
-          description: Descrição da transferência
-          example: "Transferência Bancária"
-        reference_id: 
-          type: string
-          description: Identificador único para a transferência
-          example: "7acb2cec-0f18-482c-a508-3eade9367ba3"
-        purpose_code: 
-          type: string
-          description: Código do propósito do envio da TED. Se não informado, o valor considerado será 10 (crédito em conta)
-          example: 10
-          default: 10
-    TedTransferResponse:
+        - creditor
+        - key
       type: object
       properties:
-        external_transfer_id:
-          type: object
-          example: 2a53965957814b30a065a2bb5d25bf67
-        amount: 
-          type: number
-          description: Valor em centavos a ser transferido
-          example: 400
-        formated_amount: 
+        transaction_id:
           type: string
-          description: Valor em centavos a ser transferido
-          example: "4.00"
-        description: 
+          description: Campo usado pelo recebedor do Pix para identificar uma transação no seu legado. 
+          example: "d747dc8fffec48a69830b40af4078fe1"
+        amount:
+          type: integer
+          description: Valor do pagamento em centavos. 
+          example: 12050
+        description:
           type: string
-          example: "Transferência Bancária"
-        reference_id: 
-          type: string
-          example: "7acb2cec-0f18-482c-a508-3eade9367ba3"
-        status: 
-          type: string
-          example: "AUTHORIZED"
-        recipient:
-          description: Conjunto referente ao recebedor da transferência
+          description: Descrição do pagamento. Não é permitido caracteres especiais. 
+          example: "Churrasco fim pandemia"
+        creditor:
           type: object
           properties:
-            bank_code:
+            national_registration:
+               type: string
+               description: Representa o CPF/CNPJ do recebedor do Pix - Parâmetro pertencente ao objeto creditor. 
+               example: "84154427008"
+            psp:
+               type: string
+               description: Código da instituição participante do Pix onde a conta do recebedor está criada - Parâmetro pertencente ao objeto creditor.
+               example: "60746948" 
+        key:
+          type: object
+          properties:
+            type:
               type: string
-              description: Código do banco de destino - parâmetro pertencente ao objeto recipient (utilizar 208 para TED com destino Zoop)
-              example: "208"
-            routing_number: 
-              type: string 
-              description: 'Número da agencia da conta de destino - parâmetro pertencente ao objeto recipient (Utilizar 0025 para TED com destino Zoop)'           
-              example: "0025"
-            routing_check_digit:
+              description: "Representa o tipo de chave de endereçamento. Domínio: phone, email, evp e national_registration. Parâmetro pertencente ao objeto key." 
+              enum:
+              - phone
+              - email
+              - evp
+              - national_registration
+            value:
               type: string
-              description: Digito verificador da agencia da conta de destino - parâmetro pertencente ao objeto recipient
-              example: "01"
-            account_number:
-              type: integer
-              description: Número da conta de destino - parâmetro pertencente ao objeto recipient
-              example: "10101010"
-            account_check_digit:
-              type: string
-              description: Digito verificador da conta de destino - parâmetro pertencente ao objeto recipient
-              example: "01"
-            document:
-              type: string
-              description: CPF/CNPJ da conta de destino - parâmetro pertencente ao objeto recipient
-              example: 99467256000170
-            name:
+              description: Representa o valor da chave de endereçamento. Seu formato e tamanho variam conforme o tipo escolhido anteriormente. Para phone a mascara é +9999999999999. Para email a mascara é xxxxxxxxxx@xxxxxxx.xx.xx com máximo de 77 caracteres. Para evp, não deve ser informado nenhum valor. Para national_registration, não deve ser informado nenhum valor.
+              example: "+552198744587"
+    pixAccountRequest:
+      title: Pix por dados da conta
+      required:
+        - amount
+        - creditor
+      type: object
+      properties:
+        amount:
+          type: integer
+          description: Valor do pagamento em centavos. 
+          example: 12050
+        creditor:
+          type: object
+          properties:
+            account:
               type: object
-              description: Nome do beneficiário do TED - parâmetro pertencente ao objeto recipient
-              example: "Zoop"
+              properties:
+                routing_number:
+                  type: string
+                  example: "001"
+                number:
+                  type: string
+                  example: "456123"
+                type:
+                  type: string
+                  example: "cacc"
+            name:
+               type: string
+               description: Representa o nome do recebedor - Parâmetro pertencente ao objeto creditor. 
+               example: "84154427008"
+            national_registration:
+               type: string
+               description: Representa o CPF/CNPJ do recebedor do Pix - Parâmetro pertencente ao objeto creditor. 
+               example: "84154427008"
+            psp:
+               type: string
+               description: Código da instituição participante do Pix onde a conta do recebedor está criada - Parâmetro pertencente ao objeto creditor.
+               example: "60746948" 
+        transaction_id:
+          type: string
+          description: Campo usado pelo recebedor do Pix para identificar uma transação no seu legado. 
+          example: "d747dc8fffec48a69830b40af4078fe1"
+        description:
+          type: string
+          description: Descrição do pagamento. Não é permitido caracteres especiais. 
+          example: "Churrasco fim pandemia"
+    pixResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "026b9c0e9fd34b32872906d5b64efbee"
+        end_to_end_id:
+          type: string
+          example: "E00038166201907261559y6j6mt9l0pi"
+        transaction_id:
+          type: string
+          example: "d747dc8fffec48a69830b40af4078fe1"
+        marketplace_id:
+          type: string
+          example: "0f8546897d6f41f4b3d81049693071ee"
+        status:
+          type: string
+          example: "pending"
+        amount:
+          type: string
+          example: "120.50"
+        description:
+          type: string
+          example: "Churrasco fim pandemia"
+        debtor:
+          type: object
+          properties:
+            name:
+              type: string
+              example: João da Silva
+            national_registration:
+              type: string
+              example: "33580667033"
+            type:
+              type: string
+              example: "natural_person"
+            holder_id:
+              type: string
+              example: "ec1865e565a04bcab9994a395dd6393d"
+            account:
+              type: object
+              properties:
+                psp:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      example: 19468242
+                    name:
+                      type: string
+                      example: "Zoop Tecnologia e Meios de Pagamento S.A."
+                digital_account_id:
+                  type: string
+                  example: "0ce048eebf024b26957207c53430aabb"
+                routing_number:
+                  type: string
+                  example: "001"
+                number:
+                  type: string
+                  example: "456123"
+                type:
+                  type: string
+                  example: "cacc"
+        creditor:
+          type: object
+          properties:
+            name:
+              type: string
+              example: Maria da Silva
+            national_registration:
+              type: string
+              example: "84154427008"
+            type:
+              type: string
+              example: "natural_person"
+            holder_id:
+              type: string
+              example: "ec1865e565a04bcab9994a395dd6393d"
+            account:
+              type: object
+              properties:
+                psp:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      example: 60746948
+                    name:
+                      type: string
+                      example: "Bradesco S.A."
+                routing_number:
+                  type: string
+                  example: "3000"
+                number:
+                  type: string
+                  example: "600000"
+                type:
+                  type: string
+                  example: "cacc"
+    pixRefundRequest:
+      title: Pix por dados da conta
+      required:
+        - amount
+        - reason
+      type: object
+      properties:
+        amount:
+          type: integer
+          description: Valor do pagamento em centavos. 
+          example: 12050
+        reason:
+          type: object
+          properties:
+            additional_information:
+              type: string
+              example: "envio errado"
+            code:
+              type: string
+              enum:
+              - AM05
+              - AM09
+              - BE08
+              - DS28
+              - FOCR
+              - FR01
+              - MD06
+              - NARR
+              - RUTA
+              - SL11
+              - SL12
+              - UPAY
+              example: "AM05"
+    pixRefundResponse:
+      type: object
+      properties:
+        amount:
+          type: integer
+          example: "12050"
+        created_at:
+          type: string
+          example: "2021-01-07T15:41:52.532Z"
+        id:
+          type: string
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        marketplace_id:
+          type: string
+          example: "0f8546897d6f41f4b3d81049693071ee"
+        original_transaction:
+          type: object
+          properties:
+            amount:
+              type: integer
+              example: 0
+            created_at:
+              type: string
+              example: "2021-01-07T15:41:52.532Z"
+            creditor:
+              type: object
+              properties:
+                account:
+                  type: object
+                  properties:
+                    digital_account_id:
+                      type: string
+                      example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    routing_number:
+                      type: string
+                      example: "3000"
+                    number:
+                      type: string
+                      example: "600000"
+                    psp:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: 60746948
+                        name:
+                          type: string
+                          example: "Bradesco S.A."
+                    type:
+                      type: string
+                      example: "cacc"
+                name:
+                  type: string
+                  example: Maria da Silva
+                national_registration:
+                  type: string
+                  example: "84154427008"
+                type:
+                  type: string
+                  example: "natural_person"
+                holder_id:
+                  type: string
+                  example: "ec1865e565a04bcab9994a395dd6393d"
 
-    TedTransferError400Response:
+            debtor:
+              type: object
+              properties:
+                account:
+                  type: object
+                  properties:
+                    digital_account_id:
+                      type: string
+                      example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    name:
+                      type: string
+                      example: João da Silva
+                    national_registration:
+                      type: string
+                      example: "33580667033"
+                    type:
+                      type: string
+                      example: "natural_person"
+                    holder_id:
+                      type: string
+                      example: "ec1865e565a04bcab9994a395dd6393d"
+                    account:
+                      type: object
+                      properties:
+                        psp:
+                          type: object
+                          properties:
+                            code:
+                              type: string
+                              example: 19468242
+                            name:
+                              type: string
+                              example: "Zoop Tecnologia e Meios de Pagamento S.A."
+                        digital_account_id:
+                          type: string
+                          example: "0ce048eebf024b26957207c53430aabb"
+                        routing_number:
+                          type: string
+                          example: "001"
+                        number:
+                          type: string
+                          example: "456123"
+                        type:
+                          type: string
+                          example: "cacc"
+
+
+    PixTransferError400Response:
       type: object
       properties:
         status:
@@ -1052,16 +1668,43 @@ components:
         type:
           type: string
           example: "invalid_request"
+        code:
+          type: integer
+          example: 2000
         message:
           type: string
-          example: "Reference id already exists for this account."
+          example: "Validation field error."
         category:
           type: string
           example: "business"
         status_code:
           type: number
           example: 400
-    TedTransferError403Response:
+        fields:
+          type: object
+          properties:
+            account_id:
+              type: object
+              properties:
+                code: 
+                  type: integer
+                  example: 1000
+                message:
+                  type: string
+                  example: "Account Id is required."
+            key:
+              type: object
+              properties:
+                type:
+                  type: object
+                  properties:
+                    code: 
+                      type: integer
+                      example: 1001
+                    message:
+                      type: string
+                      example: "Key type is required."
+    PixTransferError403Response:
       type: object
       properties:
         status:
@@ -1079,21 +1722,45 @@ components:
         status_code:
           type: number
           example: 403
-    TedTransferError404Response:
+    PixTransferError404Response:
       type: object
       properties:
         status:
           type: string
-          example: "bad_request"
+          example: "not_found"
         type:
           type: string
-          example: "invalid_request"
+          example: "not_found"
+        code:
+          type: integer
+          example: 3000
         message:
           type: string
-          example: "TED not found"
+          example: "Marketplace not found"
         category:
           type: string
           example: "business"
         status_code:
           type: number
           example: 404
+    PixTransferError412Response:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "precondition_failed"
+        type:
+          type: string
+          example: "invalid_request"
+        code:
+          type: integer
+          example: 4000
+        message:
+          type: string
+          example: "Maximum entry count allowed reached"
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: number
+          example: 412
