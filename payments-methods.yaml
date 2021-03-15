@@ -129,7 +129,7 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
+              anyOf:
                 - $ref: "#/components/schemas/TransactionNoTokenRequest"
                 - $ref: "#/components/schemas/TransactionDisposableTokenRequest"
                 - $ref: "#/components/schemas/TransactionDigitalWalletRequest"
@@ -2505,6 +2505,7 @@ components:
                   
     TransactionNoTokenRequest:
       type: object
+      title: Autorizacao Direta
       required:
         - amount
         - currency
