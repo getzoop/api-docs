@@ -43,6 +43,10 @@ paths:
         - application/json
       responses:
         '200':
+          headers:
+            authorization:
+              type: string
+              description: Retorna o authorization definido na criação do webhook
           description: Webhook criado com sucesso
           schema:
             $ref: '#/definitions/WebhookResponse'
@@ -169,8 +173,6 @@ paths:
     parameters:
       - $ref: '#/parameters/marketplaceId'
       - $ref: '#/parameters/eventId'
-      - $ref: '#/parameters/dateRangeGTEParam'
-      - $ref: '#/parameters/dateRangeLTEParam'
     post:
       tags:
         - 'Eventos'
@@ -213,6 +215,10 @@ definitions:
         items:
           type: string
           example: "transaction.pre_authorization.succeeded"
+      authorization: 
+        type: string
+        description: Definir autorização do webhook
+        example: "top-secret"
       metadata:
         type: object
     required:

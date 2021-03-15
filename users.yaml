@@ -1115,3 +1115,8 @@ parameters:
     in: query
     type: string
     description: "Status do evento. Ex: failed"
+  resourceParam:
+    name: resource_id
+    in: query
+    type: string
+    description: "Id do recurso a que os eventos listados se referem (ex: ID de uma transação)"

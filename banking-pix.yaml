@@ -1,18 +1,18 @@
 openapi: 3.0.2
 info:
-  title: Operações
+  title: Pix
   version: "1.1"
 
 security:
  - basicAuth: []
 
 tags:
- - name: Pagamentos
-   description: Pagamentos de contas  
- - name: Transferências entre contas
-   description: Realiza a transferências entre contas  
- - name: TED
-   description: Realiza a transferências para outros bancos  
+ - name: Dict
+   description: Diretório de Identificadores de Contas Transacionais  
+ - name: Reivindicação e Portabilidade
+   description: Reivindicar ou solicitar a portabilidade de uma chave   
+ - name: Pix
+   description: Realiza pagamentos e transferências por Pix  
 
 servers: [
     {
@@ -26,239 +26,213 @@ servers: [
     ]
     
 paths:
-  "/v2/marketplaces/{marketplace_id}/accounts/{account_id}/payments":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/accountID"
+  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/entries":
     post:
-      summary: Pagamento de contas
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/XAuthTokenReading"
+        - $ref: "#/components/parameters/XSessionToken"
+      summary: Criar chave de endereçamento
       tags:
-        - Pagamentos
+        - Dict
       requestBody:
         required: true
         content:
           application/json:
             schema:
-               $ref: '#/components/schemas/billPaymentRequest'
+               $ref: '#/components/schemas/DictKeyRequest'
       responses:
         '200':
-          description: OK
+          description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/billPaymentResponse'
-  "/v2/marketplaces/{marketplace_id}/accounts/{account_id}/payments/{payment_id}":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/accountID"
-      - $ref: "#/components/parameters/paymentID"
-    get:
-      summary: Busca de detalhes do pagamento pelo ID do pagamento
-      tags:
-        - Pagamentos
-      responses:
-        '200':
-          description: OK
+                $ref: '#/components/schemas/DictKeyResponse'
+        '202':
+          description: Accepted - Indica que a requisição de criação de chave foi recebida com sucesso, porém ela necessita de intervenção do usuário para sua conclusão ou não pode ser concluída imediatamente
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/billPaymentResponse'
-  "/v2/marketplaces/{marketplace_id}/accounts/{account_id}/payments/barcode/{barcode}":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/accountID"
-      - $ref: "#/components/parameters/barcodeID"
-    get:
-      summary: Busca de detalhes do pagamento pelo código de barras
-      tags:
-        - Pagamentos
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/billPaymentResponse'
-  "/v2/marketplaces/{marketplace_id}/accounts/{account_id}/payments/validation/{barcode}":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/accountID"
-      - $ref: "#/components/parameters/barcodeID"
-    get:
-      summary: Validação de código de barras para pagamento
-      tags:
-        - Pagamentos
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/billPaymentResponse'
-
-  "/v2/marketplaces/{marketplace_id}/accounts/{account_id}/p2p_transfers":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/accountID"
-    post:
-      summary: Criação de transferência
-      tags:
-        - Transferências entre contas
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-               $ref: '#/components/schemas/billTransferRequest'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/billTransferResponse'
-        '402':
-          description: Payment Required - Erro em caso de falta de saldo na conta de origem a ser debitada pela transferência.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/billTransferError402Response'
-    get:
-      summary: Listagem de transferências entre contas
-      tags:
-        - Transferências entre contas
-      responses:
-        '200':
-          description: OK - Serviço que lista de maneira paginada transferências entre contas digitais do mesmo marketplace
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/billPaymentResponse'
-  "/v2/marketplaces/{marketplace_id}/accounts/{account_id}/p2p_transfers/{p2p_transfer_id}":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/accountID"
-      - $ref: "#/components/parameters/p2p_transferID"
-    get:
-      summary: Recuperar detalhes de uma transferência entre contas
-      tags:
-        - Transferências entre contas
-      responses:
-        '200':
-          description: OK - Serviço que recupera os detalhes de uma transferência entre contas
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/billPaymentResponse'
-
-  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/accounts/{account_id}/external-transfer-send":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/holderID"
-      - $ref: "#/components/parameters/accountID"
-    post:
-      summary: Consulta de Envio de TED pelo referenceId
-      tags:
-        - TED
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-               $ref: '#/components/schemas/TedTransferRequest'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TedTransferResponse'
+                $ref: '#/components/schemas/DictKeyResponse202'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TedTransferError400Response'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TedTransferError403Response'
+                oneOf:
+                  - $ref: '#/components/schemas/DictKeyResponse400'
+                  - $ref: '#/components/schemas/DictKeyResponse4002'
+                  - $ref: '#/components/schemas/DictKeyResponse4003'
+                  - $ref: '#/components/schemas/DictKeyResponse4004'
+                  - $ref: '#/components/schemas/DictKeyResponse4005'
         '404':
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TedTransferError404Response'
-  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/accounts/{account_id}/external-transfer-send/reference-id/{reference_id}":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/holderID"
-      - $ref: "#/components/parameters/accountID"
-      - $ref: "#/components/parameters/referenceID"
-    get:
-      summary: Consulta de Envio de TED por externalTransfer ID
-      tags:
-        - TED
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TedTransferResponse'
-        '404':
+                $ref: '#/components/schemas/DictKeyResponse404'
+        '412':
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TedTransferError404Response'
-  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/accounts/{account_id}/external-transfer-send/{externalTransfer_id}":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/holderID"
-      - $ref: "#/components/parameters/accountID"
-      - $ref: "#/components/parameters/externalTransferID"
+                $ref: '#/components/schemas/DictKeyResponse412'
     get:
-      summary: Envio de TED
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/offsetID"
+        - $ref: "#/components/parameters/sizeID"
+      summary: Listar vínculos com chaves de endereçamento
       tags:
-        - TED
+        - Dict
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TedTransferResponse'
-        '400':
-          description: Not Found
+          description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status:
-                    type: string
-                    example: "bad_request"
-                  type:
-                    type: string
-                    example: "invalid_request"
-                  message:
-                    type: string
-                    example: "Invalid value for the path variable externalTransfer_id."
-                  category:
-                    type: string
-                    example: "business"
-                  status_code:
-                    type: number
-                    example: 400
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DictKeyResponse'
+                  has_more: 
+                    type: boolean
+                    example: false
+                  limit: 
+                    type: integer
+                    example: 1
+                  total_pages: 
+                    type: integer
+                    example: 1
+                  page: 
+                    type: integer
+                    example: 1
+                  offset: 
+                    type: integer
+                    example: 1
+                  total: 
+                    type: integer
+                    example: 1
+                  query_count: 
+                    type: integer
+                    example: 1
+                  
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/DictKeyResponse400'
+  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/entries/{entry_id}/ownership":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/entryID"
+        - $ref: "#/components/parameters/XAuthTokenReading"
+        - $ref: "#/components/parameters/XSessionToken"
+      summary: Confirmar propriedade de chave de endereçamento
+      tags:
+        - Dict
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code: 
+                  type: string
+                  description: Código de verificação de propriedade enviado para o usuário de acordo com o tipo de chave escolhido. Campo alfanumérico de 4 caracteres.
+                  example: 4040
+                  required:
+                    - "code"
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/DictKeyResponse400'
+                  - $ref: '#/components/schemas/DictKeyResponse4002'
+                  - $ref: '#/components/schemas/DictKeyResponse4003'
+                  - $ref: '#/components/schemas/DictKeyResponse4004'
+                  - $ref: '#/components/schemas/DictKeyResponse4005'
         '404':
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TedTransferError404Response'
+                $ref: '#/components/schemas/DictKeyResponse404'
+        '412':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictKeyResponse412'
+    get:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/accountID"
+        - $ref: "#/components/parameters/offsetID"
+        - $ref: "#/components/parameters/sizeID"
+      summary: Listar vínculos com chaves de endereçamento
+      tags:
+        - Dict
+      responses:
+        '200':
+          description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DictKeyResponse'
+                  has_more: 
+                    type: boolean
+                    example: false
+                  limit: 
+                    type: integer
+                    example: 1
+                  total_pages: 
+                    type: integer
+                    example: 1
+                  page: 
+                    type: integer
+                    example: 1
+                  offset: 
+                    type: integer
+                    example: 1
+                  total: 
+                    type: integer
+                    example: 1
+                  query_count: 
+                    type: integer
+                    example: 1
+                  
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/DictKeyResponse400'
+
 
 
 components:
@@ -277,7 +251,7 @@ components:
       holderID:
         name: holder_id
         in: path
-        description: ID do holder (dono da conta)
+        description: Token de leitura do 2FA
         required: true
         schema:
           type: string
@@ -405,6 +379,13 @@ components:
             - deposit
             - deposit_refunded
             - adjustment
+      entryID:
+        name: entry_id
+        in: path
+        description: Id da chave de endereçamento
+        schema:
+          type: number
+          example: 0
       created_date_rangeID:
         name: created_date_range
         in: query
@@ -440,136 +421,241 @@ components:
         schema:
           type: string
           example: "2020-10-01 15:34:00"
+      XAuthTokenReading:
+        name: X-Auth-Token-Reading
+        in: header
+        description: Token de leitura do 2FA
+        required: true
+        schema:
+          type: string
+      XSessionToken:
+        name: X-Session-Token
+        in: header
+        description: Token de sessão do 2FA
+        required: true
+        schema:
+          type: string
 
   schemas:
-    billPaymentRequest:
+    DictKeyRequest:
       type: object
       properties:
-        interest:
-          type: integer
-          description: Valor discriminado de juros pela operação utilizado no calculo no valor
-          example: 0
-        discount:
-          type: integer
-          description: Valor discriminado de desconto utilizado no calculo do valor
-          example: 0
-        bar_code:
+        type:
           type: string
-          description: Dados do código de barras do pagamento a ser realizado
-        amount:
-          type: integer
-          description: Valor total a ser repassado ao banco incluindo taxa e juros em centavos do pagamento a ser realizado
-        statement_descriptor:
-          type: integer
-          description: Descrição a ser exibida no extrato de lançamentos da conta debitada
-        reference_id:
+          description: Representa o tipo de chave de endereçamento. 
+          enum:
+           - phone
+           - email
+           - evp
+           - national_registration
+          
+        value:
           type: string
-          description: Valor de referência do pagamento no seu sistema
-        metadata:
-          type: object
-          description: Metadados associados ao pagamento
-    billPaymentResponse:
+          description: Representa o valor da chave de endereçamento. Seu formato e tamanho variam conforme o tipo escolhido anteriormente. Para phone a mascara é +9999999999999. Para email a mascara é xxxxxxxxxx@xxxxxxx.xx.xx com máximo de 77 caracteres. Para evp, não deve ser informado nenhum valor. Para national_registration, não deve ser informado nenhum valor.
+    DictKeyResponse:
       type: object
       properties:
         id:
           type: string
-          example: "942e0d178dd64644b2eb054705268c94"
-        account_id:
-          type: string
-          example: "942e0d178dd64644b2eb054705268c94"
-        marketplace_id:
-          type: string
-          example: "f8c2bfb884e4486c8e0eee15be5c3ab1"
-        amount:
-          type: integer
-          description: Valor total a ser repassado ao banco incluindo taxa e juros em centavos do pagamento a ser realizado
-        discount:
-          type: integer
-          description: Valor discriminado de desconto utilizado no calculo do valor
-          example: 0
-        interest:
-          type: integer
-          description: Valor discriminado de juros pela operação utilizado no calculo no valor
-          example: 0
-        fine:
-          type: integer
-          example: 0
-        bar_code:
-          type: string
-          description: Dados do código de barras do pagamento a ser realizado
+          example: "29b0000cb501400ea6c3f21b24ef251c"
         status:
           type: string
-          example: created
-        payment_id:
+          example: "active"
+        created_at:
           type: string
-          example: 579e68359d7b4af0bc625bb61699d69a
-        resource:
+          example: "2020-11-06T12:54:11.336975"
+        updated_at:
           type: string
-          example: billing_payment
-        recipient:
-          type: integer
-          description: Company
-        recipient_document:
-          type: string
-        referenc_id:
+          example: "2020-11-06T12:54:11.336975"
+        key:
           type: object
-        operation:
+          properties:
+            value:
+              type: string
+              example: "33580667033"
+            type:
+              type: string
+              example: national_registration
+        account:
           type: object
           properties:
             id:
               type: string
-              example: "b9602ec221a64f8897eb883eed72592e"
-            amount:
+              example: "cf27477574e04d4584ac75ef6ca5ec3f"
+            marketplace_id:
               type: string
-              description: "-3.50"
-            gross_amount:
+              example: "6c237bf9932840ccada92ac629a05d39"
+            holder_id:
               type: string
-              example: "-3.50"
-            nsu:
-              type: integer
-              example: 11
-            date:
-              type: string
-              example: "2019-08-15T15:04:29.848403"
-            fee:
-              type: string
-              example: "0.00"
-            current_balance:
-              type: string
-              example: "1.06"
-            object_type:
-              type: string
-              example: "payment"
-            object_id:
-              type: string
-              example: "442b0729ff874c0d84deb905dbb18745"
-            type:
-              type: string
-              example: "payment"
-            created_at:
-              type: string
-              example: "2020-11-06T12:54:11.336975"
-            updated_at:
-              type: string
-              example: "2020-11-06T12:54:11.336975"
-            dflag:
-              type: string
-              example: "active"
-            authorization:
+              example: "d83a1a81caa243d2a10bc414ae406bd3"
+            owner:
               type: object
               properties:
-                external_key:
+                name:
                   type: string
-                  example: "2ed672d431054261913d0e16daf6024a"
+                  example: João da Silva
+                national_registration:
+                  type: string
+                  example: "33580667033"
                 type:
                   type: string
-                  example: "payment"
-                status:
-                  type: string
-                  example: "payment"
-            resource:
+                  example: "individual"
+            routing_number:
               type: string
-              example: "payment_account.payment"
+              example: "001"
+            number:
+              type: string
+              example: "456123"
+            type:
+              type: string
+              example: "cacc"
+        psp:
+          type: object
+          properties:
+            code: 
+              type: string
+              example: "3001155"
+            name:
+              type: string
+              example: "Zoop"
+    DictKeyResponse202:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "29b0000cb501400ea6c3f21b24ef251c"
+        status:
+          type: string
+          example: "active"
+        created_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        updated_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        key:
+          type: object
+          properties:
+            value:
+              type: string
+              example: "fulano@gmail.com"
+            type:
+              type: string
+              example: email
+        account:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "cf27477574e04d4584ac75ef6ca5ec3f"
+            marketplace_id:
+              type: string
+              example: "6c237bf9932840ccada92ac629a05d39"
+            holder_id:
+              type: string
+              example: "d83a1a81caa243d2a10bc414ae406bd3"
+            owner:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: João da Silva
+                national_registration:
+                  type: string
+                  example: "33580667033"
+                type:
+                  type: string
+                  example: "individual"
+            routing_number:
+              type: string
+              example: "001"
+            number:
+              type: string
+              example: "456123"
+            type:
+              type: string
+              example: "cacc"
+        psp:
+          type: object
+          properties:
+            code: 
+              type: string
+              example: "3001155"
+            name:
+              type: string
+              example: "Zoop"
+    DictKeyResponse400:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "1000"
+        message:
+          type: string
+          example: "Account Id is required"
+    DictKeyResponse4001:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "1001"
+        message:
+          type: string
+          example: "Key value is not a valid email format"
+    DictKeyResponse4002:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "1002"
+        message:
+          type: string
+          example: "Key of type phone must have 14 characters for its value"
+    DictKeyResponse4003:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "1003"
+        message:
+          type: string
+          example: "Key value is required for phone or email types"
+    DictKeyResponse4004:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "1004"
+        message:
+          type: string
+          example: "Key type is no compatible with claim type"
+    DictKeyResponse4005:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "1005"
+        message:
+          type: string
+          example: "Key value must not be informed for national_registration or evp types"
+    DictKeyResponse404:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "3000"
+        message:
+          type: string
+          example: "Marketplace not found"
+    DictKeyResponse412:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "4000"
+        message:
+          type: string
+          example: "Maximum entry count allowed reached"
 
     billTransferRequest:
       type: object

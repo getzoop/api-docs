@@ -2400,7 +2400,7 @@ components:
            $ref: '#/components/schemas/LinksPhones'
     IndividualHolderPartnerRequest:
       required:
-        - admin
+        - adm
         - percentage
         - cbo
         - email
@@ -2415,7 +2415,7 @@ components:
           type: string
           example: "individual"
           description: Tipo do portador da conta. Para um holder pessoa física o valor deve ser sempre individual 
-        admin:
+        adm:
           type: boolean
           description: Indica se o sócio é o administrador da empresa.
           example: true 
@@ -2462,7 +2462,7 @@ components:
           example: "5500.00" 
     BusinessHolderPartnerRequest:
       required:
-        - admin
+        - adm
         - percentage
         - cbo
         - email
@@ -2477,7 +2477,7 @@ components:
           type: string
           example: "business"
           description: Tipo do portador da conta. Para um holder pessoa física o valor deve ser sempre individual 
-        admin:
+        adm:
           type: boolean
           description: Indica se o sócio é o administrador da empresa.
           example: true 

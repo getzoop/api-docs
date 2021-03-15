@@ -129,7 +129,7 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
+              anyOf:
                 - $ref: "#/components/schemas/TransactionNoTokenRequest"
                 - $ref: "#/components/schemas/TransactionDisposableTokenRequest"
                 - $ref: "#/components/schemas/TransactionDigitalWalletRequest"
@@ -504,7 +504,7 @@ paths:
           description: Missing required param
         "404":
           description: Terminal não encontrado
-  "/v1/marketplaces/card-present/terminals/{identification_number}":
+  "/v1/card-present/terminals/{identification_number}":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
       - $ref: "#/components/parameters/identificationNumberID"
@@ -2505,6 +2505,7 @@ components:
                   
     TransactionNoTokenRequest:
       type: object
+      title: Autorizacao Direta
       required:
         - amount
         - currency
@@ -2572,6 +2573,7 @@ components:
                   description: Código de segurança do cartão (CVC)
     TransactionDigitalWalletSecondaryRequest: 
       type: object
+      title: Usando card ID
       required:
         - amount
         - currency
@@ -2620,6 +2622,7 @@ components:
     
     TransactionDigitalWalletRequest:
       type: object
+      title: Usando Customer ID
       required:
         - amount
         - currency
@@ -2660,6 +2663,7 @@ components:
   
     TransactionDisposableTokenRequest:
       type: object
+      title: Token descartavel
       required:
         - amount
         - currency
@@ -2700,6 +2704,7 @@ components:
     
     TransactionSimpleBoletoTransactionRequest:
       type: object
+      title: Boleto Simples
       required:
         - amount
         - currency
@@ -2737,6 +2742,7 @@ components:
     
     TransactionBoletoTransactionRequest:
       type: object
+      title: Boleto Completo
       required:
         - amount
         - currency
