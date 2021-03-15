@@ -129,7 +129,7 @@ paths:
         content:
           application/json:
             schema:
-              anyOf:
+              oneOf:
                 - $ref: "#/components/schemas/TransactionNoTokenRequest"
                 - $ref: "#/components/schemas/TransactionDisposableTokenRequest"
                 - $ref: "#/components/schemas/TransactionDigitalWalletRequest"
