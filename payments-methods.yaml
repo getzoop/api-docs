@@ -129,7 +129,7 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
+              anyOf:
                 - $ref: "#/components/schemas/TransactionNoTokenRequest"
                 - $ref: "#/components/schemas/TransactionDisposableTokenRequest"
                 - $ref: "#/components/schemas/TransactionDigitalWalletRequest"
@@ -2571,6 +2571,86 @@ components:
                   type: string
                   example: "123"
                   description: Código de segurança do cartão (CVC)
+    TransactionDisposableTokenRequest:
+      type: object
+      title: Token descartavel
+      required:
+        - amount
+        - currency
+        - description
+        - payment_type
+        - on_behalf_of
+      properties:
+        on_behalf_of:   
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+          description: "Identificador do seller responsável pela venda."
+        token:   
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+          description: "Id do token de cartão gerado. Após o uso é descartado."
+        amount:   
+          type: string
+          example: 300
+          description: Valor em centavos a ser cobrado pela transação
+        currency:   
+          type: string
+          example: "BRL"
+          description: 'Moeda do valor a ser cobrado na venda "BRL"'
+        description:   
+          type: string
+          example: "Uma descrição breve da motivação da sua transação"
+        statement_descriptor:   
+          type: string
+          example: "Loja do Joao"
+          description: "Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor.."
+        payment_type:   
+          type: string 
+          enum:
+            - credit
+            - boleto
+          default: "credit"
+          description: Tipo de pagamento
+    TransactionDigitalWalletRequest:
+      type: object
+      title: Usando Customer ID
+      required:
+        - amount
+        - currency
+        - description
+        - payment_type
+        - on_behalf_of
+      properties:
+        on_behalf_of:  
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+          description: "Identificador do seller responsável pela venda."
+        customer:  
+          type: string
+          example: "c07ee65cda84495787cd091fea554549"
+          description: "identificador do comprador que será cobrado."
+        amount:  
+          type: number
+          example: 300
+          description: Valor em centavos a ser cobrado pela transação
+        currency:  
+          type: string
+          example: "BRL"
+          description: 'Moeda do valor a ser cobrado na venda "BRL"'
+        description:  
+          type: string
+          example: "Uma descrição breve da motivação da sua transação"
+        statement_descriptor:  
+          type: string
+          example: "Loja do Joao"
+          description: "Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor.."
+        payment_type: 
+          type: string 
+          enum:
+            - credit
+            - boleto
+          default: "credit"
+          description: Tipo de pagamento
     TransactionDigitalWalletSecondaryRequest: 
       type: object
       title: Usando card ID
@@ -2619,89 +2699,6 @@ components:
                   type: string
                   example: "822a8bda73c546a8b2f12a5ebcce7732"
                   description: identificador do cartão para source tipo card
-    
-    TransactionDigitalWalletRequest:
-      type: object
-      title: Usando Customer ID
-      required:
-        - amount
-        - currency
-        - description
-        - payment_type
-        - on_behalf_of
-      properties:
-        on_behalf_of:  
-          type: string
-          example: "822a8bda73c546a8b2f12a5ebcce7732"
-          description: "Identificador do seller responsável pela venda."
-        customer:  
-          type: string
-          example: "c07ee65cda84495787cd091fea554549"
-          description: "identificador do comprador que será cobrado."
-        amount:  
-          type: number
-          example: 300
-          description: Valor em centavos a ser cobrado pela transação
-        currency:  
-          type: string
-          example: "BRL"
-          description: 'Moeda do valor a ser cobrado na venda "BRL"'
-        description:  
-          type: string
-          example: "Uma descrição breve da motivação da sua transação"
-        statement_descriptor:  
-          type: string
-          example: "Loja do Joao"
-          description: "Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor.."
-        payment_type: 
-          type: string 
-          enum:
-            - credit
-            - boleto
-          default: "credit"
-          description: Tipo de pagamento
-  
-    TransactionDisposableTokenRequest:
-      type: object
-      title: Token descartavel
-      required:
-        - amount
-        - currency
-        - description
-        - payment_type
-        - on_behalf_of
-      properties:
-        on_behalf_of:   
-          type: string
-          example: "822a8bda73c546a8b2f12a5ebcce7732"
-          description: "Identificador do seller responsável pela venda."
-        token:   
-          type: string
-          example: "822a8bda73c546a8b2f12a5ebcce7732"
-          description: "Id do token de cartão gerado. Após o uso é descartado."
-        amount:   
-          type: string
-          example: 300
-          description: Valor em centavos a ser cobrado pela transação
-        currency:   
-          type: string
-          example: "BRL"
-          description: 'Moeda do valor a ser cobrado na venda "BRL"'
-        description:   
-          type: string
-          example: "Uma descrição breve da motivação da sua transação"
-        statement_descriptor:   
-          type: string
-          example: "Loja do Joao"
-          description: "Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor.."
-        payment_type:   
-          type: string 
-          enum:
-            - credit
-            - boleto
-          default: "credit"
-          description: Tipo de pagamento
-    
     TransactionSimpleBoletoTransactionRequest:
       type: object
       title: Boleto Simples
@@ -2739,7 +2736,6 @@ components:
             - boleto
           default: "boleto"
           description: Tipo de pagamento
-    
     TransactionBoletoTransactionRequest:
       type: object
       title: Boleto Completo
@@ -2891,7 +2887,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PlanResponseItem'
-            
     PlanResponseItem:
       type: object
       required:
@@ -3116,7 +3111,6 @@ components:
         uri:
           type: string
           example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/subscription/73c0789594c1470cb10cc957f2435c00"
-
     InvoiceRequest:
       type: object
       properties:
@@ -3218,7 +3212,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/InvoiceResponseItem'
-  
     InvoiceResponseItem:
       type: object
       properties:
@@ -3317,7 +3310,6 @@ components:
         uri:
           type: string
           example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/invoice/73c0789594c1470cb10cc957f2435c00"
-
     InvoiceCustomer:
       type: object
       properties:
