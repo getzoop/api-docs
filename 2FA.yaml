@@ -1,0 +1,1980 @@
+openapi: 3.0.2
+info:
+  title: 2FA
+  version: "1.1"
+
+security:
+ - basicAuth: []
+
+tags:
+ - name: Autenticação
+   description: Gerenciar autenticação  
+ - name: Usuário
+   description: Gerenciar dados dos usuários   
+
+servers: [
+    {
+      "url": "https://2fa-sandbox.zoop.ws",
+      "description": "Sandbox"
+    },    
+    {
+      "url": "https://2fa.zoop.ws",
+      "description": "Produção"
+    }
+    ]
+    
+paths:
+  "/v1/api/company/login":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+      summary: Realizar login
+      tags:
+        - Autenticação
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/2faLoginRequest'
+      responses:
+        '200':
+          description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faLoginResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   message: 
+                    type: string
+                    example: "Token is expired, Token invalid or incorrect secret, Token invalid"
+                 
+        '412':
+          description: Precondition Failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   message: 
+                    type: string
+                    example: "No Company was found with this combination of Token and Secret Key"
+  "/v1/api/company/applications":
+    get:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Obter dados da empresa
+      tags:
+        - Autenticação
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/2faCompanyResponse'
+          description: OK
+        '401':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: "Token is expired, Token invalid or incorrect secret, Token invalid"
+  "/v1/api/company":
+    get:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Obter aplicativos cadastrados na empresa
+      tags:
+        - Autenticação
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/2faApplicationsResponse'
+          description: OK
+        '401':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: "Token is expired, Token invalid or incorrect secret, Token invalid"
+  "/v1/api/company/renew":
+    get:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Renovar o token do usuário
+      tags:
+        - Autenticação
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/2faCompanyResponse'
+          description: OK
+        '401':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: "Token is expired, Token invalid or incorrect secret, Token invalid"
+  "/v1/api/user/cellphone/session":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Solicitar sessão de usuário por SMS
+      tags:
+        - Autenticação
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/2faSessionRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faSessionResponse'
+          description: OK
+  "/v1/api/user/cellphone/validate":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Validar o código enviado por SMS para o celular do usuário
+      tags:
+        - Autenticação
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/2faSessionRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faCellPhoneValidateResponse'
+          description: OK
+  "/v1/api/user/email/session":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Solicitar sessão de usuário por email
+      tags:
+        - Autenticação
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/2faSessionRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faSessionResponse'
+          description: OK
+  "/v1/api/user/email/validate":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Validar o código enviado para o e-mail do usuário
+      tags:
+        - Autenticação
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/2faSessionRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faEmailValidateResponse'
+          description: OK
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faSession401Response'
+          description: OK
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faSession500Response'
+          description: OK
+  "/v1/api/user/session/validate":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Validar uma sessão de usuário criada por SMS ou E-mail
+      tags:
+        - Autenticação
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/2faSessionValidateRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faSessionValidateResponse'
+          description: OK
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faSession401Response'
+          description: OK
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faSession500Response'
+          description: OK
+    get:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+        - $ref: "#/components/parameters/UserSessionTokenID"
+      summary: Verificar se a sessão foi validada
+      tags:
+        - Autenticação
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faSessionValidateResponse'
+          description: OK
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faSession401Response'
+          description: Unauthorized
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faSession500Response'
+          description: Internal Server Error
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faSession503Response'
+          description: Service Unavailable
+
+  "/v1/api/api/user":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Registrar e-mail e celular para um usuário
+      tags:
+        - Usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/2faEmailCellRequest'
+      responses:
+        '200':
+          description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faEmailCellResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   message: 
+                    type: string
+                    example: "Token is expired, Token invalid or incorrect secret, Token invalid"
+                 
+        '412':
+          description: Precondition Failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   message: 
+                    type: string
+                    example: '"Application Token incorrect number"
+                              "Application Token not found"
+                              "CellPhone not found"
+                              "CellPhone not numeric"
+                              "CellPhone incorrect number"
+                              "Email incorrect length"
+                              "Email not found"
+                              "Unique Identifier min length X"
+                              "Unique Identifier not found"
+                              "User already exists"'
+    get:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+        - $ref: "#/components/parameters/ApplicationTokenID"
+        - $ref: "#/components/parameters/UniqueIdentifierID"
+      summary: Renovar o token do usuário
+      tags:
+        - Usuário
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/2faEmailCellResponse'
+          description: OK
+        '401':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: "Token is expired, Token invalid or incorrect secret, Token invalid"
+  "/v1/api/api/user/cellphone":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Registrar celular para um usuário
+      tags:
+        - Usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/2faCellRequest'
+      responses:
+        '200':
+          description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faCellResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   message: 
+                    type: string
+                    example: "Token is expired, Token invalid or incorrect secret, Token invalid"
+                 
+        '412':
+          description: Precondition Failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   message: 
+                    type: string
+                    example: '"Application Token not found"
+                              "Unique Identifier min length X"
+                              "Unique Identifier not found"
+                              "User already exists"'
+    get:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+        - $ref: "#/components/parameters/ApplicationTokenID"
+        - $ref: "#/components/parameters/UniqueIdentifierID"
+      summary: Obter dados de celular de usuário
+      tags:
+        - Usuário
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/2faCellResponse'
+          description: OK
+        '401':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: "Token is expired, Token invalid or incorrect secret, Token invalid"
+    put:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Atualizar celular de usuário
+      tags:
+        - Usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/2faCellRequest'
+      responses:
+        '200':
+          description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faCellResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   message: 
+                    type: string
+                    example: "Token is expired, Token invalid or incorrect secret, Token invalid"
+                 
+        '412':
+          description: Precondition Failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   message: 
+                    type: string
+                    example: '"Application Token not found"
+                              "Unique Identifier min length X"
+                              "Unique Identifier not found"
+                              "User already exists"'
+  "/v1/api/api/user/change/cellphone":
+    put:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Atualizar celular validado de usuário
+      tags:
+        - Usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/2faCellRequest'
+      responses:
+        '200':
+          description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faCellChangeResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   message: 
+                    type: string
+                    example: "Token is expired, Token invalid or incorrect secret, Token invalid"
+                 
+        '412':
+          description: Precondition Failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   message: 
+                    type: string
+                    example: '"Application Token not found"
+                              "Unique Identifier min length X"
+                              "Unique Identifier not found"
+                              "User already exists"'
+  "/v1/api/api/user/email":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Registrar dados de usuário para autenticação por e-mail
+      tags:
+        - Usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/2faEmailRequest'
+      responses:
+        '200':
+          description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faEmailResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   message: 
+                    type: string
+                    example: "Token is expired, Token invalid or incorrect secret, Token invalid"
+                 
+        '412':
+          description: Precondition Failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   message: 
+                    type: string
+                    example: '"Application Token incorrect number"
+                              "Application Token not found"
+                              "Unique Identifier min length X"
+                              "Unique Identifier not found"
+                              "User already exists"'
+    get:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+        - $ref: "#/components/parameters/ApplicationTokenID"
+        - $ref: "#/components/parameters/UniqueIdentifierID"
+      summary: Obter dados de e-mail do usuário
+      tags:
+        - Usuário
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/2faEmailResponse'
+          description: OK
+        '401':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: "Token is expired, Token invalid or incorrect secret, Token invalid"
+    put:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Atualizar e-mail de usuário
+      tags:
+        - Usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/2faEmailRequest'
+      responses:
+        '200':
+          description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faEmailResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   message: 
+                    type: string
+                    example: "Token is expired, Token invalid or incorrect secret, Token invalid"
+                 
+        '412':
+          description: Precondition Failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   message: 
+                    type: string
+                    example: '"Application Token incorrect number"
+                              "Application Token not found"
+                              "Unique Identifier min length X"
+                              "Unique Identifier not found"
+                              "User already exists"'
+  "/v1/api/api/user/change/email":
+    put:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Atualizar e-mail validado de usuário
+      tags:
+        - Usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/2faEmailRequest'
+      responses:
+        '200':
+          description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faCellChangeResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   message: 
+                    type: string
+                    example: "Token is expired, Token invalid or incorrect secret, Token invalid"
+                 
+        '412':
+          description: Precondition Failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   message: 
+                    type: string
+                    example: '"Application Token not found"
+                              "Unique Identifier min length X"
+                              "Unique Identifier not found"
+                              "User already exists"'
+
+
+
+components:
+  securitySchemes:
+     basicAuth:
+       type: http
+       scheme: basic 
+  parameters:
+      XApiKey:
+        name: x-api-key
+        in: header
+        description: VErificar origem desse header 
+        required: true
+        schema:
+          type: string
+      XAuthToken:
+        name: X-Auth-Token
+        in: header
+        description: Token de leitura do 2FA
+        required: true
+        schema:
+          type: string
+      XSessionToken:
+        name: X-Session-Token
+        in: header
+        description: Token de sessão do 2FA
+        required: true
+        schema:
+          type: string
+      UserSessionTokenID:
+        name: UserSessionToken
+        in: query
+        description: Token de sessão do usuário
+        required: true
+        schema:
+          type: string
+      ApplicationTokenID:
+        name: ApplicationToken
+        in: query
+        description: "Token da Aplicação. Mascara: AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+        required: true
+        schema:
+          type: string
+      UniqueIdentifierID:
+        name: UniqueIdentifier
+        in: query
+        description: "Código de identificação único do usuário. Exemplo: 12345678910"
+        required: true
+        schema:
+          type: string
+
+
+
+      marketplaceID:
+        name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        schema:
+          type: string
+      holderID:
+        name: holder_id
+        in: path
+        description: ID do holder
+        required: true
+        schema:
+          type: string
+      referenceID:
+        name: reference_id
+        in: path
+        description: Id de referencia informado na solicitação da TED
+        required: true
+        schema:
+          type: string
+      externalTransferID:
+        name: externalTransfer_id
+        in: path
+        description: Id gerado da transferência quando bem sucedida
+        required: true
+        schema:
+          type: string
+      barcodeID:
+        name: barcode
+        in: path
+        description: Identificacao do barcode
+        required: true
+        schema:
+          type: string
+      accountID:
+        name: account_id
+        in: path
+        description: ID da conta digital 
+        required: true
+        schema:
+          type: string
+      paymentID:
+        name: payment_id
+        in: path
+        description: Id do pagamento que será confirmado 
+        required: true
+        schema:
+          type: string
+      transactionID:
+        name: transaction_id
+        in: path
+        description: Representa o id da transação PIX de crédito que sofrerá a devolução 
+        required: true
+        schema:
+          type: string
+      refundID:
+        name: refund_id
+        in: path
+        description: Id da devolução 
+        required: true
+        schema:
+          type: string
+      p2p_transferID:
+        name: p2p_transfer_id
+        in: path
+        description: ID da transferência entre contas 
+        required: true
+        schema:
+          type: string
+      phoneID:
+        name: phone_id
+        in: path
+        description: ID do telefone 
+        required: true
+        schema:
+          type: string
+      type:
+        name: type_id
+        in: query
+        description: Tipo do arquivo a ser enviado
+        required: true
+        schema:
+          type: string
+          enum:
+            - SELFIE
+            - RG_FRENTE
+            - RG_VERSO
+            - CNH_FRENTE
+            - CNH-VERSO
+            - CCMEI
+            - PAGINA_CONTRATO_SOCIAL
+            - PAGINA_ESTATUTO_SOCIAL
+            - PAGINA_ATA_ELEICAO_DIRETORES
+            - PAGINA_PROCURACAO
+      documentID:
+        name: documents_id
+        in: path
+        description: ID do documento
+        required: true
+        schema:
+          type: string
+      adressID:
+        name: address_id
+        in: path
+        description: ID do endereço
+        required: true
+        schema:
+          type: string
+      pageID:
+        name: page_id
+        in: query
+        description: indica a página que será exibida
+        schema:
+          type: number
+          example: 0
+      sizeID:
+        name: size_id
+        in: query
+        description: Quantidade de registros a ser retornado por página
+        schema:
+          type: number
+          example: 20
+      offsetID:
+        name: offset
+        in: query
+        description: Determina o ponto de inicio dos registros retornados
+        schema:
+          type: number
+          example: 0
+      limitID:
+        name: limit
+        in: query
+        description: Quantidade máxima de itens por página (<100)
+        schema:
+          type: number
+          example: 0
+      typeOpID:
+        name: type
+        in: query
+        description: "Retorna lançamentos onde o tipo da operação seja igual a um dos valores informado. O valor pode ser uma string ou uma lista de valores concatenados por ', '. (ex: charge, charge_refunded, transfer, transfer_refunded, deposit, deposit_refunded, adjustment)"
+        required: true
+        schema:
+          type: string
+          enum:
+            - charge
+            - charge_refunded
+            - transfer
+            - transfer_refunded
+            - deposit
+            - deposit_refunded
+            - adjustment
+      entryID:
+        name: entry_id
+        in: path
+        description: Id da reivindicação
+        required: true
+        schema:
+          type: number
+          example: 0
+      claimID:
+        name: claim_id
+        in: path
+        description: Id da chave de endereçamento
+        required: true
+        schema:
+          type: number
+          example: 0
+      created_date_rangeID:
+        name: created_date_range
+        in: query
+        description: Retorna lançamentos onde a data for igual o valor informado. O valor pode ser uma string com um horário em UTC timestamp ou ISO (YYYY-DD-MM HH:MM:SS)
+        schema:
+          type: string
+          example: "2020-10-01 15:34:00"
+      created_date_rangeGTID:
+        name: created_date_range[gt]
+        in: query
+        description: Retorna lançamentos onde a data for maior o valor informado
+        schema:
+          type: string
+          example: "2020-10-01 15:34:00"
+      created_date_rangeLTID:
+        name: created_date_range[lt]
+        in: query
+        description: Retorna lançamentos onde a data for menor o valor informado
+        schema:
+          type: string
+          example: "2020-10-01 15:34:00"
+      created_date_rangeGTEID:
+        name: created_date_range[gte]
+        in: query
+        description: Retorna lançamentos onde a data for maior ou igual o valor informado
+        schema:
+          type: string
+          example: "2020-10-01 15:34:00"
+      created_date_rangeLTEID:
+        name: created_date_range[lte]
+        in: query
+        description: Retorna lançamentos onde a data for menor ou igual valor informado
+        schema:
+          type: string
+          example: "2020-10-01 15:34:00"
+
+  schemas:
+    2faLoginRequest:
+      type: object
+      properties:
+        CompanyToken:
+          type: string
+          description: Token da empresa   
+        SecretKey:
+          type: string
+          description: Senha
+    2faCompanyResponse:
+      type: object
+      properties:
+        CompanyName:
+          type: string
+          example: "My Company Name"
+        CompanyToken:
+          type: string
+          example: "My Company Token"
+        CompanyStatus:
+          type: string
+          example: "A"
+        Token-Expiration:
+          type: string
+          example: "2020-02-15T06:30:27.000000Z"
+    2faApplicationsResponse:
+      type: object
+      properties:
+        Applications:
+          type: array
+          items:
+            type: object
+            properties:
+              Name:
+                type: string
+                example: "Empresa XYZ"
+              ApplicationToken:
+                type: string
+                example: "AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+              SMSProviderId:
+                type: string
+                example: "1"
+              PasswordLength:
+                type: string
+                example: "6"
+              SessionDurationMinutes:
+                type: string
+                example: "2"
+              AttemptsIntervalInMinutes:
+                type: string
+                example: "1"
+              MaxAttempts:
+                type: string
+                example: "3"
+              SMSTextUserTemplate:
+                type: string
+                example: "SENHA PARA CONFIRMAR SEU TELEFONE CELULAR: [PASSWORD]"
+              SMSTextUserSessionTemplate:
+                type: string
+                example: "SENHA PARA CONFIRMAR SUA OPERACAO: [PASSWORD]"
+              Status:
+                type: string
+                example: "A"
+              Deleted:
+                type: boolean
+                example: false
+              LastAccessDate:
+                type: string
+                example: "2020-01-30T18:37:52.000000Z"
+              CreationDate:
+                type: string
+                example: "2020-01-30T18:37:52.000000Z"
+    2faLoginResponse:
+      type: object
+      properties:
+        X-Auth-Token:
+          type: string
+          example: "My X-Auth-Token"
+        X-Auth-Token-Reading:
+          type: string
+          example: "Partner X-Auth-Token-Reading"
+        Token-Expiration:
+          type: string
+          example: "2020-02-12T02:53:58.781091Z"
+    2faSessionRequest:
+      type: object
+      title: Por SMS
+      properties:
+        UserToken:
+          type: string
+          description: "Token do usuário. Mascara: AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"  
+        UserPassword:
+          type: string
+          description: "Senha do usuário. Exemplo: 123456"
+          example: "123456"
+    2faSessionResponse:
+      type: object
+      properties:
+        UserSessionToken:
+          type: string
+          example: "AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+        OneTimePassword:
+          type: boolean
+          example: "false"
+        ExpirationDate:
+          type: string
+          example: "2020-01-01T12:00:00.000000Z"
+        CreationDate:
+          type: string
+          example: "2020-01-01T12:00:00.000000Z"
+    2faCellPhoneValidateResponse:
+      type: object
+      properties:
+        ResponseCode:
+          type: string
+          example: "0"
+        Message:
+          type: string
+          example: "CELLPHONE VALIDATED SUCCESSFULLY."
+    2faEmailValidateResponse:
+      type: object
+      properties:
+        ResponseCode:
+          type: integer
+          example: 0
+        Message:
+          type: string
+          example: "EMAIL VALIDATED SUCCESSFULLY."
+    2faSessionValidateRequest:
+      type: object
+      title: Por SMS
+      properties:
+        UserSessionToken:
+          type: string
+          description: "oken da sessão do usuário. Mascara: AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"  
+        UserSessionPassword:
+          type: string
+          description: "Senha do usuário. Exemplo: 123456"
+          example: "123456"
+    2faSessionValidateResponse:
+      type: object
+      properties:
+        UserSessionToken:
+          type: string
+          example: "AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+        Validated:
+          type: boolean
+          example: true
+        ResponseCode:
+          type: integer
+          example: 0
+        Message:
+          type: string
+          example: "SESSION VALIDATED SUCCESSFULLY."
+    2faSession401Response:
+      type: object
+      properties:
+        ResponseCode :
+          type: integer
+          example: -1
+        message:
+          type: string
+          example: "SENHA INVÁLIDA OU TOKEN DO USUÁRIO"
+    2faSession500Response:
+      type: object
+      properties:
+        ResponseCode :
+          type: integer
+          example: -2
+        message:
+          type: string
+          example: "SESSÃO EXPIRADA"
+    2faSession503Response:
+      type: object
+      properties:
+        ResponseCode :
+          type: integer
+          example: -3
+        message:
+          type: string
+          example: "SESSÃO NÃO VALIDADA"
+    2faEmailCellRequest:
+      type: object
+      title: Por SMS
+      properties:
+        ApplicationToken:
+          type: string
+          description: "Token da aplicação em que o usuário tem acesso. Mascara: AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"  
+        CellPhone:
+          type: string
+          description: "Telefone do usuário"
+          example: "5521987654321"
+        Email:
+          type: string
+          description: "E-mail do usuário"
+          example: "user@company.com.br"
+        UniqueIdentifier:
+          type: string
+          description: "Código de identificação única do usuário. Exemplo: 12345678910"
+          example: "12345678910"
+    2faEmailCellResponse:
+      type: object
+      title: Por SMS
+      properties:
+        UserToken:
+          type: string
+          example: "AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"  
+        UniqueIdentifier:
+          type: string
+          example: "12345678910"
+        CellPhone:
+          type: string
+          example: "5521987654321"
+        CellPhoneValidated:
+          type: boolean
+          example: false
+        Email:
+          type: string
+          example: "user@company.com.br"
+        EmailValidated:
+          type: boolean
+          example: false
+        CreationDate:
+          type: string
+          example: "2020-01-01T12:00:00.000000Z"
+    2faCellRequest:
+      type: object
+      title: Por SMS
+      properties:
+        ApplicationToken:
+          type: string
+          description: "Token da aplicação em que o usuário tem acesso. Mascara: AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"  
+        CellPhone:
+          type: string
+          description: "Telefone do usuário"
+          example: "5521987654321"
+        UniqueIdentifier:
+          type: string
+          description: "Código de identificação única do usuário. Exemplo: 12345678910"
+          example: "12345678910"
+    2faCellResponse:
+      type: object
+      title: Por SMS
+      properties:
+        UserToken:
+          type: string
+          example: "AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"  
+        UniqueIdentifier:
+          type: string
+          example: "12345678910"
+        CellPhone:
+          type: string
+          example: "5521987654321"
+        CellPhoneValidated:
+          type: boolean
+          example: false
+        CreationDate:
+          type: string
+          example: "2020-01-01T12:00:00.000000Z"
+    2faEmailRequest:
+      type: object
+      title: Por SMS
+      properties:
+        ApplicationToken:
+          type: string
+          description: "Token da aplicação em que o usuário tem acesso. Mascara: AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"  
+        Email:
+          type: string
+          description: "E-mail do usuário"
+          example: "user@company.com.br"
+        UniqueIdentifier:
+          type: string
+          description: "Código de identificação única do usuário. Exemplo: 12345678910"
+          example: "12345678910"
+    2faEmailResponse:
+      type: object
+      title: Por SMS
+      properties:
+        UserToken:
+          type: string
+          example: "AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"  
+        UniqueIdentifier:
+          type: string
+          example: "12345678910"
+        Email:
+          type: string
+          example: "user@company.com.br"
+        EmailValidated:
+          type: boolean
+          example: false
+        CreationDate:
+          type: string
+          example: "2020-01-01T12:00:00.000000Z"
+    2faCellChangeResponse:
+      type: object
+      properties:
+        UserToken:
+          type: string
+          example: "AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"  
+        UniqueIdentifier:
+          type: string
+          example: "12345678910"
+        Email:
+          type: string
+          example: "user@company.com.br"
+        EmailValidated:
+          type: boolean
+          example: true
+        CellPhoneFrom:
+          type: string
+          example: "5521987654321"
+        CellPhoneFromValidated:
+          type: boolean
+          example: true
+        CellPhoneTo:
+          type: string
+          example: "5521123456789"
+        CellPhoneToValidated:
+          type: boolean
+          example: false
+        CreationDate:
+          type: string
+          example: "2020-01-01T12:00:00.000000Z"
+
+    DictKeyResponse202:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "29b0000cb501400ea6c3f21b24ef251c"
+        status:
+          type: string
+          example: "active"
+        created_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        updated_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        key:
+          type: object
+          properties:
+            value:
+              type: string
+              example: "fulano@gmail.com"
+            type:
+              type: string
+              example: email
+        account:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "cf27477574e04d4584ac75ef6ca5ec3f"
+            marketplace_id:
+              type: string
+              example: "6c237bf9932840ccada92ac629a05d39"
+            holder_id:
+              type: string
+              example: "d83a1a81caa243d2a10bc414ae406bd3"
+            owner:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: João da Silva
+                national_registration:
+                  type: string
+                  example: "33580667033"
+                type:
+                  type: string
+                  example: "individual"
+            routing_number:
+              type: string
+              example: "001"
+            number:
+              type: string
+              example: "456123"
+            type:
+              type: string
+              example: "cacc"
+        psp:
+          type: object
+          properties:
+            code: 
+              type: string
+              example: "3001155"
+            name:
+              type: string
+              example: "Zoop"
+    DictKeyResponse400:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "1000"
+        message:
+          type: string
+          example: "Account Id is required"
+    DictKeyResponse4001:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "1001"
+        message:
+          type: string
+          example: "Key value is not a valid email format"
+    DictKeyResponse4002:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "1002"
+        message:
+          type: string
+          example: "Key of type phone must have 14 characters for its value"
+    DictKeyResponse4003:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "1003"
+        message:
+          type: string
+          example: "Key value is required for phone or email types"
+    DictKeyResponse4004:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "1004"
+        message:
+          type: string
+          example: "Key type is no compatible with claim type"
+    DictKeyResponse4005:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "1005"
+        message:
+          type: string
+          example: "Key value must not be informed for national_registration or evp types"
+    DictKeyResponse404:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "3000"
+        message:
+          type: string
+          example: "Marketplace not found"
+    DictKeyResponse412:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "4000"
+        message:
+          type: string
+          example: "Maximum entry count allowed reached"
+
+    ClaimRequest:
+      type: object
+      properties:
+        claim_type:
+          type: string
+          description: Utilize ownership para reinvindicar uma chave e portability para realizar a portabilidade de chave. 
+          enum:
+           - ownership 
+           - portability
+        key:
+          type: object
+          properties:
+            type:
+              type: string
+              description: "Indica o tipo de chave de endereçamento. Os tipos de chave são: phone, email, evp e national_registration."
+              enum:
+              - email
+              - phone 
+              - evp 
+              - national_registration
+            value:
+              type: string
+              description: "Indica o valor da chave de endereçamento"
+              example: "fulano@gmail.com"
+    ClaimResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "76d1f0c3772f45899b3025481a79967d"
+        marketplace_id:
+          type: string
+          example: "6c237bf9932840ccada92ac629a05d39"
+        created_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        updated_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        type:
+          type: string
+          example: "ownership"
+        status:
+          type: string
+          example: "open"
+        key:
+          type: object
+          properties:
+            type:
+              type: string
+              description: "Indica o tipo de chave de endereçamento. Os tipos de chave são: phone, email, evp e national_registration."
+              enum:
+              - email
+              - phone 
+              - evp 
+              - national_registration
+            value:
+              type: string
+              description: "Indica o valor da chave de endereçamento"
+              example: "fulano@gmail.com"
+        claimer:
+          type: object
+          properties:
+            name:
+              type: string
+              example: João da Silva
+            national_registration:
+              type: string
+              example: "33580667033"
+            type:
+              type: string
+              example: "individual"
+            marketplace_id:
+              type: string
+              example: "6c237bf9932840ccada92ac629a05d39"
+            holder_id:
+              type: string
+              example: "d83a1a81caa243d2a10bc414ae406bd3"
+            account:
+              type: object
+              properties:
+                digital_account_id:
+                  type: string
+                  example: "cf27477574e04d4584ac75ef6ca5ec3f"
+                routing_number:
+                  type: string
+                  example: "001"
+                number:
+                  type: string
+                  example: "456123"
+                type:
+                  type: string
+                  example: "cacc"
+            psp:
+              type: object
+              properties:
+                code: 
+                  type: string
+                  example: "3001155"
+        donor:
+          type: object
+          properties:
+            code:
+              type: string
+              example: 30011455
+            name:
+              type: string
+              example: "Zoop"
+        completion_period_end:
+          type: string
+          example: "2020-01-17T10:00:00Z"
+        resolution_periodo_end:
+          type: string
+          example: "2020-01-17T10:00:00Z"
+
+    pixRequest:
+      title: Pix por Chave
+      required:
+        - amount
+        - creditor
+        - key
+      type: object
+      properties:
+        transaction_id:
+          type: string
+          description: Campo usado pelo recebedor do Pix para identificar uma transação no seu legado. 
+          example: "d747dc8fffec48a69830b40af4078fe1"
+        amount:
+          type: integer
+          description: Valor do pagamento em centavos. 
+          example: 12050
+        description:
+          type: string
+          description: Descrição do pagamento. Não é permitido caracteres especiais. 
+          example: "Churrasco fim pandemia"
+        creditor:
+          type: object
+          properties:
+            national_registration:
+               type: string
+               description: Representa o CPF/CNPJ do recebedor do Pix - Parâmetro pertencente ao objeto creditor. 
+               example: "84154427008"
+            psp:
+               type: string
+               description: Código da instituição participante do Pix onde a conta do recebedor está criada - Parâmetro pertencente ao objeto creditor.
+               example: "60746948" 
+        key:
+          type: object
+          properties:
+            type:
+              type: string
+              description: "Representa o tipo de chave de endereçamento. Domínio: phone, email, evp e national_registration. Parâmetro pertencente ao objeto key." 
+              enum:
+              - phone
+              - email
+              - evp
+              - national_registration
+            value:
+              type: string
+              description: Representa o valor da chave de endereçamento. Seu formato e tamanho variam conforme o tipo escolhido anteriormente. Para phone a mascara é +9999999999999. Para email a mascara é xxxxxxxxxx@xxxxxxx.xx.xx com máximo de 77 caracteres. Para evp, não deve ser informado nenhum valor. Para national_registration, não deve ser informado nenhum valor.
+              example: "+552198744587"
+    pixAccountRequest:
+      title: Pix por dados da conta
+      required:
+        - amount
+        - creditor
+      type: object
+      properties:
+        amount:
+          type: integer
+          description: Valor do pagamento em centavos. 
+          example: 12050
+        creditor:
+          type: object
+          properties:
+            account:
+              type: object
+              properties:
+                routing_number:
+                  type: string
+                  example: "001"
+                number:
+                  type: string
+                  example: "456123"
+                type:
+                  type: string
+                  example: "cacc"
+            name:
+               type: string
+               description: Representa o nome do recebedor - Parâmetro pertencente ao objeto creditor. 
+               example: "84154427008"
+            national_registration:
+               type: string
+               description: Representa o CPF/CNPJ do recebedor do Pix - Parâmetro pertencente ao objeto creditor. 
+               example: "84154427008"
+            psp:
+               type: string
+               description: Código da instituição participante do Pix onde a conta do recebedor está criada - Parâmetro pertencente ao objeto creditor.
+               example: "60746948" 
+        transaction_id:
+          type: string
+          description: Campo usado pelo recebedor do Pix para identificar uma transação no seu legado. 
+          example: "d747dc8fffec48a69830b40af4078fe1"
+        description:
+          type: string
+          description: Descrição do pagamento. Não é permitido caracteres especiais. 
+          example: "Churrasco fim pandemia"
+    pixResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "026b9c0e9fd34b32872906d5b64efbee"
+        end_to_end_id:
+          type: string
+          example: "E00038166201907261559y6j6mt9l0pi"
+        transaction_id:
+          type: string
+          example: "d747dc8fffec48a69830b40af4078fe1"
+        marketplace_id:
+          type: string
+          example: "0f8546897d6f41f4b3d81049693071ee"
+        status:
+          type: string
+          example: "pending"
+        amount:
+          type: string
+          example: "120.50"
+        description:
+          type: string
+          example: "Churrasco fim pandemia"
+        debtor:
+          type: object
+          properties:
+            name:
+              type: string
+              example: João da Silva
+            national_registration:
+              type: string
+              example: "33580667033"
+            type:
+              type: string
+              example: "natural_person"
+            holder_id:
+              type: string
+              example: "ec1865e565a04bcab9994a395dd6393d"
+            account:
+              type: object
+              properties:
+                psp:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      example: 19468242
+                    name:
+                      type: string
+                      example: "Zoop Tecnologia e Meios de Pagamento S.A."
+                digital_account_id:
+                  type: string
+                  example: "0ce048eebf024b26957207c53430aabb"
+                routing_number:
+                  type: string
+                  example: "001"
+                number:
+                  type: string
+                  example: "456123"
+                type:
+                  type: string
+                  example: "cacc"
+        creditor:
+          type: object
+          properties:
+            name:
+              type: string
+              example: Maria da Silva
+            national_registration:
+              type: string
+              example: "84154427008"
+            type:
+              type: string
+              example: "natural_person"
+            holder_id:
+              type: string
+              example: "ec1865e565a04bcab9994a395dd6393d"
+            account:
+              type: object
+              properties:
+                psp:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      example: 60746948
+                    name:
+                      type: string
+                      example: "Bradesco S.A."
+                routing_number:
+                  type: string
+                  example: "3000"
+                number:
+                  type: string
+                  example: "600000"
+                type:
+                  type: string
+                  example: "cacc"
+    pixRefundRequest:
+      title: Pix por dados da conta
+      required:
+        - amount
+        - reason
+      type: object
+      properties:
+        amount:
+          type: integer
+          description: Valor do pagamento em centavos. 
+          example: 12050
+        reason:
+          type: object
+          properties:
+            additional_information:
+              type: string
+              example: "envio errado"
+            code:
+              type: string
+              enum:
+              - AM05
+              - AM09
+              - BE08
+              - DS28
+              - FOCR
+              - FR01
+              - MD06
+              - NARR
+              - RUTA
+              - SL11
+              - SL12
+              - UPAY
+              example: "AM05"
+    pixRefundResponse:
+      type: object
+      properties:
+        amount:
+          type: integer
+          example: "12050"
+        created_at:
+          type: string
+          example: "2021-01-07T15:41:52.532Z"
+        id:
+          type: string
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        marketplace_id:
+          type: string
+          example: "0f8546897d6f41f4b3d81049693071ee"
+        original_transaction:
+          type: object
+          properties:
+            amount:
+              type: integer
+              example: 0
+            created_at:
+              type: string
+              example: "2021-01-07T15:41:52.532Z"
+            creditor:
+              type: object
+              properties:
+                account:
+                  type: object
+                  properties:
+                    digital_account_id:
+                      type: string
+                      example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    routing_number:
+                      type: string
+                      example: "3000"
+                    number:
+                      type: string
+                      example: "600000"
+                    psp:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: 60746948
+                        name:
+                          type: string
+                          example: "Bradesco S.A."
+                    type:
+                      type: string
+                      example: "cacc"
+                name:
+                  type: string
+                  example: Maria da Silva
+                national_registration:
+                  type: string
+                  example: "84154427008"
+                type:
+                  type: string
+                  example: "natural_person"
+                holder_id:
+                  type: string
+                  example: "ec1865e565a04bcab9994a395dd6393d"
+
+            debtor:
+              type: object
+              properties:
+                account:
+                  type: object
+                  properties:
+                    digital_account_id:
+                      type: string
+                      example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    name:
+                      type: string
+                      example: João da Silva
+                    national_registration:
+                      type: string
+                      example: "33580667033"
+                    type:
+                      type: string
+                      example: "natural_person"
+                    holder_id:
+                      type: string
+                      example: "ec1865e565a04bcab9994a395dd6393d"
+                    account:
+                      type: object
+                      properties:
+                        psp:
+                          type: object
+                          properties:
+                            code:
+                              type: string
+                              example: 19468242
+                            name:
+                              type: string
+                              example: "Zoop Tecnologia e Meios de Pagamento S.A."
+                        digital_account_id:
+                          type: string
+                          example: "0ce048eebf024b26957207c53430aabb"
+                        routing_number:
+                          type: string
+                          example: "001"
+                        number:
+                          type: string
+                          example: "456123"
+                        type:
+                          type: string
+                          example: "cacc"
+
+
+    PixTransferError400Response:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "bad_request"
+        type:
+          type: string
+          example: "invalid_request"
+        code:
+          type: integer
+          example: 2000
+        message:
+          type: string
+          example: "Validation field error."
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: number
+          example: 400
+        fields:
+          type: object
+          properties:
+            account_id:
+              type: object
+              properties:
+                code: 
+                  type: integer
+                  example: 1000
+                message:
+                  type: string
+                  example: "Account Id is required."
+            key:
+              type: object
+              properties:
+                type:
+                  type: object
+                  properties:
+                    code: 
+                      type: integer
+                      example: 1001
+                    message:
+                      type: string
+                      example: "Key type is required."
+    PixTransferError403Response:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "Forbidden"
+        type:
+          type: string
+          example: "invalid_request"
+        message:
+          type: string
+          example: "Transfer window is not valid"
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: number
+          example: 403
+    PixTransferError404Response:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "not_found"
+        type:
+          type: string
+          example: "not_found"
+        code:
+          type: integer
+          example: 3000
+        message:
+          type: string
+          example: "Marketplace not found"
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: number
+          example: 404
+    PixTransferError412Response:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "precondition_failed"
+        type:
+          type: string
+          example: "invalid_request"
+        code:
+          type: integer
+          example: 4000
+        message:
+          type: string
+          example: "Maximum entry count allowed reached"
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: number
+          example: 412
