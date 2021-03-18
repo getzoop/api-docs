@@ -116,7 +116,7 @@ paths:
           description: Marketplace/Cartão não encontrado
 
   "/v1/marketplaces/{marketplace_id}/transactions":
-    parameters:
+    parameters: 
       - $ref: "#/components/parameters/marketplaceID"
     post:
       summary: Criar transação
