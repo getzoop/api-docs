@@ -120,9 +120,8 @@ paths:
       - $ref: "#/components/parameters/marketplaceID"
     post:
       summary: Criar transação
-      description: Usar (Option 1) Autorização direta, (Option 2) Token descartavél, (Option 3) Custormer ID, (Option 4) Card ID, (Option 5) Boleto Simples, (Option 6) Boleto completo
       tags:
-        - Transações
+        - Transacoes
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
       requestBody:
@@ -137,7 +136,7 @@ paths:
                 - $ref: "#/components/schemas/TransactionSimpleBoletoTransactionRequest"
                 - $ref: "#/components/schemas/TransactionBoletoTransactionRequest"
 
-        description: Transacao
+        description: Transação
       responses:
         "200":
           description: Transação criada com sucesso
@@ -205,7 +204,7 @@ paths:
     get:
       summary: Listar transaçoes por vendedor
       tags:
-        - Transações
+        - Transacoes
       parameters:
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/sortParam"
@@ -236,7 +235,7 @@ paths:
     get:
       summary: Listar detalhes de transação pelo identificador
       tags:
-        - Transações
+        - Transacoes
       responses:
         "200":
           description: Transação recuperada com sucesso
@@ -249,7 +248,7 @@ paths:
     put:
       summary: Alterar detalhes de transação pelo identificador
       tags:
-        - Transações
+        - Transacoes
       deprecated: true
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
@@ -286,7 +285,7 @@ paths:
           type: string
     post:
       tags:
-        - Transações
+        - Transacoes
       summary: Estornar transação cartão não presente
       description: ""
       requestBody:
@@ -318,7 +317,7 @@ paths:
     get:
       summary: Disponibilizar link carta de cancelamento
       tags:
-        - Transações
+        - Transacoes
       responses:
         "200":
           description: Transação recuperada com sucesso
@@ -339,7 +338,7 @@ paths:
           type: string
     post:
       tags:
-        - Transações
+        - Transacoes
       summary: Capturar transação cartão não presente
       description: ""
       requestBody:
@@ -2531,6 +2530,15 @@ components:
             - boleto
           default: "credit"
           description: Tipo de pagamento
+        capture:
+          type: boolean
+          example: true
+          description: Capturar transação (true) ou criar uma pre-autorização (false) para
+            ser capturada a posteriori
+        reference_id:
+          type: string
+          example: "10902"
+          description: ID referência da sua aplicação VARCHAR(500)
         source:
           type: object
           properties:
@@ -2571,6 +2579,12 @@ components:
                   type: string
                   example: "123"
                   description: Código de segurança do cartão (CVC)
+        installment_plan:
+          type: object
+          properties:
+            number_installments:
+              type: integer
+              description: número de parcelas (1-12)
     TransactionDisposableTokenRequest:
       type: object
       title: Token descartavel
@@ -2611,6 +2625,21 @@ components:
             - boleto
           default: "credit"
           description: Tipo de pagamento
+        capture:
+          type: boolean
+          example: true
+          description: Capturar transação (true) ou criar uma pre-autorização (false) para
+            ser capturada a posteriori
+        reference_id:
+          type: string
+          example: "10902"
+          description: ID referência da sua aplicação VARCHAR(500)
+        installment_plan:
+          type: object
+          properties:
+            number_installments:
+              type: integer
+              description: número de parcelas (1-12)
     TransactionDigitalWalletRequest:
       type: object
       title: Usando Customer ID
@@ -2651,6 +2680,21 @@ components:
             - boleto
           default: "credit"
           description: Tipo de pagamento
+        capture:
+          type: boolean
+          example: true
+          description: Capturar transação (true) ou criar uma pre-autorização (false) para
+            ser capturada a posteriori
+        reference_id:
+          type: string
+          example: "10902"
+          description: ID referência da sua aplicação VARCHAR(500)
+        installment_plan:
+          type: object
+          properties:
+            number_installments:
+              type: integer
+              description: número de parcelas (1-12)
     TransactionDigitalWalletSecondaryRequest: 
       type: object
       title: Usando card ID
@@ -2699,6 +2743,21 @@ components:
                   type: string
                   example: "822a8bda73c546a8b2f12a5ebcce7732"
                   description: identificador do cartão para source tipo card
+        capture:
+          type: boolean
+          example: true
+          description: Capturar transação (true) ou criar uma pre-autorização (false) para
+            ser capturada a posteriori
+        reference_id:
+          type: string
+          example: "10902"
+          description: ID referência da sua aplicação VARCHAR(500)
+        installment_plan:
+          type: object
+          properties:
+            number_installments:
+              type: integer
+              description: número de parcelas (1-12)
     TransactionSimpleBoletoTransactionRequest:
       type: object
       title: Boleto Simples
@@ -2736,6 +2795,10 @@ components:
             - boleto
           default: "boleto"
           description: Tipo de pagamento
+        reference_id:
+          type: string
+          example: "10902"
+          description: ID referência da sua aplicação VARCHAR(500)
     TransactionBoletoTransactionRequest:
       type: object
       title: Boleto Completo

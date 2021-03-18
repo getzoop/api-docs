@@ -1492,6 +1492,91 @@ paths:
                   query_count:
                     type: number
                     example: 1
+
+  "/v2/marketplaces/{marketplace_id}/banking/cards/embossing/policies":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+    post:
+      summary: Cadastrar politica de embossamento
+      tags:
+        - Cartão pré-pago
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/embossingPolicesRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/embossingPolicesResponse'
+    get:
+      summary: Listar politicas de embossamento
+      tags:
+        - Cartão pré-pago
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/embossingPolicesResponse'
+  "/v2/marketplaces/{marketplace_id}/banking/cards/embossing/policies/{policy_Id}/default":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/policyID"
+    get:
+      summary: Obter dados de uma politica de embossamento
+      tags:
+        - Cartão pré-pago
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/embossingPolicesResponse'
+    put:
+      summary: Alterar politica de embossamento
+      tags:
+        - Cartão pré-pago
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/embossingPolicesRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/embossingPolicesResponse'
+  "/v2/marketplaces/{marketplace_id}/banking/cards/embossing/policies/{policy_Id}":
+    delete:
+      summary: Alterar politica de embossamento
+      tags:
+        - Cartão pré-pago
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/policyID"
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object 
+                properties:
+                  message:
+                    type: string
+                    example: "Politica de embossamento removida com sucesso"
   "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/requests":
     post:
       summary: Realizar Pedido de Cartão
@@ -1772,6 +1857,13 @@ components:
         name: phone_id
         in: path
         description: ID do telefone 
+        required: true
+        schema:
+          type: string
+      policyID:
+        name: policy_id
+        in: path
+        description: Id da politica de embossamento 
         required: true
         schema:
           type: string
@@ -2131,7 +2223,7 @@ components:
           properties:
             format: 
               type: string
-              description: "Formato de constituição da empresa. Valores possíveis: SS (Sociedade Simples), SC (Sociedade Cooperativa), SPE (Sociedade de Propósito Especifico), LTDA (Sociedade Limitada), SA (Sociedade por Ações), ME (Micro empresa) , MEI (Microempreendedor individual), EI (Empresário individual), EIRELI (Empresário Individual de Responsabilidade Limitada) , SNC (Sociedade em Nome Coletivo), SCS (Sociedade em Comandita Simples), SCA (Sociedade em Comandita por Ações (somente tipo business)"
+              description: "Formato de constituição da empresa. Valores possíveis: SS (Sociedade Simples), COOP (Sociedade Cooperativa), SPE (Sociedade de Propósito Especifico), LTDA (Sociedade Limitada), SA (Sociedade por Ações), ME (Micro empresa) , MEI (Microempreendedor individual), EI (Empresário individual), EIRELI (Empresário Individual de Responsabilidade Limitada) , SNC (Sociedade em Nome Coletivo), SCS (Sociedade em Comandita Simples), SCA (Sociedade em Comandita por Ações (somente tipo business)"
               example: "LTDA"
             date:
               type: string
@@ -2975,6 +3067,56 @@ components:
               type: string
               description: CEP
               example: "22783450" 
+    embossingPolicesRequest:
+      required:
+        - business_source_id
+        - card_design_id
+        - default
+        - name
+        - product_id
+      type: object
+      properties:
+        business_source_id:
+          type: string
+          description: "Id da politica de embossamento"
+        card_design_id:
+          type: string
+          description: "Id do card design"
+        default:
+          type: boolean
+          description: "Indica se é a politica principal"
+          enum:
+          - true
+          - false
+        name:
+          type: string
+          example: "Maria da Silva"
+          description: "O nome da politica de embossamento (Máximo de 100 caracteres)"
+        product_id:
+          type: string
+          example: "1010"
+          description: Id do produto
+    embossingPolicesResponse:
+      type: object
+      properties:
+        business_source_id:
+          type: string
+        card_design_id:
+          type: string
+        default:
+          type: boolean
+        id:
+          type: string
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        marketplace_id:
+          type: string
+          example: "3fa85f6457174562b3fc2c963f66afa6"
+        name:
+          type: string
+          example: "Maria da Silva"
+        product_id:
+          type: string
+          example: "1010"
 
 
     MessageNotFound400:
