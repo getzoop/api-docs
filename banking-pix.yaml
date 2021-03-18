@@ -11,7 +11,7 @@ tags:
    description: Diretório de Identificadores de Contas Transacionais  
  - name: Reivindicação/Portabilidade
    description: Reivindicar ou solicitar a portabilidade de uma chave   
- - name: Pix
+ - name: Pagamentos
    description: Realiza pagamentos e transferências por Pix  
 
 servers: [
@@ -576,7 +576,7 @@ paths:
         - $ref: "#/components/parameters/XSessionToken"
       summary: Criar pagamento Pix 
       tags:
-        - Pix
+        - Pagamentos
       requestBody:
         required: true
         content:
@@ -623,7 +623,7 @@ paths:
         - $ref: "#/components/parameters/XSessionToken"
       summary: Consultar pagamento Pix 
       tags:
-        - Pix
+        - Pagamentos
       responses:
         '200':
           description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
@@ -654,7 +654,7 @@ paths:
         - $ref: "#/components/parameters/XSessionToken"
       summary: Confirmar pagamento Pix 
       tags:
-        - Pix
+        - Pagamentos
       responses:
         '200':
           description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
@@ -691,7 +691,7 @@ paths:
         - $ref: "#/components/parameters/XSessionToken"
       summary: Cancelar pagamento Pix 
       tags:
-        - Pix
+        - Pagamentos
       responses:
         '200':
           description: OK 
@@ -706,7 +706,7 @@ paths:
         - $ref: "#/components/parameters/XSessionToken"
       summary: Devolver pagamento Pix 
       tags:
-        - Pix
+        - Pagamentos
       requestBody:
         required: true
         content:
@@ -730,7 +730,7 @@ paths:
         - $ref: "#/components/parameters/sizeID"
       summary: Listar devoluções Pix 
       tags:
-        - Pix
+        - Pagamentos
       requestBody:
         required: true
         content:
@@ -754,7 +754,7 @@ paths:
         - $ref: "#/components/parameters/XSessionToken"
       summary: Consultar devolução Pix 
       tags:
-        - Pix
+        - Pagamentos
       responses:
         '200':
           description: OK 
@@ -767,7 +767,7 @@ paths:
 components:
   securitySchemes:
      basicAuth:
-       type: http
+       type: http 
        scheme: basic 
   parameters:
       marketplaceID:

@@ -1560,7 +1560,7 @@ paths:
                 $ref: '#/components/schemas/embossingPolicesResponse'
   "/v2/marketplaces/{marketplace_id}/banking/cards/embossing/policies/{policy_Id}":
     delete:
-      summary: Alterar politica de embossamento
+      summary: Remover politica de embossamento
       tags:
         - Cartão pré-pago
       parameters:
