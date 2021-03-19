@@ -25,7 +25,6 @@ paths:
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders":
     post:
       summary: Cadastrar portador
-      description: Usar (Option 1) para Pessoa física e (Option 2) para Pessoa jurídica
       tags:
         - Credenciamento portador
       parameters:
