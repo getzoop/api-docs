@@ -24,7 +24,7 @@ servers: [
 paths:
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders":
     post:
-      summary: Cadastrar portador
+      summary: Cadastrar portador 
       tags:
         - Credenciamento portador
       parameters:
