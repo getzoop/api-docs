@@ -395,7 +395,7 @@ paths:
                 $ref: "#/components/schemas/MessageNotFound500"
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/approval":
     post:
-      summary: Cadastrar endereço do portador 
+      summary: Solicitar aprovação do  portador 
       tags:
         - Credenciamento portador
       parameters:
@@ -507,7 +507,6 @@ paths:
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners":
     post:
       summary: Cadastrar sócio 
-      description: Usar (Option 1) para Pessoa física e (Option 2) para Pessoa jurídica / Cadastrar quando o portador for Pessoa Jurídica
       tags:
         - Credenciamento sócio
       parameters:
@@ -2493,6 +2492,7 @@ components:
          _links:
            $ref: '#/components/schemas/LinksPhones'
     IndividualHolderPartnerRequest:
+      title: Individual
       required:
         - adm
         - percentage
@@ -2555,6 +2555,7 @@ components:
           format: double
           example: "5500.00" 
     BusinessHolderPartnerRequest:
+      title: Businesses
       required:
         - adm
         - percentage
