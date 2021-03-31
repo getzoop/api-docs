@@ -1,0 +1,403 @@
+swagger: '2.0'
+x-api-id: 'notificações-e-eventos'
+host: api.zoop.ws
+info:
+  title: Notificações e Eventos
+  version: "1.2"
+
+securityDefinitions: 
+  basicAuth:
+    type: basic
+security:
+  - basicAuth: []
+
+schemes:
+  - https
+
+tags:
+  - name: 'Webhook'
+    description: Gerenciar notificações (webhook)
+  - name: 'Eventos'
+    description: Consultar eventos e reenviar webhook 
+
+paths:
+  '/v1/marketplaces/{marketplace_id}/webhooks':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+    post:
+      tags:
+        - 'Webhook'
+      summary: 'Criar webhook por marketplace'
+      description: ''
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - in: body
+          name: body
+          description: Individual webhook
+          required: true
+          schema:
+            $ref: '#/definitions/Webhook'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          headers:
+            authorization:
+              type: string
+              description: Retorna o authorization definido na criação do webhook
+          description: Webhook criado com sucesso
+          schema:
+            $ref: '#/definitions/WebhookResponse'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Marketplace não encontrado
+    get:
+      tags:
+        - 'Webhook'
+      summary: 'Listar webhooks por marketplace'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Webhook listado com sucesso
+          schema:
+            $ref: '#/definitions/WebhookListResponse'
+        '404':
+          description: Marketplace não encontrado
+
+  '/v1/marketplaces/{marketplace_id}/webhooks/{webhook_id}':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/webhookId'
+    get:
+      tags:
+        - 'Webhook'
+      summary: 'Recuperar detalhes de webhook'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Webhook recuperado com sucesso
+          schema:
+            $ref: '#/definitions/WebhookResponse'
+        401:
+          description: Webhook recuperado com sucesso
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Marketplace/Webhook não encontrado
+    delete:
+      tags:
+        - 'Webhook'
+      summary: 'Remover webhook'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Webhook removido com sucesso
+        '404':
+          description: Marketplace/Webhook não encontrado
+
+  '/v1/marketplaces/{marketplace_id}/events/{event_id}':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+      - name: event_id
+        in: path
+        description: identificador do Eventos
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Eventos'
+      summary: 'Recuperar detalhes de evento pelo identificador'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Evento recuperado com sucesso
+        '404':
+          description: Marketplace/Evento não encontrado
+
+  '/v1/marketplaces/{marketplace_id}/events':
+    get:
+      parameters:
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/dateRangeGTEParam'
+      - $ref: '#/parameters/dateRangeLTEParam'
+      - $ref: '#/parameters/resourceParam'
+      - $ref: '#/parameters/resourceTypeParam'
+      - $ref: '#/parameters/eventTypeParam'
+      - $ref: '#/parameters/eventStatusParam'
+      tags:
+        - 'Eventos'
+      summary: 'Listar eventos por marketplace'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Evento listado com sucesso
+        '404':
+          description: Marketplace não encontrado
+  '/v1/marketplaces/{marketplace_id}/events/actions/replay':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/dateRangeGTEParam'
+      - $ref: '#/parameters/dateRangeLTEParam'
+    post:
+      tags:
+        - 'Eventos'
+      summary: 'Redisparo de eventos'
+      description: 'Uma solicitação de replay (ou reenvio) de eventos irá notificar no máximo os 100 primeiros eventos encontrados em sua filtragem. Portanto, caso haja um número maior do que 100 eventos a serem solicitados, o solicitante deverá ajustar o range de timestamps de forma que este comporte 100 eventos.'
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Replay solicitado com sucesso
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Marketplace não encontrado
+  '/v1/marketplaces/{marketplace_id}/events/{event_id}/actions/replay':
+    parameters:
+      - $ref: '#/parameters/marketplaceId'
+      - $ref: '#/parameters/eventId'
+    post:
+      tags:
+        - 'Eventos'
+      summary: 'Redisparo de eventos por ID'
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Replay solicitado com sucesso
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Marketplace não encontrado
+
+
+
+definitions:
+  Webhook:
+    properties:
+      method:
+        type: string
+        example: "POST"
+        enum: [POST]
+        description: 'valor estático "POST"'
+      url:
+        type: string
+        example: 'https://seusistema.com/webhook'
+        description: 'URL do seu sistema que irá receber as chamadas'
+      description:
+        type: string
+        example: 'Nome do webhook'
+        description: 'Nome do webhook para identificação posterior'
+      event:
+        type: array
+        description: lista de tipos de eventos a serem enviados para este webhook
+        items:
+          type: string
+          example: "transaction.pre_authorization.succeeded"
+      authorization: 
+        type: string
+        description: Definir autorização do webhook
+        example: "top-secret"
+      metadata:
+        type: object
+    required:
+       - method
+       - url
+       - event      
+  WebhookListResponse:
+    properties: 
+      resource:
+        type: string
+        example: "list"
+      uri:
+        type: string
+        example: "/v1/marketplaces/5e677e28f06247e8a55801af7d28f929/webhooks"
+      limit:
+        type: integer
+        example: 100
+      offset:
+        type: integer
+        example: 0
+      has_more:
+        type: boolean
+        example: false
+      total:
+        type: integer
+        example: 0
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/WebhookResponse'
+  WebhookResponse:
+      properties:
+        method:
+          type: string
+          example: "POST"
+          description: 'valor estático "POST"'
+        url:
+          type: string
+          example: '{{SUA_URL_DE_WEBHOOK}}'
+          description: 'URL do seu sistema que irá receber as chamadas'
+        description:
+          type: string
+          example: 'Nome do webhook'
+          description: 'Nome do webhook para identificação posterior'
+        event:
+          type: array
+          description: lista de tipos de eventos a serem enviados para este webhook
+          items:
+            type: string
+            example: "transaction.pre_authorization.succeeded"
+        status:
+          type: string
+          enum: ["new", "succeeded", "failed"]
+          example: "registered"
+        last_error:
+          type: string
+          example: "2019-04-09T06:30:37+00:00"
+        retries:
+          type: integer
+        events_sent: 
+          type: integer
+        batches_sent: 
+          type: integer
+        metadata:
+          type: object
+        created_at:
+          type: string
+          example: "2019-04-09T06:30:37+00:00"
+        updated_at:
+          type: string
+          example: "2019-04-09T06:30:37+00:00"
+        last_sent_at:
+          type: string
+          example: null
+        uri:
+          type: string
+          example: "/v1/webhooks/77054d87a43148dc95c4018d71c5cf75"
+        id:
+          type: string
+          example: "77054d87a43148dc95c4018d71c5cf75"
+        resource:
+          type: string
+          example: "webhook"
+  Error:
+    properties:
+      method:
+        type: string
+parameters:
+  marketplaceId:
+    name: marketplace_id
+    in: path
+    description: ID do marketplace
+    required: true
+    type: string
+  webhookId:
+    name: webhook_id
+    in: path
+    description: identificador do webhook
+    required: true
+    type: string
+  limitParam:
+    name: limit
+    in: query
+    description: Limita o número de objetos retornados, podendo ser entre 1 e 100
+    required: false
+    type: number
+    format: int32
+    default: 20
+  sortParam:
+    name: sort
+    in: query
+    description: Determinar como ordenar a lista em relação a data de criação do objeto
+    required: false
+    type: string
+    enum:
+      - time-descending
+      - time-ascending
+    default: time-descending
+  offsetParam:
+    name: offset
+    in: query
+    description: Determina o ponto de inicio dos registros retornados
+    required: false
+    type: number
+    format: int32
+    default: 0
+  dateRangeParam:
+    name: date_range
+    in: query
+    description: Filtro na lista base de objetos pela data de criação. O valor pode ser uma string com um horário em UTC timestamp, ou pode ser uma lista com os parametros abaixo
+    required: false
+    type: number
+  dateRangeGTParam:
+    name: date_range[gt]
+    in: query
+    description: Retorna valores onde a data maior que o timestamp informado
+    required: false
+    type: number
+  dateRangeGTEParam:
+    name: date_range[gte]
+    in: query
+    description: 'Retorna valores onde a data for maior ou igual que o timestamp informado. ex: 2019-12-23T13:00:00'
+    required: false
+    type: string
+  dateRangeLTParam:
+    name: date_range[lt]
+    in: query
+    description: Retorna valores onde a data for menor que o timestamp informado
+    required: false
+    type: number
+  dateRangeLTEParam:
+    name: date_range[lte]
+    in: query
+    description: 'Retorna valores onde a data for menor ou igual que o timestamp informado. ex: 2019-12-23T13:00:00'
+    required: false
+    type: string
+  resourceParam:
+    name: resource_id
+    in: query
+    type: string
+    description: "Id do recurso a que os eventos listados se referem (ex: ID de uma transação)"
+  resourceTypeParam:
+    name: resource
+    in: query
+    type: string
+    description: "O tipo do evento. Exemplo: transaction"
+  eventTypeParam:
+    name: type
+    in: query
+    type: string
+    description: "Tipo do evento. Exemplo: transaction.failed"
+  eventStatusParam:
+    name: status
+    in: query
+    type: string
+    description: "Status do evento. Ex: failed"
+  eventId:
+    name: event_id
+    in: path
+    description: ID do evento disparado
+    required: true
+    type: string

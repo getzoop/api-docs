@@ -1,0 +1,3478 @@
+openapi: 3.0.2
+info:
+  title: Gestão de transações e recebíveis
+  version: "1.1"
+security:
+  - basicAuth: []
+tags:
+  - name: Tokenização de cartão
+    description: Token de cartões e cartões de crédito utilizados nos pagamentos
+  - name: Transacoes
+    description: Operações de pagamento com dados de cartão de crédito e boleto
+  - name: Source
+    description: Manter source de pagamentos
+  - name: Boleto
+    description: Operações de pagamento via boleto bancário registrado
+  - name: Mundo Físico
+    description: Pareamento de POS usando a API
+  - name: Planos de Recorrência
+    description: Criação de planos de recorrência
+  - name: Assinatura de Recorrência
+    description: Criação de assinaturas de recorrência
+  - name: Fatura de Recorrência
+    description: Verificação de Faturas de recorrência
+  - name: Split (Regra de divisão) 
+    description: Regras de divisão (split) de um pagamento
+  - name: Recibo
+    description: Recibos de pagamentos realizados com sucesso 
+  - name: Recebível
+    description: Parcelas de recebimento de uma transação
+    
+paths:
+# V1
+
+  '/v1/marketplaces/{marketplace_id}/cards/tokens':
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+    post:
+      tags:
+        - 'Tokenização de cartão'
+      summary: 'Criar novo token de cartão'
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenCardRequest'
+      responses:
+        '200':
+          description: Token de cartão criado com sucesso
+        '400':
+          description: Requisição/Parâmetros invalidos
+        '404':
+          description: Marketplace/ não encontrado
+  '/v1/marketplaces/{marketplace_id}/tokens/{token_id}':
+    parameters:
+      - $ref: '#/components/parameters/marketplaceID'
+      - $ref: '#/components/parameters/tokenID'
+    get:
+      deprecated: true
+      tags:
+        - 'Tokenização de cartão'
+      summary: 'Listar detalhes de token de cartão/conta bancária'
+      description: ''
+      responses:
+        '200':
+          description: Token recuperado com sucesso
+        '404':
+          description: Marketplace/Token não encontrado
+  '/v1/marketplaces/{marketplace_id}/cards':  
+    parameters:
+      - $ref: '#/components/parameters/marketplaceID'
+    post:
+      tags:
+        - 'Tokenização de cartão'
+      summary: Associar cartão com comprador
+      description: 'Associar token de cartão com comprador'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CardRequest"
+      responses:
+        "200":
+          description: Cartão associado com sucesso
+        "400":
+          description: Requisição/Parâmetros invalidos
+        "404":
+          description: Marketplace/ não encontrado
+  '/v1/marketplaces/{marketplace_id}/cards/{card_id}':
+    parameters:
+      - $ref: '#/components/parameters/marketplaceID'
+      - $ref: '#/components/parameters/cardID'
+    get:
+      tags:
+        - 'Tokenização de cartão'
+      summary: Listar detalhes de cartão pelo identificador
+      description: ""
+      responses:
+        "200":
+          description: Cartão recuperado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardResponse"
+        "404":
+          description: Marketplace/Cartão não encontrado
+    delete:
+      tags:
+        - 'Tokenização de cartão'
+      summary: Remover cartão pelo identificador
+      description: ""
+      responses:
+        "200":
+          description: Cartão removido com sucesso
+        "404":
+          description: Marketplace/Cartão não encontrado
+
+  "/v1/marketplaces/{marketplace_id}/transactions":
+    parameters: 
+      - $ref: "#/components/parameters/marketplaceID"
+    post:
+      summary: Criar transação
+      tags:
+        - Transacoes
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              anyOf:
+                - $ref: "#/components/schemas/TransactionNoTokenRequest"
+                - $ref: "#/components/schemas/TransactionDisposableTokenRequest"
+                - $ref: "#/components/schemas/TransactionDigitalWalletRequest"
+                - $ref: "#/components/schemas/TransactionDigitalWalletSecondaryRequest"
+                - $ref: "#/components/schemas/TransactionSimpleBoletoTransactionRequest"
+                - $ref: "#/components/schemas/TransactionBoletoTransactionRequest"
+
+        description: Transação
+      responses:
+        "200":
+          description: Transação criada com sucesso
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/TransactionResponse"
+                  - $ref: "#/components/schemas/TransactionResponse"
+                  - $ref: "#/components/schemas/TransactionResponse"
+                  - $ref: "#/components/schemas/TransactionResponse"
+                  - $ref: "#/components/schemas/TransactionBoletoResponse"
+                  - $ref: "#/components/schemas/TransactionBoletoResponse"
+        "201":
+          description: Transação criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionBoletoResponse"
+        "404":
+          description: Transação não encontrada
+    get:
+      summary: Listar transaçoes do marketplace
+      tags:
+        - Transacoes
+      parameters:
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/sortParam"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/dateRangeParam"
+        - $ref: "#/components/parameters/dateRangeGTParam"
+        - $ref: "#/components/parameters/dateRangeGTEParam"
+        - $ref: "#/components/parameters/dateRangeLTParam"
+        - $ref: "#/components/parameters/dateRangeLTEParam"
+        - name: reference_id
+          in: query
+          description: Retorna transações onde o reference id for igual o informado
+          required: false
+          schema:
+            type: string
+        - $ref: "#/components/parameters/transactionStatus"
+        - name: payment_type
+          in: query
+          description: Retorna transações onde o payment type for igual o informado. Para
+            busca múltipla basta concatenar com ,
+          required: false
+          schema:
+            type: string
+            enum:
+              - credit
+              - boleto
+      responses:
+        "200":
+          description: Transações recuperadas com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transactions"
+        "404":
+          description: Marketplace não encontrado
+  "/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/transactions":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/sellerID"
+    get:
+      summary: Listar transaçoes por vendedor
+      tags:
+        - Transacoes
+      parameters:
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/sortParam"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/dateRangeParam"
+        - $ref: "#/components/parameters/dateRangeGTParam"
+        - $ref: "#/components/parameters/dateRangeGTEParam"
+        - $ref: "#/components/parameters/dateRangeLTParam"
+        - $ref: "#/components/parameters/dateRangeLTEParam"
+      responses:
+        "200":
+          description: Transações recuperadas com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transactions"
+        "404":
+          description: Marketplace não encontrado
+  "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Listar detalhes de transação pelo identificador
+      tags:
+        - Transacoes
+      responses:
+        "200":
+          description: Transação recuperada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionResponse"
+        "404":
+          description: Transação não encontrada
+    put:
+      summary: Alterar detalhes de transação pelo identificador
+      tags:
+        - Transacoes
+      deprecated: true
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - name: transaction_id
+          in: path
+          description: identificador da transação
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionUpdateRequest"
+        description: Transacao
+        required: true
+      responses:
+        "200":
+          description: Transação alterada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionResponse"
+        "404":
+          description: Transação não encontrada
+  "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/void":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+        - Transacoes
+      summary: Estornar transação cartão não presente
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionVoidRequest"
+        description: Transacao
+      responses:
+        "200":
+          description: Transação estornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionResponse"
+        "400":
+          description: Requisição/Parametros inválidos
+        "404":
+          description: Marketplace/Transação não encontrado
+  "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/cancelled-letter":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Disponibilizar link carta de cancelamento
+      tags:
+        - Transacoes
+      responses:
+        "200":
+          description: Transação recuperada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LetterCancelResponse"
+        "404":
+          description: Transação não encontrada
+  "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/capture":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+        - Transacoes
+      summary: Capturar transação cartão não presente
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionCaptureRequest"
+        description: Transacao
+      responses:
+        "200":
+          description: Transação capturada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionResponse"
+        "400":
+          description: Requisição/Parametros inválidos
+        "404":
+          description: Marketplace/Transação não encontrado
+  "/v1/marketplaces/{marketplace_id}/sources":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+    post:
+      tags:
+        - Source
+      summary: Criar source para utilização transação
+      description: Um objeto source permite você aceitar uma variedade de formas de
+        pagamento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SourceRequest"
+        description: Dados do source
+        required: true
+      responses:
+        "201":
+          description: Source criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SourceResponse"
+        "400":
+          description: Requisição/Parâmetros invalidos
+        "404":
+          description: Marketplace/ não encontrado
+  "/v1/marketplaces/{marketplace_id}/sources/{source_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: source_id
+        in: path
+        description: identificador do source
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Source
+      summary: Listar detalhes de source pelo identificador
+      description: ""
+      responses:
+        "200":
+          description: Source recuperado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SourceResponse"
+        "404":
+          description: Marketplace/Source não encontrado
+    delete:
+      tags:
+        - Source
+      summary: Remover source pelo identificador
+      description: ""
+      responses:
+        "200":
+          description: Source removido com sucesso
+        "404":
+          description: Marketplace/Source não encontrado
+  "/v1/marketplaces/{marketplace_id}/boletos/{boleto_id}/emails":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: boleto_id
+        in: path
+        description: identificador do boleto
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+        - Boleto
+      summary: Enviar cobrança de boleto por email
+      description: ""
+      responses:
+        "200":
+          description: Boleto enviado por email
+        "404":
+          description: Marketplace/Boleto não encontrado
+  "/v1/marketplaces/{marketplace_id}/boletos/{boleto_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: boleto_id
+        in: path
+        description: identificador do boleto
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Boleto
+      summary: Listar detalhes de boleto
+      description: ""
+      responses:
+        "200":
+          description: Boleto recuperado com sucesso
+        "404":
+          description: Marketplace/Boleto não encontrado
+  "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/approve":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+        - Boleto
+      summary: Aprovar boleto (somente sandbox)
+      description: ""
+      responses:
+        "200": 
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transactions"
+
+        "404":
+          description: Marketplace/Boleto não encontrado
+
+  "/v1/marketplaces/{marketplace_id}/terminals/pairing":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+    post:
+      tags:
+        - Mundo Físico
+      summary: Parear terminal POS
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TerminalRequest"
+        description: Split de transações
+
+      responses:
+        "200":
+          description: Terminal alterado com sucesso
+        "400":
+          description: Missing required param
+        "404":
+          description: Terminal não encontrado
+  "/v1/card-present/terminals/{identification_number}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/identificationNumberID"
+    get:
+      tags:
+        - Mundo Físico
+      summary: Buscar informações sobre terminal
+      description: ""
+      responses:
+        "200":
+          description: Terminal alterado com sucesso
+        "400":
+          description: Missing required param
+        "404":
+          description: Terminal não encontrado
+
+  "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/split_rules":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Split (Regra de divisão)
+      summary: Listar detalhes de Split por transação
+      description: ""
+      responses:
+        "200":
+          description: Split recuperado com sucesso
+        "404":
+          description: Marketplace/Transação não encontrado
+    post:
+      tags:
+        - Split (Regra de divisão)
+      summary: Criar Split por transação
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SplitRuleRequest"
+        description: Split de transações
+      responses:
+        "200":
+          description: Split criado com sucesso
+        "404":
+          description: Marketplace/Transação não encontrado
+  "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/split_rules/{id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: identificador do split
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Split (Regra de divisão)
+      summary: Recupera detalhes de Split por ID
+      description: ""
+      responses:
+        "200":
+          description: Split recuperado com sucesso
+        "404":
+          description: Marketplace/Transação não encontrado
+    put:
+      tags:
+        - Split (Regra de divisão)
+      summary: Alterar Split por transação
+      description: ""
+      responses:
+        "200":
+          description: Split alterado com sucesso
+        "404":
+          description: Marketplace/Transação não encontrado
+    delete:
+      tags:
+        - Split (Regra de divisão)
+      summary: Remover Split por transação
+      description: ""
+      responses:
+        "200":
+          description: Split criado com sucesso
+        "404":
+          description: Marketplace/Transação não encontrado
+
+  "/v2/marketplaces/{marketplace_id}/plans":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+      tags:
+        - Planos de Recorrência
+      summary: Criar um plano
+      requestBody: 
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanRequest'
+        description: Criar um plano
+      responses:
+        201:
+          description: plano criado com sucesso
+        400:
+          description: invalid input, object invalid
+    get:
+      tags:
+        - Planos de Recorrência
+      summary: Listar planos por marketplace
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/dateRangeParam'
+        - $ref: '#/components/parameters/dateRangeGTParam'
+        - $ref: '#/components/parameters/dateRangeGTEParam'
+        - $ref: '#/components/parameters/dateRangeLTParam'
+        - $ref: '#/components/parameters/dateRangeLTEParam'
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanResponse'
+        400:
+          description: bad input parameter
+  "/v2/marketplaces/{marketplace_id}/plans/{plan_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/planID"
+    get:
+      tags:
+        - Planos de Recorrência
+      summary: Recupera um plano pelo identificador
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanResponseItem'
+        400:
+          description: bad input parameter
+        404:
+          description: plan_id was not found
+    put:
+      tags:
+        - Planos de Recorrência
+      summary: Alterar plano pelo identificador
+      description: Alterar detalhes de um plano existente pelo identificador
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanRequest'
+        description: plan to update
+      responses:
+        200:
+          description: item updated
+        400:
+          description: invalid input, object invalid
+        404:
+          description: plan_id was not found
+    delete:
+      tags:
+        - Planos de Recorrência
+      summary: Deletar um plano pelo identificador
+      responses:
+        200:
+          description: item deleted
+        400:
+          description: invalid input, object invalid
+        404:
+          description: plan_id was not found
+  "/v2/marketplaces/{marketplace_id}/subscriptions":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+      tags:
+          - Assinatura de Recorrência
+      summary: Criar uma assinatura entre um comprador e um plano
+      description: subscription to add
+      requestBody: 
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionRequest'
+      responses:
+        201:
+          description: item created
+        400:
+          description: invalid input, object invalid
+    get:
+      tags:
+          - Assinatura de Recorrência
+      summary: Listar todas as assinatura de um marketplace
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/dateRangeParam'
+        - $ref: '#/components/parameters/dateRangeGTParam'
+        - $ref: '#/components/parameters/dateRangeGTEParam'
+        - $ref: '#/components/parameters/dateRangeLTParam'
+        - $ref: '#/components/parameters/dateRangeLTEParam'
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+        400:
+          description: bad input parameter
+  "/v2/marketplaces/{marketplace_id}/subscriptions/{subscription_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/subscriptionID"
+    get:
+      tags:
+       - Assinatura de Recorrência
+      summary: Listar os detalhes de uma assinatura pelo identificador
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                 $ref: '#/components/schemas/SubscriptionResponseItem'
+        400:
+          description: bad input parameter
+        404:
+          description: subscription_id not found
+    put:
+      tags:
+        - Assinatura de Recorrência
+      summary: Alterar os detalhes de uma assinatura pelo identificador
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionRequest'
+        description: subscription to add
+      responses:
+        200:
+          description: item updated
+        400:
+          description: invalid input, object invalid
+        404:
+          description: subscription_id not found
+    delete:
+      tags:
+        - Assinatura de Recorrência
+      summary: Remover uma assinatura pelo identificador
+      description: 
+        Assinatura é a relação entre um plano e um cliente. Possui uma data de início e representa um contrato de recorrência firmado entre o cliente e o parceiro.
+      responses:
+        200:
+          description: item deleted
+        400:
+          description: invalid input, object invalid
+        404:
+          description: subscription_id not found
+  "/v2/marketplaces/{marketplace_id}/subscriptions/{subscription_id}/suspend":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/subscriptionID"
+    post:
+      tags:
+        - Assinatura de Recorrência
+      summary: Suspender uma assinatura pelo identificador
+      description: |
+        Ao suspender uma assinatura, não serão mais geradas faturas
+      responses:
+        200:
+          description: item suspended
+        400:
+          description: invalid input, object invalid
+        404:
+          description: subscription_id not found
+  "/v2/marketplaces/{marketplace_id}/subscriptions/{subscription_id}/reactivate":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/subscriptionID"
+    post:
+      tags:
+          - Assinatura de Recorrência
+      summary: Reativa uma assinatura pelo identificador
+      description: |
+        Ao reativar uma assinatura que estava suspensa ela volta a gerar faturas
+      responses:
+        200:
+          description: item reativado
+        400:
+          description: invalid input, object invalid
+        404:
+          description: subscription_id not found
+  "/v2/marketplaces/{marketplace_id}/invoices":
+    post:
+      parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      tags:
+        - Fatura de Recorrência
+      summary: Criar uma fatura avulsa
+      description:  |
+        A fatura totaliza, em valores financeiros, mercadorias ou serviços que serão cobrados do cliente. Uma conta telefônica é um exemplo de fatura que você pode relacionar com seu cotidiano. Uma fatura pode conter vários itens: "Assinatura mensal", "Suporte técnico adicional", "Mensagens enviadas", etc.
+        Faturas podem existir independente de assinaturas e neste caso elas são chamadas de "faturas avulsas" e são ligadas diretamente ao cliente.
+        description: invoice to add
+      requestBody: 
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceRequest'
+      responses:
+        201:
+          description: item created
+        400:
+          description: invalid input, object invalid
+        409:
+          description: item already exists
+    get:
+      tags:
+        - Fatura de Recorrência
+      summary: Listar todas as faturas de um marketplace
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/dateRangeParam'
+        - $ref: '#/components/parameters/dateRangeGTParam'
+        - $ref: '#/components/parameters/dateRangeGTEParam'
+        - $ref: '#/components/parameters/dateRangeLTParam'
+        - $ref: '#/components/parameters/dateRangeLTEParam'
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceResponse'
+        400:
+          description: bad input parameter
+  "/v2/marketplaces/{marketplace_id}/invoices/{invoice_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/invoiceID"
+    get:
+      tags:
+          - Fatura de Recorrência
+      summary: Listar os detalhes de uma fatura pelo identificador
+      description: |
+        Você pode listar os detalhes de uma determinada fatura através do identificador
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceResponseItem'
+        400:
+          description: bad input parameter
+    put:
+      tags:
+          - Fatura de Recorrência
+      summary: Alterar detalhes de uma fatura pelo identificador
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceRequest'
+        description: plan to add
+      responses:
+        200:
+          description: item updated
+        400:
+          description: invalid input, object invalid
+    delete:
+      tags:
+          - Fatura de Recorrência
+      summary: Remover uma fatura pelo identificador
+      responses:
+        200:
+          description: item deleted
+        400:
+          description: invalid input, object invalid
+  "/v2/marketplaces/{marketplace_id}/invoices/{invoice_id}/approve":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/invoiceID"
+    post:
+      tags:
+          - Fatura de Recorrência
+      summary: Aprovar fatura pendente
+      description: |
+        Aprovar manualmente uma fatura pendente, sem que seja feita a cobrança ao cobrador
+      responses:
+        200:
+          description: invoice approved
+        400:
+          description: invalid input, object invalid
+  "/v2/marketplaces/{marketplace_id}/invoices/{invoice_id}/void":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/invoiceID"
+    post:
+      tags:
+          - Fatura de Recorrência
+      summary: Estornar e reembolsar fatura
+      description: |
+        Estornar uma fatura paga, sendo feito o processamento do estorno da forma de cobrança associada ao pagamento da fatura;
+      responses:
+        200:
+          description: fatura estornado com sucesso
+        400:
+          description: invalid input, object invalid
+  "/v2/marketplaces/{marketplace_id}/sellers/{customer_id}/invoices":
+    get:
+      tags:
+          - Fatura de Recorrência
+      summary: Listar faturas associadas a um vendedor pelo identificador
+      description: |
+        Listar os detalhes de todas as faturas associadas a um determinado vendedor pelo identificador
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/customerID"
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/dateRangeParam'
+        - $ref: '#/components/parameters/dateRangeGTParam'
+        - $ref: '#/components/parameters/dateRangeGTEParam'
+        - $ref: '#/components/parameters/dateRangeLTParam'
+        - $ref: '#/components/parameters/dateRangeLTEParam'
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceResponse'
+        400:
+          description: bad input parameter
+
+  "/v1/marketplaces/{marketplace_id}/receipts/{receipt_id}/emails":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: receipt_id
+        in: path
+        description: identificador do recibo
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+        - Recibo
+      summary: Enviar recibo por email
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                to:
+                  type: string
+                  description: Informar o email para envio
+                  example: "teste@teste.com.br"
+        description: Envio de recibo por email
+      responses:
+        "200":
+          description: Recibo enviado com sucesso
+        "404":
+          description: Marketplace/Recibo não encontrada
+  "/v1/marketplaces/{marketplace_id}/receipts/{receipt_id}/texts":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: receipt_id
+        in: path
+        description: identificador do recibo
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+        - Recibo
+      summary: Enviar recibo por SMS
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                to:
+                  type: string
+                  description: Informar país, código de área e o número do celular para envio
+                  example: "+55 21999099999"
+        description: Envio de recibo por sms
+      responses:
+        "200":
+          description: Recibo enviado com sucesso
+        "404":
+          description: Marketplace/Recibo não encontrada
+  "/v1/marketplaces/{marketplace_id}/receipts/{receipt_id}/send":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: receipt_id
+        in: path
+        description: identificador do recibo
+        required: true
+        schema:
+          type: string
+    post:
+      deprecated: true
+      tags:
+        - Recibo
+      summary: Enviar recibo por sms.email
+      description: ""
+      responses:
+        "200":
+          description: Recibo enviado com sucesso
+        "404":
+          description: Marketplace/Recibo não encontrada
+  "/v1/marketplaces/{marketplace_id}/receipts/{receipt_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: receipt_id
+        in: path
+        description: identificador do recibo
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Recibo
+      summary: Listar detalhes do recibo
+      description: ""
+      responses:
+        "200":
+          description: Recibo recuperado com sucesso
+        "404":
+          description: Marketplace/Recibo não encontrada
+    put:
+      deprecated: true
+      tags:
+        - Recibo
+      summary: Alterar detalhes do recibo
+      description: ""
+      responses:
+        "200":
+          description: Recibo alteardo com sucesso
+        "404":
+          description: Marketplace/Recibo não encontrada
+  "/v1/receipts/{marketplace_id}/{receipt_id}":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - name: receipt_id
+        in: path
+        description: identificador do recibo
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Recibo
+      summary: Renderizar template de recibo HTML
+      description: ""
+      security: []
+      responses:
+        "200":
+          description: Recibo renderizado com sucesso
+        "404":
+          description: Marketplace/Recibo não encontrada
+  "/v1/marketplaces/{marketplace_id}/receivables/{receivable_id}":
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        schema:
+          type: string
+      - name: receivable_id
+        in: path
+        description: identificador do recebível
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - "Recebível"
+      summary: 'Listar detalhes de recebível'
+      description: ''
+      responses:
+        '200':
+          description: Recebível recuperado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReceivableResponse"
+        '404':
+          description: Marketplace/Recebível não encontrado
+  "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/receivables":
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        schema:
+          type: string
+      - name: transaction_id
+        in: path
+        description: identificador da transação
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - "Recebível"
+      summary: 'Listar recebíveis por transação'
+      description: 'Listar todas as parcelas de recebimento por transação'
+      responses:
+        '200':
+          description: Recebível listado com sucesso
+          content:
+           application/json:
+             schema:
+               $ref: "#/components/schemas/ReceivableResponse"
+        '404':
+          description: Marketplace/Transação não encontrado
+  "/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/receivables":
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        schema:
+          type: string
+      - name: seller_id
+        in: path
+        description: Id do seller
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - "Recebível"
+      summary: 'Listar recebíveis por seller'
+      description: 'Listar todas as parcelas de recebimento por seller'
+      responses:
+        '200':
+          description: Recebível listado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReceivableResponse"
+        '404':
+          description: Marketplace/Seller não encontrado
+servers:
+  - url: https://api.zoop.ws
+  
+
+components:
+
+  parameters:
+    transactionStatus:
+      name: status
+      in: query
+      description: Retorna transações onde o status for igual o informado. Para busca
+        múltipla basta concatenar com ,
+      required: false
+      schema:
+        type: string
+        enum:
+          - succeeded
+          - failed
+          - canceled
+          - pre_authorized
+          - reversed
+          - refunded
+          - pending
+          - new
+          - partial_refunded
+          - dispute
+          - charged_back
+    marketplaceID:
+      name: marketplace_id
+      in: path
+      description: ID do marketplace
+      required: true
+      schema:
+        type: string
+    sellerID:
+      name: seller_id
+      in: path
+      description: identificador do seller
+      required: true
+      schema:
+        type: string
+    planID:
+      name: plan_id
+      in: path
+      required: true
+      schema:
+        type: string
+    subscriptionID:
+      in: path
+      name: subscription_id
+      required: true
+      schema:
+        type: string
+    invoiceID:
+      in: path
+      name: invoice_id
+      required: true
+      schema:
+        type: string
+    customerID:
+      in: path
+      name: customer_id
+      required: true
+      schema:
+        type: string
+    tokenID:
+      name: token_id
+      in: path
+      description: identificador do token
+      required: true
+      schema:
+        type: string
+    cardID:
+      name: card_id
+      in: path
+      description: identificador do cartão
+      required: true
+      schema:
+        type: string
+    identificationNumberID:
+      name: identification_number
+      in: path
+      description: identificador do terminal
+      required: true
+      schema:
+        type: string
+
+    limitParam:
+      name: limit
+      in: query
+      description: Limita o número de objetos retornados, podendo ser entre 1 e 100
+      required: false
+      schema:
+        type: number
+        format: int32
+        default: 20
+    sortParam:
+      name: sort
+      in: query
+      description: Determinar como ordenar a lista em relação a data de criação do objeto
+      required: false
+      schema:
+        type: string
+        enum:
+          - time-descending
+          - time-ascending
+        default: time-descending
+    offsetParam:
+      name: offset
+      in: query
+      description: Determina o ponto de inicio dos registros retornados
+      required: false
+      schema:
+        type: number
+        format: int32
+        default: 0
+    dateRangeParam:
+      name: date_range
+      in: query
+      description: Filtro na lista base de objetos pela data de criação. O valor pode ser
+        uma string com um horário em UTC timestamp, ou pode ser uma lista com os
+        parametros abaixo
+      required: false
+      schema:
+        type: number
+    dateRangeGTParam:
+      name: date_range[gt]
+      in: query
+      description: Retorna valores onde a data maior que o timestamp informado
+      required: false
+      schema:
+        type: number
+    dateRangeGTEParam:
+      name: date_range[gte]
+      in: query
+      description: Retorna valores onde a data for maior ou igual que o timestamp informado
+      required: false
+      schema:
+        type: number
+    dateRangeLTParam:
+      name: date_range[lt]
+      in: query
+      description: Retorna valores onde a data for menor que o timestamp informado
+      required: false
+      schema:
+        type: number
+    dateRangeLTEParam:
+      name: date_range[lte]
+      in: query
+      description: Retorna valores onde a data for menor ou igual que o timestamp informado
+      required: false
+      schema:
+        type: number
+
+
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      
+  schemas:
+    Card:
+      type: object
+      description: "Objeto agrupador dos dados de cartão do pagador da transação"
+      properties:
+        holder_name:
+          type: string
+          description: "Nome no cartão"
+        expiration_month:
+          type: string
+          description: "Mês de vencimento. Ex.: 9"
+          example: "9"
+        expiration_year:
+          type: string
+          description: "Ano de vencimento. Ex.: 2027"
+          example: "2027"
+        security_code:
+          type: string
+          description: "Código de segurança (CVV) que fica atrás do cartão"
+    SimpleCardResponse:
+      type: object
+      description: "Objeto agrupador dos dados de cartão do pagador da transação"
+      properties:
+        id: 
+          type: string
+          description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
+        holder_name:
+          type: string
+          description: "Nome no cartão"
+        expiration_month:
+          type: string
+          description: "Mês de vencimento. Ex.: 9"
+          example: "9"
+        expiration_year:
+          type: string
+          description: "Ano de vencimento. Ex.: 2027"
+          example: "2027"
+        security_code:
+          type: string
+          description: "Código de segurança (CVV) que fica atrás do cartão"
+    ReceivableResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Identificador do recebível retornado"
+          example: 001decf0cca34b1b9ead40d8511a1afd
+        resource: 
+          type: string
+          description: "Recurso referente a informação retornada"
+          example: receivable
+        status:
+          type: string
+          description: "Status do recebível"
+          example: pending
+        recipient:
+          type: string
+          description: "Identificador do recebedor"
+          example: 047cf3697440496fa588672f76c0e3db
+        transaction:
+          type: string
+          description: "Identificador da transação que originou o recebível"
+          example: 3088ace16dea427e8383a25201fbad22
+        split_rule:
+          type: string
+          description: "Se houve o split da transação, irá aparecer o identificador do split"
+          example: null
+        installment: 
+          type: string
+          description: "Informação se a respeito de parcelamento da transação"
+          example: null
+        liable: 
+          type: string
+          description: "Liable da transação"
+          example: true
+        amount: 
+          type: string
+          description: "Valor liquido da transação"
+          example: "34.40"
+        gross_amount:
+          type: string
+          description: "Valor bruto da transação"
+          example: "36.00"
+        anticipation_fee:
+          type: string
+          description: "Taxa da antecipação quando o recebível for antecipado"
+          example: "0.00"
+        paid_at: 
+          type: string
+          description: "Data da liquidação do recebível"
+          example: null
+        created_at:
+          type: string
+          description: "Data de criação do recebível"
+          example: "2020-07-09T19:04:30+00:00"
+        transaction_created_at:
+          type: string
+          description: "Data da criação da transação"
+          example: "2020-07-09T19:04:26+00:00"
+        canceled_at:
+          type: string
+          description: "Data de cancelamento do recebível"
+          example: null
+        expected_on: 
+          type: string
+          description: "Data prevista de liquidação do recebível"
+          example: "2020-08-10T00:00:00+00:00"
+        authorization_code: 
+          type: string
+          description: "Código de autorização da transação"
+          example: "Z133937-000260004"
+        id_original_receivable: 
+          type: string
+          description: "ID original do recebível"
+          example: null
+        prepaid: 
+          type: string
+          description: "Se o recebível foi antecipado"
+          example: false
+    TransactionV2:
+      type: object
+      required:
+        - amount
+      properties:
+        token:
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+          description: "Identificador retornado na tokenização do cartão"
+        customer:
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+          description: "Identificador do cliente dono da carteira digital"
+        source:
+          type: object
+          description: "Objeto agrupador das informações de fonte de pagamento da transação"
+          properties:
+            type:
+              type: string
+              description: "Tipo da fonte de pagamento. Por enquanto, o único tipo aceito é card"
+            card:
+              $ref: "#/components/schemas/Card"
+            description:
+              type: string
+              description: "Uma descrição breve do parcelamento"
+        on_behalf_of:
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+          description: "Identificador do vendedor responsável pela transação"
+        amount:
+          type: integer
+          example: 300
+          description: "Número centavos a ser cobrado na transação"
+        capture:
+          type: boolean
+          example: true
+          description: "Indica autorização direta quando true ou pré-autorização quando false. Default: true"
+        description:
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+          description: "Uma descrição breve da motivação da sua transação"
+        reference_id:
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+          description: "Identificador da transação no seu sistema, como por exemplo, um código de pedido."
+        statement_descriptor:
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+          description: "A descrição à aparecer na fatura do pagador. Para evitar disputas e can que seja algo que o cliente rapidamente identifique a cobrança."
+        installment_plan:
+          type: object
+          description: "Plano de parcelamento da transação"
+          properties:
+            mode:
+              type: string
+              description: "Modo de cobrança de juros no parcelamento, sendo pago pelo comprador quando with_interest e pelo lojista quando interest_free"
+            number_installments:
+              type: string
+              description: "Quantidade de parcelas"
+            description:
+              type: string
+              description: "Uma descrição breve do parcelamento"
+        split_rules:
+          type: object
+          description: "Regras de divisão de recebimento financeiro para outros vendedores envolvidos na transação"
+          properties:
+            recipient:
+              type: string
+              description: "Identificador do recebedor do montante líquido calculado pelo sistema"
+            liable:
+              type: boolean
+              description: "Define se o recebedor entra no rateio do prejuízo em caso de reembolso forçado, arcando com a quantia recebida quando true e não arcando quando false. Default false"
+            amount:
+              type: integer
+              description: "Valor fixo a ser aplicado recebido pela transação. Somado quando utilizado em conjunto com o campo split_rules[].percentage. Obrigatório quando não passado o campo split_rules[].percentage."
+            percentage:
+              type: integer
+              description: "Valor percentual a ser aplicado recebido pela transação. Somado quando utilizado em conjunto com o campo split_rules[].amount. Obrigatório quando não passado o campo split_rules[].amount."
+            charge_processing_fee:
+              type: boolean
+              description: "Aplica o percentual solicitado em cima do valor bruto da transação quando true ou em cima do valor líquido quando false. Default false. Tem efeito apenas quando usado em conjunto com o campo split_rules[].percentage."
+    Transactions:
+      type: object
+      properties:
+        resource:
+          type: string
+          example: list
+        uri:
+          type: string
+          example: /v1/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/transactions
+        limit:
+          type: number
+          example: 100
+        offset:
+          type: number
+          example: 0
+        has_more:
+          type: boolean
+          example: false
+        query_count:
+          type: number
+          example: 2
+        total:
+          type: number
+          example: 2
+        items:
+          $ref: "#/components/schemas/TransactionResponse"
+    TransactionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 0009462369b14ee596aabfd27faa97f7
+        status:
+          description: Retorna transações onde o status for igual o informado. Para busca múltipla basta concatenar com ,
+          type: string
+          enum:
+            - succeeded
+            - failed
+            - canceled
+            - pre_authorized
+            - reversed
+            - refunded
+            - pending
+            - new
+            - partial_refunded
+            - dispute
+            - charged_back
+        resource:
+          type: string
+          example: transaction
+        amount:
+          type: string
+          example: "1.00"
+        original_amount:
+          type: string
+          example: "1.00"
+        currency:
+          type: string
+          example: BRL
+        description:
+          type: string
+          example: BRL
+        payment_type:
+          enum:
+            - credit
+            - boleto
+          example: credit
+        transaction_number:
+          type: string
+          example: W-12343124
+        sales_receipt:
+          type: string
+          example: 00d5ce5086c84c0f824cf660b020881a
+        on_behalf_of:
+          type: string
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        statement_descriptor:
+          type: string
+          example: SuaMarcaAqui
+        payment_method:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 2f008ac254964e658be566241cc87c1a
+            resource:
+              type: string
+              example: card
+            description:
+              type: string
+              example: null
+            card_brand:
+              type: string
+              example: Visa
+            first4_digits:
+              type: string
+              example: "4893"
+            last4_digits:
+              type: string
+              example: null
+            expiration_month:
+              type: string
+              example: "7"
+            expiration_year:
+              type: string
+              example: "2023"
+            holder_name:
+              type: string
+              example: LEITE/ANDRE S DE M
+            is_active:
+              type: boolean
+              example: false
+            is_valid:
+              type: boolean
+              example: true
+            is_verified:
+              type: boolean
+              example: false
+            customer:
+              type: string
+              example: e4e8c5b569da48b28d896385f5481bcf
+            fingerprint:
+              type: string
+              example: 9f2843f0c1b08d6018927b4e5e884a869ae49
+            uri:
+              type: string
+              example: /v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/2f008ac254964e658be566241cc87c1a
+            metadata:
+              type: object
+            created_at:
+              type: string
+              format: dateTime
+              example: 2015-04-17T06:39:52+00:00
+            updated_at:
+              type: string
+              format: dateTime
+              example: 2015-04-17T06:39:52+00:00
+        point_of_sale:
+          type: object
+          properties:
+            entry_mode:
+              type: string
+              enum:
+                - manually_keyed
+                - magstripe
+                - barcode
+                - ocr
+                - chip
+                - contactless_chip
+                - magstripe_fallback
+                - manually_keyed_fallback
+                - contactless_magstripe
+              example: chip
+            identification_number:
+              type: string
+              example: 4b7d03e6aa01463bb5673f04a7717db9
+        refunded:
+          type: boolean
+          example: false
+        voided:
+          type: boolean
+          example: false
+        captured:
+          type: boolean
+          example: false
+        fees:
+          type: string
+          example: "0.05"
+        fee_details:
+          type: object
+          properties:
+            amount:
+              type: string
+              example: "0.05"
+            prepaid:
+              type: boolean
+              example: true
+            currency:
+              type: string
+              example: BRL
+            type:
+              type: string
+              example: zoop_credit_fee_d0
+            description:
+              type: string
+              example: Zoop prepaid card-present credit fee
+        uri:
+          type: string
+          example: >
+            /v1/marketplaces/3249465a7753536b62545a6a684b0000/transactions/0009462369b14ee596aabfd27faa97f7
+        metadata:
+          type: object
+        expected_on:
+          type: string
+          format: dateTime
+          example: 2015-04-17T06:39:52+00:00
+        created_at:
+          type: string
+          format: dateTime
+          example: 2015-04-17T06:39:52+00:00
+        updated_at:
+          type: string
+          format: dateTime
+          example: 2015-04-17T06:39:52+00:00
+    TransactionBoletoResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 0009462369b14ee596aabfd27faa97f7
+        resource:
+          type: string
+          example: transaction
+        status:
+          description: Retorna transações onde o status for igual o informado. Para busca múltipla basta concatenar com ,
+          type: string
+          example: pending
+        amount:
+          type: string
+          example: "3.00"
+        original_amount:
+          type: string
+          example: "3.00"
+        currency:
+          type: string
+          example: BRL
+        description:
+          type: string
+          example: Venda
+        payment_type:
+          type: string
+          example: boleto
+        transaction_number:
+          type: string
+          example: null
+        gateway_authorizer:
+          type: string
+          example: ITAU
+        app_transaction_uid:
+          type: string
+          example: null
+        refunds:
+          type: string
+          example: null
+        rewards:
+          type: string
+          example: null
+        discounts:
+          type: string
+          example: null
+        pre_authorization:
+          type: string
+          example: null
+        sales_receipt:
+          type: string
+          example: 00d5ce5086c84c0f824cf660b020881a
+        on_behalf_of:
+          type: string
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        customer:
+          type: string
+          example: 3d5ccfdfcdc74918982276c933842a98
+        statement_descriptor:
+          type: string
+          example: SuaMarcaAqui
+        payment_method:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 0195470428304b368e98bede3316ac5d
+            zoop_boleto_id:
+              type: string
+              example: null
+            resource:
+              type: string
+              example: boleto
+            description:
+              type: string
+              example: venda
+            reference_number:
+              type: string
+              example: "10672107"
+            document_number:
+              type: string
+              example: "10672107"
+            expiration_date:
+              type: string
+              format: dateTime
+              example: 2021-03-06T00:00:00+00:00
+            payment_limit_date:
+              type: string
+              format: dateTime
+              example: null
+            recipient:
+              type: string
+              example: "Estabelecimento L P Silva"
+            bank_code:
+              type: string
+              example: "109"
+            customer:
+              type: string
+              example: "3d5ccfdfcdc74918982276c933842a98"
+            address:
+              type: string
+              example: null
+            sequence:
+              type: string
+              example: "148824"
+            url:
+              type: string
+              example: "https://api-boleto-production.s3.amazonaws.com/4efbad0e595343fbbe9f9725d6fc5769/047cf3697440496fa588672f76c0e3db/603fc5b4cb2de307ddda3ca1.html"
+            barcode:
+              type: string
+              example: "34191091076721074893431977690002185510000000300"
+            created_at:
+              type: string
+              format: dateTime
+              example: 2015-04-17T06:39:52+00:00
+            updated_at:
+              type: string
+              format: dateTime
+              example: 2015-04-17T06:39:52+00:00
+            status:
+              type: string
+              example: "not_paid"
+        source:
+          type: string
+          example: null
+        point_of_sale:
+          type: object
+          properties:
+            entry_mode:
+              type: string
+              enum:
+                - manually_keyed
+                - magstripe
+                - barcode
+                - ocr
+                - chip
+                - contactless_chip
+                - magstripe_fallback
+                - manually_keyed_fallback
+                - contactless_magstripe
+              example: barcode
+            identification_number:
+              type: string
+              example: null
+        installment_plan:
+          type: string
+          example: null
+        refunded:
+          type: boolean
+          example: false
+        voided:
+          type: boolean
+          example: false
+        captured:
+          type: boolean
+          example: true
+        fees:
+          type: string
+          example: "0.00"
+        fee_details:
+          type: object
+          example: null
+        uri:
+          type: string
+          example: >
+            /v1/marketplaces/4efbad0e595343fbbe9f9725d6fc9769/transactions/f851cc9e5d724e2780d53d46b78a7c1c
+        metadata:
+          type: object
+        expected_on:
+          type: string
+          format: dateTime
+          example: null
+        created_at:
+          type: string
+          format: dateTime
+          example: 2021-03-03T17:21:55+00:00
+        updated_at:
+          type: string
+          format: dateTime
+          example: 2021-03-03T17:21:55+00:00
+        payment_authorization:
+          type: string
+          example: null
+        history:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: 754e145a117949228e79a99773e46d60
+              transaction:
+                type: string
+                example: 0009462369b14ee596aabfd27faa97f7
+              amount:
+                type: string
+                example: "3.00"
+              operation_type:
+                type: string
+                example: "created"
+              status:
+                type: string
+                example: "succeeded"
+              response_code:
+                type: string
+                example: "null"
+              response_message:
+                type: string
+                example: "null"
+              authorization_code:
+                type: string
+                example: "null"
+              authorizer_id:
+                type: string
+                example: "null"
+              authorization_nsu:
+                type: string
+                example: "null"
+              gatewayResponseTime:
+                type: string
+                example: "null"
+              authorizer:
+                type: string
+                example: "null"
+              created_at:
+                type: string
+                format: dateTime
+                example: 2021-03-03T17:21:55+00:00
+
+    TransactionUpdateRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          example: BRL
+        metadata:
+          type: object
+    TransactionVoidRequest:
+      type: object
+      required:
+        - on_behalf_of
+        - amount
+      properties:
+        on_behalf_of:
+          type: string
+          description: Identificador do seller responsável pela venda
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        amount:
+          type: integer
+          description: valor da venda a ser estornado em centavos
+        void_rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/VoidRulesResponse"
+    VoidRulesResponse:
+      type: object
+      properties:
+        recipient:
+          type: string
+          description: Identificador do seller participante do split
+          example: 1e9ee3e290d040769806c79e6ef94ee3
+        amount:
+          type: integer
+          description: valor da venda a ser estornado em centavos
+    TransactionCaptureRequest:
+      type: object
+      required:
+        - on_behalf_of
+        - amount
+      properties:
+        on_behalf_of:
+          type: string
+          description: Identificador do seller responsável pela venda
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        amount:
+          type: integer
+          description: valor da venda a ser capturado em centavos. para captura parcial
+            basta enviar valor a menor, sendo possível realizar somente uma
+            captura parcial por autorização 
+    SplitRuleRequest:
+      type: object
+      required:
+        - amount
+      properties:
+        recipient:
+          type: string
+          description: Identificador do seller recebedor
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        liable:
+          type: boolean
+          description: define se o recebedor arca com prejuízo em caso de chargeback ou
+            não. 1 arca; 0 não arca.
+          default: 0
+        charge_processing_fee:
+          type: boolean
+          description: define se vai ser feito split em cima do valor bruto (0) ou do valor
+            líquido (1) da transação. Caso o split seja realizado por valor líquido, a taxa 
+            será dividida entre o recipient e o on_behalf_of.
+          default: 0
+        charge_recipient_processing_fee:
+          type: boolean
+          description: Carrega o valor da taxa da venda para o recipient quando definido como 1 ou true.
+          default: 0
+        is_gross_amount:
+          type: boolean
+          description: Quando o valor (amount) é passado exatamente igual ao valor da transação ocorre o
+           erro pois, o parceiro esquece da taxa Zoop. Para evitar esse tipo de problema, deve-se usar 
+           está opção como 1 ou true e, com isso, a API irá considerar a taxa Zoop antes do split. 
+          default: 0
+        percentage:
+          type: integer
+          description: percentual da venda a ser splitado.
+        amount:
+          type: integer
+          description: valor em centavos a ser splitado.
+    TerminalRequest:
+      type: object
+      required:
+        - seller_id
+      properties:
+        seller:
+          type: string
+          description: Identificador do seller
+          example: 005846dadde34e28ba7b9fecfccc989a
+        marketplace_id:
+          type: boolean
+          description: Identificador do seller
+          example: 3249465a7753536b62545a6a684b0000
+        token:
+          type: string
+          description: Identificador do seller
+          example: 123456
+        isStaging:
+          type: boolean
+          description: false para ambiente de produção.
+          example: false
+    CardRequest:
+      type: object
+      required:
+        - token
+        - customer
+      properties:
+        token:
+          type: string
+          description: Identificador do token de cartão a ser associado ao customer
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        customer:
+          type: string
+          description: Identificador do customer
+    CardResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único do cartão
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        resource:
+          type: string
+          description: Tipo de recurso
+          example: card
+        description:
+          type: string
+          description: Descrição do cartão
+          example: Cartão trabalho
+        card_brand:
+          type: string
+          description: Bandeira do cartão
+          example: Visa
+        first4_digits:
+          type: string
+          description: Primeiros 4 dígitos do cartão
+          example: "4929"
+        fingerprint:
+          type: string
+          description: Identificador de segurança da transação
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        customer:
+          type: string
+          description: Identificador do customer
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        expiration_month:
+          type: string
+          description: Mês da expiração cartão
+          example: "9"
+        expiration_year:
+          type: string
+          description: Ano da expiração cartão
+          example: "2020"
+        holder_name:
+          type: string
+          example: Joao da Silva
+        is_active:
+          type: boolean
+          example: true
+        is_valid:
+          type: boolean
+          example: true
+        is_verified:
+          type: boolean
+          example: true
+        address:
+          type: string
+        verification_checklist:
+          type: object
+          properties:
+            postal_code_check:
+              type: string
+              example: unchecked
+            security_code_check:
+              type: string
+              example: unchecked
+            address_line1_check:
+              type: string
+              example: unchecked
+        metadata:
+          type: object
+        uri:
+          type: string
+          example: /v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/02ec41795637446d805b6795b3b3331e
+        created_at:
+          type: string
+          example: 2019-05-06T12:39:27+00:00
+        updated_at:
+          type: string
+          example: 2019-05-06T12:39:34+00:00
+    SourceResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 0009462369b14ee596aabfd27faa97f7
+        status:
+          type: string
+          enum:
+            - pending
+            - charged
+            - deleted
+          example: charged
+        usage:
+          type: string
+          enum:
+            - single_use
+            - reusable
+          default: single_use
+        amount:
+          type: string
+          example: "1.00"
+          description: valor a ser cobrado na venda (opcional)
+        currency:
+          type: string
+          example: BRL
+          description: moeda do valor a ser cobrado na venda (opcional)
+        description:
+          type: string
+          example: BRL
+          description: descrição da venda quando gerada (opcional)
+        type:
+          type: string
+          enum:
+            - card
+          example: card
+        capture:
+          type: boolean
+          example: false
+          description: Capturar transação (true) ou criar uma pre-autorização (false) para
+            ser capturada a posteriori
+        on_behalf_of:
+          type: string
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        reference_id:
+          type: string
+          example: "10902"
+          description: ID referência da sua aplicação VARCHAR(500)
+        card:
+          type: object
+          description: objeto obrigatório no tipo card e card_and_wallet
+          properties:
+            id:
+              type: string
+              example: 2f008ac254964e658be566241cc87c1a
+            amount:
+              type: string
+              example: "1.00"
+              description: valor a ser cobrado na venda (opcional)
+            resource:
+              type: string
+              example: card
+            description:
+              type: string
+              example: null
+            card_brand:
+              type: string
+              example: Visa
+            first4_digits:
+              type: string
+              example: "4893"
+            last4_digits:
+              type: string
+              example: null
+            expiration_month:
+              type: string
+              example: "7"
+            expiration_year:
+              type: string
+              example: "2023"
+            holder_name:
+              type: string
+              example: LEITE/ANDRE S DE M
+            is_active:
+              type: boolean
+              example: false
+            is_valid:
+              type: boolean
+              example: true
+            is_verified:
+              type: boolean
+              example: false
+            customer:
+              type: string
+              example: e4e8c5b569da48b28d896385f5481bcf
+            fingerprint:
+              type: string
+              example: 9f2843f0c1b08d6018927b4e5e884a869ae49
+            uri:
+              type: string
+              example: /v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/2f008ac254964e658be566241cc87c1a
+            metadata:
+              type: object
+            created_at:
+              type: string
+              format: dateTime
+              example: 2015-04-17T06:39:52+00:00
+            updated_at:
+              type: string
+              format: dateTime
+              example: 2015-04-17T06:39:52+00:00
+        installment_plan:
+          type: object
+          properties:
+            number_installments:
+              type: integer
+              description: número de parcelas (1-12)
+        statement_descriptor:
+          type: string
+          example: CORRENTISTA 03  3011
+        customer:
+          type: object
+          description: identificador do comprador que será cobrado
+          properties:
+            id:
+              type: string
+              example: 1e5ee2e290d040769806c79e6ef94ee1
+              description: identificador do comprador que será cobrado para source tipo
+                customer, wallet e card_and_wallet
+            amount:
+              type: integer
+              example: 100
+              description: valor a ser cobrado neste customer (opcional)
+        token:
+          type: object
+          description: identificador do token de cartão que será cobrado obrigatorio no
+            source tipo token
+          properties:
+            id:
+              type: string
+              description: identificador do cartão para source tipo card
+              example: 1e5ee2e290d040769806c79e6ef94ee1
+            amount:
+              type: integer
+              example: 100
+              description: valor a ser cobrado neste token (opcional)
+        uri:
+          type: string
+          example: >
+            /v1/marketplaces/3249465a7753536b62545a6a684b0000/sources/0009462369b14ee596aabfd27faa97f7
+        metadata:
+          type: object
+        created_at:
+          type: string
+          format: dateTime
+          example: 2015-04-17T06:39:52+00:00
+        updated_at:
+          type: string
+          format: dateTime
+          example: 2015-04-17T06:39:52+00:00
+    SourceRequest:
+      type: object
+      required:
+        - type
+        - usage
+        - currency
+      properties:
+        usage:
+          type: string
+          enum:
+            - single_use
+            - reusable
+          default: single_use
+        amount:
+          type: integer
+          example: 100
+          description: valor em centavos a ser cobrado na venda (opcional)
+        currency:
+          type: string
+          example: BRL
+          description: moeda do valor a ser cobrado na venda
+        description:
+          type: string
+          example: BRL
+          description: descrição da venda quando gerada (opcional)
+        type:
+          type: string
+          enum:
+            - card
+          example: card
+        capture:
+          type: boolean
+          example: false
+          description: Capturar transação (true) ou criar uma pre-autorização (false) para
+            ser capturada a posteriori
+        on_behalf_of:
+          type: string
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        reference_id:
+          type: string
+          example: "10902"
+          description: ID referência da sua aplicação VARCHAR(500)
+        card:
+          type: object
+          description: objeto obrigatório no tipo card e card_and_wallet
+          properties:
+            id:
+              type: string
+              example: 8c795953db6342be9fc14a36d5308bed
+              description: identificador do cartão para source tipo card
+            amount:
+              type: integer
+              example: 100
+              description: valor a ser cobrado neste cartao (opcional)
+            holder_name:
+              type: string
+            expiration_month:
+              type: string
+              description: mês de expiração do cartão (MM)
+            expiration_year:
+              type: string
+              description: ano de expiração do cartão (AAAA)
+            card_number:
+              type: string
+              description: Número do cartão
+            security_code:
+              type: string
+              description: Código de segurança do cartão (CVC)
+        installment_plan:
+          type: object
+          properties:
+            number_installments:
+              type: integer
+              description: número de parcelas (1-12)
+        statement_descriptor:
+          type: string
+          example: CORRENTISTA 03  3011
+        customer:
+          type: object
+          description: identificador do comprador que será cobrado
+          properties:
+            id:
+              type: string
+              example: 1e5ee2e290d040769806c79e6ef94ee1
+              description: identificador do comprador que será cobrado para source tipo
+                customer, wallet e card_and_wallet
+            amount:
+              type: integer
+              example: 100
+              description: valor a ser cobrado neste customer (opcional)
+        token:
+          type: object
+          description: identificador do token de cartão que será cobrado obrigatorio no
+            source tipo token
+          properties:
+            id:
+              type: string
+              description: identificador do cartão para source tipo card
+              example: 1e5ee2e290d040769806c79e6ef94ee1
+            amount:
+              type: integer
+              example: 100
+              description: valor a ser cobrado neste token (opcional)
+        metadata:
+          type: object
+    TransactionCNPRequest:
+      type: object
+      required:
+        - amount
+        - currency
+        - description
+        - payment_type
+        - on_behalf_of
+      properties:
+        amount:
+          type: integer
+          example: 100
+          description: valor em centavos a ser cobrado pela transação
+        currency:
+          type: string
+          example: BRL
+        description:
+          type: string
+          example: Venda pelo site
+        payment_type:
+          type: string
+          enum:
+            - credit
+            - boleto
+          example: credit
+        capture:
+          type: boolean
+          example: false
+          description: Capturar transação (true) ou criar uma pre-autorização (false) para
+            ser capturada a posteriori
+        on_behalf_of:
+          type: string
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        reference_id:
+          type: string
+          example: "10902"
+          description: ID referência da sua aplicação VARCHAR(500)
+        payment_method:
+          type: object
+          properties:
+            expiration_date:
+              type: string
+              example: 20170410
+              description: Data de vencimento utilizado nas vendas por boleto
+            top_instructions:
+              type: array
+              description: Instruções para o comprador utilizado nas vendas por boleto
+              items:
+                type: string
+        source:
+          $ref: "#/components/schemas/SourceRequest"
+        installment_plan:
+          type: object
+          properties:
+            number_installments:
+              type: integer
+              description: número de parcelas (1-12)
+        statement_descriptor:
+          type: string
+          example: SuaMarcaAqui
+          description: Nome da empresa que aparecerá na fatura. Utilizando esse campo você
+            sobrescreve a informação do cadastro do Vendedor.
+        customer:
+          type: string
+          description: identificador do comprador que será cobrado
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        token:
+          type: string
+          description: identificador do token de cartão que será cobrado
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        metadata:
+          type: object
+                  
+    TransactionNoTokenRequest:
+      type: object
+      title: Autorizacao Direta
+      required:
+        - amount
+        - currency
+        - description
+        - payment_type
+        - on_behalf_of
+      properties:
+        on_behalf_of:
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+          description: "Identificador do seller responsável pela venda."
+        description:
+          type: string
+          example: "Uma descrição breve da motivação da sua transação"
+        statement_descriptor:
+          type: string
+          example:  "Loja do Joao"
+          description: "Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor.."
+        payment_type:
+          type: string
+          enum:
+            - credit
+            - boleto
+          default: "credit"
+          description: Tipo de pagamento
+        capture:
+          type: boolean
+          example: true
+          description: Capturar transação (true) ou criar uma pre-autorização (false) para
+            ser capturada a posteriori
+        reference_id:
+          type: string
+          example: "10902"
+          description: ID referência da sua aplicação VARCHAR(500)
+        source:
+          type: object
+          properties:
+            usage:
+              type: string
+              example: "single_use"
+            amount: 
+              type: number
+              example: 700
+              description: Valor em centavos a ser cobrado pela transação
+            currency: 
+              type: string
+              example: "BRL"
+              description: 'Moeda do valor a ser cobrado na venda "BRL"'
+            type:
+              type: string 
+              example: "card"
+            card:
+              type: object
+              properties:
+                card_number: 
+                  type: string
+                  example: "4539003370725497"
+                  description: Número do cartão
+                holder_name: 
+                  type: string
+                  example: "João Silva"
+                  description: Nome do portador do cartão.
+                expiration_month:  
+                  type: string
+                  example: "03"
+                  description: mês de expiração do cartão (MM)
+                expiration_year:  
+                  type: string
+                  example: "2027"
+                  description: ano de expiração do cartão (AAAA)
+                security_code:  
+                  type: string
+                  example: "123"
+                  description: Código de segurança do cartão (CVC)
+        installment_plan:
+          type: object
+          properties:
+            number_installments:
+              type: integer
+              description: número de parcelas (1-12)
+    TransactionDisposableTokenRequest:
+      type: object
+      title: Token descartavel
+      required:
+        - amount
+        - currency
+        - description
+        - payment_type
+        - on_behalf_of
+      properties:
+        on_behalf_of:   
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+          description: "Identificador do seller responsável pela venda."
+        token:   
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+          description: "Id do token de cartão gerado. Após o uso é descartado."
+        amount:   
+          type: string
+          example: 300
+          description: Valor em centavos a ser cobrado pela transação
+        currency:   
+          type: string
+          example: "BRL"
+          description: 'Moeda do valor a ser cobrado na venda "BRL"'
+        description:   
+          type: string
+          example: "Uma descrição breve da motivação da sua transação"
+        statement_descriptor:   
+          type: string
+          example: "Loja do Joao"
+          description: "Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor.."
+        payment_type:   
+          type: string 
+          enum:
+            - credit
+            - boleto
+          default: "credit"
+          description: Tipo de pagamento
+        capture:
+          type: boolean
+          example: true
+          description: Capturar transação (true) ou criar uma pre-autorização (false) para
+            ser capturada a posteriori
+        reference_id:
+          type: string
+          example: "10902"
+          description: ID referência da sua aplicação VARCHAR(500)
+        installment_plan:
+          type: object
+          properties:
+            number_installments:
+              type: integer
+              description: número de parcelas (1-12)
+    TransactionDigitalWalletRequest:
+      type: object
+      title: Usando Customer ID
+      required:
+        - amount
+        - currency
+        - description
+        - payment_type
+        - on_behalf_of
+      properties:
+        on_behalf_of:  
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7732"
+          description: "Identificador do seller responsável pela venda."
+        customer:  
+          type: string
+          example: "c07ee65cda84495787cd091fea554549"
+          description: "identificador do comprador que será cobrado."
+        amount:  
+          type: number
+          example: 300
+          description: Valor em centavos a ser cobrado pela transação
+        currency:  
+          type: string
+          example: "BRL"
+          description: 'Moeda do valor a ser cobrado na venda "BRL"'
+        description:  
+          type: string
+          example: "Uma descrição breve da motivação da sua transação"
+        statement_descriptor:  
+          type: string
+          example: "Loja do Joao"
+          description: "Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor.."
+        payment_type: 
+          type: string 
+          enum:
+            - credit
+            - boleto
+          default: "credit"
+          description: Tipo de pagamento
+        capture:
+          type: boolean
+          example: true
+          description: Capturar transação (true) ou criar uma pre-autorização (false) para
+            ser capturada a posteriori
+        reference_id:
+          type: string
+          example: "10902"
+          description: ID referência da sua aplicação VARCHAR(500)
+        installment_plan:
+          type: object
+          properties:
+            number_installments:
+              type: integer
+              description: número de parcelas (1-12)
+    TransactionDigitalWalletSecondaryRequest: 
+      type: object
+      title: Usando card ID
+      required:
+        - amount
+        - currency
+        - description
+        - payment_type
+        - on_behalf_of
+        - source
+      properties:
+        on_behalf_of: 
+          type: string
+          example: "822a8bda73c546a8b2f12a5ebcce7733"
+          description: "Identificador do seller responsável pela venda."
+        statement_descriptor: 
+          type: string
+          example: "Loja do Joao"
+          description: "Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor.."
+        currency: 
+          type: string
+          example: "BRL"
+          description: 'Moeda do valor a ser cobrado na venda "BRL"'
+        amount: 
+          type: number
+          example: 700
+          description: Valor em centavos a ser cobrado pela transação
+        payment_type: 
+          type: string
+          enum:
+            - credit
+            - boleto
+          default: "credit"
+          description: Tipo de pagamento
+        source:
+          type: object
+          properties:
+            type: 
+              type: string
+              example: "card"
+            card:
+              description: Objeto obrigatório no tipo card.
+              type: object
+              properties:
+                id:  
+                  type: string
+                  example: "822a8bda73c546a8b2f12a5ebcce7732"
+                  description: identificador do cartão para source tipo card
+        capture:
+          type: boolean
+          example: true
+          description: Capturar transação (true) ou criar uma pre-autorização (false) para
+            ser capturada a posteriori
+        reference_id:
+          type: string
+          example: "10902"
+          description: ID referência da sua aplicação VARCHAR(500)
+        installment_plan:
+          type: object
+          properties:
+            number_installments:
+              type: integer
+              description: número de parcelas (1-12)
+    TransactionSimpleBoletoTransactionRequest:
+      type: object
+      title: Boleto Simples
+      required:
+        - amount
+        - currency
+        - description
+        - payment_type
+        - on_behalf_of
+        - customer
+      properties:
+        on_behalf_of:    
+          type: string
+          example: "573e2aa71cb94ecda8dee14087327b48"
+          description: "Identificador do seller responsável pela venda."
+        customer:    
+          type: string
+          example: "573e2aa71cb94ecda8dee14087327b48"
+          description: "identificador do comprador que será cobrado."
+        amount:    
+          type: number
+          example: 300
+          description: Valor em centavos a ser cobrado pela transação
+        currency:    
+          type: string
+          example: "BRL"
+          description: 'Moeda do valor a ser cobrado na venda "BRL"'
+        description:    
+          type: string
+          example: "venda"
+        payment_type:    
+          type: string 
+          enum:
+            - credit
+            - boleto
+          default: "boleto"
+          description: Tipo de pagamento
+        reference_id:
+          type: string
+          example: "10902"
+          description: ID referência da sua aplicação VARCHAR(500)
+    TransactionBoletoTransactionRequest:
+      type: object
+      title: Boleto Completo
+      required:
+        - amount
+        - currency
+        - description
+        - payment_type
+        - on_behalf_of
+        - customer
+      properties:
+        on_behalf_of:     
+          type: string
+          example: "573e2aa71cb94ecda8dee14087327b48"
+          description: "Identificador do seller responsável pela venda."
+        customer:     
+          type: string
+          example: "573e2aa71cb94ecda8dee14087327b48"
+          description: "identificador do comprador que será cobrado."
+        amount:     
+          type: number
+          example: 300
+          description: Valor em centavos a ser cobrado pela transação
+        currency:     
+          type: string
+          example: "BRL"
+          description: 'Moeda do valor a ser cobrado na venda "BRL"'
+        description:     
+          type: string
+          example: "Venda de ingressos para o show do dia 30"
+        reference_id:     
+          type: string
+          example: "reference_5132"
+        payment_type:     
+          type: string
+          enum:
+            - boleto
+          description: Tipo de pagamento
+        payment_method:
+          type: object
+          properties:
+            expiration_date:      
+              type: string
+              example: "2018-11-20"
+              description: Data de expiração do boleto no formato (AAAA-MM-DD)
+            payment_limit_date:       
+              type: string
+              example: "2018-11-20"
+              description: Data limite para o pagamento do boleto (AAAA-MM-DD)
+            body_instructions:       
+              type: array
+              items:
+                example: "Pedido #5132"
+              description: Instruções utilizadas na parte central do boleto. É possível até 5 instruções
+            billing_instructions:
+              type: object
+              properties:
+                late_fee:
+                  description: Objeto para utilização de cobrança da multa por atraso de pagamento do boleto
+                  type: object
+                  properties:
+                    mode:        
+                      type: string
+                      enum:
+                        - FIXED
+                        - PERCENTAGE
+                      default: "FIXED"
+                      description: "Modo de cobrança. Valores aceitos: FIXED (fixo) ou PERCENTAGE (percentual)"
+                    amount:         
+                      type: number
+                      example: 500
+                      description: "Valor fixo para o tipo de multa FIXED (fixa)"
+                    percentage:         
+                      type: number
+                      example: 10
+                      description: "Porcentagem baseado no valor do boleto para tipo de multa PERCENTAGE (percentual)"
+                    start_date:         
+                      type: string
+                      example: "2018-11-20"
+                      description: "A data inicial para cobrança de multa"
+                interest:
+                  description: Objeto para utilização de cobrança de juros
+                  type: object
+                  properties:
+                    mode:        
+                      type: string
+                      enum:
+                        - DAILY_AMOUNT
+                        - DAILY_PERCENTAGE
+                        - MONTHLY_PERCENTAGE
+                      default: "DAILY_AMOUNT"
+                      description: "Modo de cobrança. Valores aceitos: DAILY_AMOUNT, DAILY_PERCENTAGE, MONTHLY_PERCENTAGE"
+                    amount:         
+                      type: number
+                      example: 200
+                      description: "Valor fixo para o tipo de juros DAILY_AMOUNT"
+                    percentage:         
+                      type: number
+                      example: 10
+                      description: "Porcentagem baseado no valor do boleto para tipo de juros DAILY_PERCENTAGE ou MONTHLY_PERCENTAGE"
+                    start_date:         
+                      type: string
+                      example: "2018-11-20"
+                      description: "A data inicial para cobrança dos juros"
+                discount:
+                  description: Objeto para aplicar descontos no boleto para uma ou mais datas limite
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      mode:        
+                        type: string
+                        enum:
+                          - FIXED
+                          - PERCENTAGE
+                        default: "FIXED"
+                        description: "Modo de cobrança. Valores aceitos: FIXED(fixo), PERCENTAGE(percentual)."
+                      amount:         
+                        type: number
+                        example: 500
+                        description: "Valor fixo para o tipo de desconto FIXED"
+                      limit_date:          
+                        type: string
+                        example: "2018-11-09"
+                        description: 'Data limite para o pagamento ocorrer com desconto. Deve ser anterior a data informada em "expiration date"'
+
+    PlanResponse:
+      type: object
+      properties:
+        resource:
+          type: string
+          example: "list"
+        uri:
+          type: string
+          example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/plan/"
+        limit:
+          type: number
+          example: 100
+        offset:
+          type: number
+          example: 0
+        has_more:
+          type: boolean
+          example: false
+        total:
+          type: number
+          example: 2
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlanResponseItem'
+    PlanResponseItem:
+      type: object
+      required:
+        - name
+        - frequency
+        - interval
+        - payment_methods
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+          example: d290f1ee6c544b0190e6d701748f0851
+        frequency:
+          description: Frequencia que o plano será cobrado
+          type: string
+          enum:
+            - daily
+            - monthly
+            - weekly
+            - annually
+        interval:
+          description: intervalo entre frequencia de cobrança
+          type: integer
+          format: int32
+        payment_methods:
+          description: métodos de pagamento utilizados
+          type: array
+          items:
+            type: string
+            enum:
+            - credit
+            default: 'credit'
+        amount:
+          description: valor plano em centavos
+          type: integer
+          format: int32
+        setup_amount:
+          description: valor do setup do plano em centavos
+          type: integer
+          format: int32
+        currency:
+          description: moeda utilizada
+          type: string
+          example: BRL
+        description:
+          description: descrição do plano
+          type: string
+        name:
+          description: nome do plano
+          type: string
+        duration:
+          description: tempo de duração do plano em relação à frequencia escolhida
+          type: integer
+          format: int32
+        status:
+          description: status do plano
+          type: string
+          enum:
+            - active
+            - canceled
+        resource:
+          type: string
+          example: plan
+        created_at:
+          type: integer
+          format: datetime
+        updated_at:
+          type: integer
+          format: datetime
+        uri:
+          type: string
+          example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/plan/73c0789594c1470cb10cc957f2435c00"
+    SubscriptionRequest:
+      type: object
+      properties:
+        plan:
+          description: referência a um plano existente
+          type: string
+          format: uuid
+          example: d290f1ee6c544b0190e6d701748f0851
+        on_behalf_of:
+          description: referência a um vendedor existente
+          type: string
+          format: uuid
+          example: d290f1ee6c544b0190e6d701748f0851
+        customer:
+          description: referência a um comprador existente
+          type: string
+          format: uuid
+          example: d290f1ee6c544b0190e6d701748f0851
+        payment_method:
+          description: método de pagamento
+          type: string
+          enum:
+            - credit
+          default: 'credit'
+        due_date:
+          description: data da próxima cobrança
+          type: string
+          format: date
+          example: 2017-07-21
+        expiration_date:
+          description: data final da assinatura
+          type: string
+          format: date
+          example: 2017-07-25
+        amount:
+          description: valor em centavos
+          type: integer
+          format: int32
+        currency:
+          description: moeda utilizada, no formato ISO4217
+          type: string
+          example: BRL
+    SubscriptionResponse:
+      type: object
+      properties:
+        resource:
+          type: string
+          example: "list"
+        uri:
+          type: string
+          example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/subscription/"
+        limit:
+          type: number
+          example: 100
+        offset:
+          type: number
+          example: 0
+        has_more:
+          type: boolean
+          example: false
+        query_count:
+          type: number
+          example: 2
+        total:
+          type: number
+          example: 2
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionResponseItem'
+    SubscriptionResponseItem:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          example: d290f1ee6c544b0190e6d701748f0851
+        plan:
+          description: referência a um plano existente
+          type: string
+          format: uuid
+          example: d290f1ee6c544b0190e6d701748f0851
+        on_behalf_of:
+          description: referência a um vendedor existente
+          type: string
+          format: uuid
+          example: d290f1ee6c544b0190e6d701748f0851
+        customer:
+          description: referência a um comprador existente
+          type: string
+          format: uuid
+          example: d290f1ee6c544b0190e6d701748f0851
+        description:
+          description: descrição da assinatura
+          type: string
+          format: text
+        payment_method:
+          description: método de pagamento
+          type: string
+          enum:
+            - credit
+          default: 'credit'
+        due_date:
+          description: data da próxima cobrança
+          type: string
+          format: date
+          example: 2017-07-21
+        due_since_date:
+          description: data da primeira cobrança da assinatura
+          type: string
+          format: date
+          example: 2017-07-21
+        expiration_date:
+          description: data final da assinatura
+          type: string
+          format: date
+          example: 2017-07-25
+        amount:
+          description: valor em centavos
+          type: integer
+          format: int32
+        currency:
+          description: moeda utilizada no formato ISO4217
+          type: string
+          example: BRL
+        status:
+          description: status da assinatura
+          type: string
+          enum:
+            - active
+            - suspended
+            - canceled
+            - expired
+        resource:
+          type: string
+          example: subscription
+        created_at:
+          type: string
+          format: date-time
+          example: 2017-07-25
+        updated_at:
+          type: string
+          format: date-time
+          example: 2017-07-25
+        suspended_at:
+          type: string
+          format: date-time
+          example: 2017-07-25
+        uri:
+          type: string
+          example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/subscription/73c0789594c1470cb10cc957f2435c00"
+    InvoiceRequest:
+      type: object
+      properties:
+        subscription:
+          description: referência a uma assinatura existente
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        on_behalf_of:
+          description: referência a um vendedor existente
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        customer:
+          description: referência a um comprador existente
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        description:
+          description: descrição da assinatura
+          type: string
+          format: text
+        payment_method:
+          description: método de pagamento
+          type: string
+          enum:
+            - credit
+          default: 'credit'
+        due_date:
+          description: data da próxima cobrança
+          type: string
+          format: date
+          example: 2017-07-21
+        expiration_date:
+          description: data de vencimento cobrança
+          type: string
+          format: date
+          example: 2017-07-25
+        amount:
+          description: valor em centavos
+          type: integer
+          format: int32
+        currency:
+          description: moeda utilizada seguindo o padrão ISO4217
+          type: string
+          example: BRL
+        paid_at:
+          description: data do pagamento
+          readOnly: true
+          type: string
+          format: date-time
+        voided_at:
+          description: data do cancelamento
+          readOnly: true
+          type: integer
+          format: date-time
+        retries:
+          description: quantidade de vezes que tentou efetuar o pagamento
+          type: integer
+          format: int32
+        max_retries:
+          description: quantidade máxima de vezes que se deve tentar efetuar o pagamento
+          type: integer
+          format: int32
+        status:
+          description: status da cobrança
+          readOnly: true
+          type: string
+          enum:
+            - pending
+            - paid
+            - canceled
+            - failed
+    InvoiceResponse:
+      type: object
+      properties:
+        resource:
+          type: string
+          example: "list"
+        uri:
+          type: string
+          example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/invoice/"
+        limit:
+          type: number
+          example: 100
+        offset:
+          type: number
+          example: 0
+        has_more:
+          type: boolean
+          example: false
+        query_count:
+          type: number
+          example: 2
+        total:
+          type: number
+          example: 2
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvoiceResponseItem'
+    InvoiceResponseItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee6c544b0190e6d701748f0851
+        subscription:
+          description: referência a uma assinatura existente
+          type: string
+          format: uuid
+          example: d290f1ee6c544b0190e6d701748f0851
+        on_behalf_of:
+          description: referência a um vendedor existente
+          type: string
+          format: uuid
+          example: d290f1ee6c544b0190e6d701748f0851
+        customer:
+          description: referência a um comprador existente
+          type: string
+          format: uuid
+          example: d290f1ee6c544b0190e6d701748f0851
+        invoice_customer:
+          description: dados do comprador associado a assinaturas
+          $ref: '#/components/schemas/InvoiceCustomer'
+        description:
+          description: descrição da assinatura
+          type: string
+          format: text
+        payment_methods:
+          description: métodos de pagamentos
+          type: string
+          enum:
+            - credit
+          default: 'credit'
+        due_date:
+          description: data da próxima cobrança
+          type: string
+          format: date
+          example: 2017-07-21
+        expiration_date:
+          description: data de vencimento cobrança
+          type: string
+          format: date
+          example: 2017-07-25
+        amount:
+          description: valor em centavos
+          type: integer
+          format: int32
+        currency:
+          description: moeda utilizada
+          type: string
+          example: BRL
+        paid_at:
+          readOnly: true
+          description: data do pagamento
+          type: string
+          format: date-time
+        voided_at:
+          readOnly: true
+          description: data do cancelamento
+          type: string
+          format: date-time
+        retries:
+          description: quantidade de vezes que tentou efetuar o pagamento
+          type: integer
+          format: int32
+        max_retries:
+          description: quantidade máxima de vezes que se deve tentar efetuar o pagamento
+          type: integer
+          format: int32
+        status:
+          description: status da cobrança
+          type: string
+          enum:
+            - pending
+            - paid
+            - over-due
+            - canceled
+            - failed
+        resource:
+          type: string
+          example: invoice
+        metadata:
+          type: array
+          items:
+            type: object
+        created_at:
+          readOnly: true
+          type: string
+          format: date-time
+        updated_at:
+          readOnly: true
+          type: string
+          format: date-time
+        uri:
+          type: string
+          example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/invoice/73c0789594c1470cb10cc957f2435c00"
+    InvoiceCustomer:
+      type: object
+      properties:
+        uuid:
+          readOnly: true
+          description: id do comprador na API de pagamento
+          type: string
+          format: uuid
+        first_name:
+          readOnly: true
+          description: nome do comprador
+          type: string
+        last_name:
+          readOnly: true
+          description: sobrenome do comprador
+          type: string
+        taxpayer_id:
+          readOnly: true
+          description: documento de identificação
+          type: string
+        email:
+          readOnly: true
+          description: endereço de email
+          type: string
+          format: email
+          
+    PlanRequest:
+      type: object
+      required:
+      - name
+      - frequency
+      - interval
+      - payment_methods
+      - currency
+      properties:
+        frequency:
+          description: Frequencia que o plano será cobrado
+          type: string
+          enum:
+            - daily
+            - monthly
+            - weekly
+            - annually
+        interval:
+          description: intervalo entre frequencia de cobrança
+          type: integer
+          format: int32
+        payment_methods:
+          description: métodos de pagamento utilizados
+          type: array
+          items:
+            type: string
+            enum:
+             - credit
+            default: 'credit'
+        amount:
+          description: valor plano em centavos
+          type: integer
+          format: int32
+        setup_amount:
+          description: valor do setup do plano em centavos
+          type: integer
+          format: int32
+        currency:
+          description: moeda utilizada no formato ISO 4217
+          type: string
+          example: BRL
+        description:
+          description: descrição do plano
+          type: string
+        name:
+          description: nome do plano
+          type: string
+        duration:
+          description: tempo de duração do plano em relação à frequencia escolhida
+          type: integer
+          format: int32
+    TokenCardRequest:
+      type: object
+      properties:
+        holder_name: 
+          type: string
+          description: Nome do portador
+        expiration_month:
+          type: string
+          description: mês de expiração do cartão (MM)
+        expiration_year:
+          type: string
+          description: ano de expiração do cartão (AAAA)
+        card_number:
+          type: string
+          description: Número do cartão
+        security_code:
+          type: string
+          description: Código de segurança do cartão (CVC)
+    LetterCancelResponse:
+      type: object
+      properties:
+            url:
+              type: string
+              example: "https://zoop-cancelled-letters-prod.s3.amazonaws.com/Carta_Cancelamento_Venda_fe39ddda9b384ddc91c6efab6b74dc8e_2021-02-27T14%3A03%3A54.pdf?AWSAccessKeyId=AKIAUYSUHOIR5WKLRRHD&Expires=1614866804&Signature=qN0EzTrPqOV8Iov%2BMwVjxb3q4AY%3D"
+
+          
