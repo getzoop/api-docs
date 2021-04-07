@@ -209,7 +209,7 @@ paths:
     get:
       tags:
         - 'Vendedores'
-      summary: Download documentos de um vendedor pelo ID
+      summary: Download documentos de um vendedor por ID
       description: ''
       operationId: getSellerDocument
       responses:
@@ -226,7 +226,7 @@ paths:
     get:
       tags:
         - 'Vendedores'
-      summary: Recupera detalhes de vendedor pelo id, os campos começando por "business_" são específicos para empresas.
+      summary: Recupera detalhes de vendedor por ID.
       produces:
         - application/json
       responses:
@@ -239,7 +239,7 @@ paths:
     delete:
       tags:
         - 'Vendedores'
-      summary: Deleta um de vendedor pelo id
+      summary: Deleta vendedor por ID
       produces:
         - application/json
       responses:
@@ -293,7 +293,7 @@ paths:
     get:
       tags:
         - 'Vendedores'
-      summary: Buscando de vendedor por CPF/CNPJ
+      summary: Buscando vendedor por CPF/CNPJ
       consumes:
         - application/json
       produces:
@@ -389,18 +389,24 @@ paths:
         '404':
           description: Marketplace não encontrado
   '/v1/marketplaces/{marketplace_id}/buyers/{buyer_id}':
-    parameters:
-      - $ref: '#/parameters/marketplaceId'
-      - $ref: '#/parameters/buyerId'
     put:
       tags:
         - 'Compradores'
-      summary: 'Alterar detalhes de comprador'
+      summary: 'Alterar comprador'
       description: ''
       consumes:
         - application/json
       produces:
         - application/json
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - $ref: '#/parameters/buyerId'
+        - in: body
+          name: buyer data
+          description: buyer object
+          required: true
+          schema:
+           $ref: '#/definitions/BuyerRequest'
       responses:
         '200':
           description: Comprador alterado com sucesso
@@ -417,6 +423,9 @@ paths:
       description: ''
       produces:
         - application/json
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - $ref: '#/parameters/buyerId'  
       responses:
         '200':
           description: Comprador alterado com sucesso
@@ -427,10 +436,13 @@ paths:
     delete:
       tags:
         - 'Compradores'
-      summary: 'Remover comprador pelo identificador'
+      summary: 'Remover comprador por ID'
       description: ''
       produces:
         - application/json
+      parameters:
+        - $ref: '#/parameters/marketplaceId'
+        - $ref: '#/parameters/buyerId'
       responses:
         '200':
           description: Comprador removido com sucesso
