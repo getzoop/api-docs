@@ -252,6 +252,33 @@ paths:
           description: Transferência já efetuada
         '404':
           description: Marketplace/Transferência não encontrada
+          
+  /v1/marketplaces/{marketplace_id}/transfers/{transfer_id}/transactions:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: transfer_id
+        in: path
+        description: identificador da transferência
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Transferências'
+      summary: 'Listar transações associadas a transferência'
+      description: ''
+      deprecated: false
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transferência recuperada com sucesso
+        '404':
+          description: Marketplace/Transferência não encontrada
+          
   /v1/marketplaces/{marketplace_id}/adjustments/{owner}/to/{receiver}:
     parameters:
       - name: marketplace_id
