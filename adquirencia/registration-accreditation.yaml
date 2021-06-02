@@ -682,7 +682,7 @@ paths:
     post:
       tags:
         - 'Plano de Vendas'
-      summary: 'Associar assinatura de plano de venda'
+      summary: 'Associar plano de venda'
       description: ''
       parameters:
         - in: body
@@ -698,7 +698,7 @@ paths:
       
       responses:
         '200':
-          description: Assinatura de plano de venda removido com sucesso
+          description: Plano de venda removido com sucesso
         '404':
           description: Marketplace não encontrado
     get:
@@ -740,13 +740,13 @@ paths:
     delete:
       tags:
         - 'Plano de Vendas'
-      summary: 'Desassociar assinatura de plano de venda'
+      summary: 'Desassociar plano de venda'
       description: ''
       produces:
         - application/json
       responses:
         '200':
-          description: Assinatura de plano de venda desassociado com sucesso
+          description: Plano de venda desassociado com sucesso
         '404':
           description: Marketplace não encontrado
   '/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/subscriptions':
