@@ -47,10 +47,17 @@ paths:
       responses:
         '200':
           description: Token de cartão criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenCardResponse"
         '400':
-          description: Requisição/Parâmetros invalidos
-        '404':
-          description: Marketplace/ não encontrado
+          description: "Requisição/Missing required param:  Please verify request parameters."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenCardResponse400"
+
   '/v1/marketplaces/{marketplace_id}/tokens/{token_id}':
     parameters:
       - $ref: '#/components/parameters/marketplaceID'
@@ -82,10 +89,16 @@ paths:
       responses:
         "200":
           description: Cartão associado com sucesso
-        "400":
-          description: Requisição/Parâmetros invalidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardResponseAssociate"
         "404":
-          description: Marketplace/ não encontrado
+          description: Cartão associado sem sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardResponseAssociate404"
   '/v1/marketplaces/{marketplace_id}/cards/{card_id}':
     parameters:
       - $ref: '#/components/parameters/marketplaceID'
@@ -101,9 +114,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CardResponse"
+                $ref: "#/components/schemas/CardListResponse"
         "404":
-          description: Marketplace/Cartão não encontrado
+          description: Cartão recuperado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardListResponse404"
     delete:
       tags:
         - 'Tokenização de cartão'
@@ -112,8 +129,16 @@ paths:
       responses:
         "200":
           description: Cartão removido com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardRemove"
         "404":
-          description: Marketplace/Cartão não encontrado
+          description: Cartão removido sem sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardRemove404"
 
   "/v1/marketplaces/{marketplace_id}/transactions":
     parameters: 
@@ -3468,6 +3493,424 @@ components:
         security_code:
           type: string
           description: Código de segurança do cartão (CVC)
+    TokenCardResponse:
+      type: object
+      properties:
+        id: 
+          type: string
+          description: Id do token
+          example: 1e5ee2e290d040769806c79e6ef94ee1
+        resource:
+          type: string
+          description: Tipo de recurso
+          example: token
+        used:
+          type: string
+          description: token não utilizado
+          example: False
+        type:
+          type: string
+          description: Tipo de recuros
+          example: card
+        card:
+          type: object
+          properties:        
+            id:
+              type: string
+              description: Id do cartão
+              example: 2f008ac254964e658be566241cc87c1a
+            resource:
+              type: string
+              description: Tipo de recurso
+              example: card
+            description:
+              type: string
+              description: ""
+              example: Null
+            card_brand:
+              type: string
+              description: Bandeira do cartão
+              example: Visa
+            first4_digits:
+              type: string
+              description: Quatros primeiros dígitos do cartão.
+              example: 4539
+            expiration_month:
+              type: string
+              description: Mês de expiração.
+              example: 12
+            expiration_year:
+              type: string
+              description: Ano de expiração.
+              example: 12
+            holder_name:
+              type: string
+              description: Nome do portador
+              example: Julio Alvarenga
+            is_active:
+              type: string
+              description: Ativo
+              example: false
+            is_valid:
+              type: string
+              description: valido
+              example: true
+            is_verified:
+              type: string
+              description: verificado
+              example: false
+            customer:
+              type: string
+              description: ""
+              example: Null
+            fingerprint:
+              type: string
+              description: Digital
+              example: f689b03585fce7e8a1836366ffe1ad1255f4df8735b5462f6204a3a8a3474a12
+            address:
+              type: string
+              description: ""
+              example: Null
+            verification_checklist:
+              type: object
+            postal_code_check:
+              type: string
+              description: ""
+              example: unchecked
+            security_code_check:
+              type: string
+              description: ""
+              example: unchecked
+            address_line1_check:
+              type: string
+              description: ""
+              example: unchecked
+            metadata:
+              type: object
+            uri:
+              type: string
+              example: /v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/2f008ac254964e658be566241cc87c1a
+            created_at:
+              type: string
+              format: dateTime
+              example: 2015-04-17T06:39:52+00:00  
+            updated_at:
+              type: string
+              format: dateTime
+              example: 2015-04-17T06:39:52+00:00        
+        uri:
+          type: string
+          example: /v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/2f008ac254964e658be566241cc87c1a
+        created_at:
+          type: string 
+          format: dateTime
+          example: 2015-04-17T06:39:52+00:00  
+        updated_at:
+          type: string
+          format: dateTime
+          example: 2015-04-17T06:39:52+00:00       
+          
+    CardResponseAssociate:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID do token
+          example: dab47c14aa284bcd874dbeda519f735c
+        resource:
+          type: string
+          description: Tipo de recurso
+          example: card        
+        description:
+          type: string
+          description: Descrição
+          example: Null        
+        card_brand:
+          type: string
+          description: Bandeira do cartão
+          example: Visa        
+        first4_digits:
+          type: string
+          description: Quatros primeiros dígitos do cartão.
+          example: 4539
+        last4_digits:
+          type: string
+          description: Quatros ultimos dígitos do cartão.
+          example: 5497
+        expiration_month:
+          type: string
+          description: Mês de expiração.
+          example: 1
+        expiration_year:
+          type: string
+          description: Ano de expiração.
+          example: 2025
+        holder_name:
+          type: string
+          description: Nome do portador
+          example: Julio Alvarenga
+        is_active:
+          type: string
+          description: Ativo
+          example: true
+        is_valid:
+          type: string
+          description: valido
+          example: true
+        is_verified:
+          type: string
+          description: verificado
+          example: false
+        customer:
+          type: string
+          description: ID do customer
+          example: 005846dadde34e28ba7b9fecfccc989a
+        fingerprint:
+          type: string
+          description: Digital
+          example: f689b03585fce7e8a1836366ffe1ad1255f4df8735b5462f6204a3a8a3474a12
+        address:
+          type: string
+          description: Endereço
+          example: Null
+        verification_checklist:
+          type: object
+          properties:
+            postal_code_check:
+              type: string
+              description: Verificação de código postal
+              example: unchecked
+            security_code_check: 
+              type: string
+              description: Verificação do código de segurança
+              example: fail
+            address_line1_check:
+              type: string
+              description: Verificação de endereço
+              example: unchecked
+        metadata:
+          type: object
+        uri:
+          type: string
+          example: /v1/marketplaces/4efbad0e595343fbbe9f9725d6fc9769/cards/dab47c14aa284bcd874dbeda519f735c"
+        created_at:
+          type: string
+          format: dateTim
+          example: 2021-06-10T19:02:46+00:00 
+        updated_at:
+          type: string
+          format: dateTime
+          example: 2021-06-10T19:03:18+00:00    
+    TokenCardResponse400:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:        
+            status:
+              type: string
+              description: Status
+              example: Bad Request
+            status_code:
+              type: string
+              description: Código do erro
+              example: 400         
+            type:
+              type: string
+              description: Tipo de erro
+              example: invalid_request_error
+            category:
+              type: string
+              description: Categoria de erro
+              example: missing_required_param
+            message: 
+              type: string
+              description: Mensagem de erro
+              example: "Missing required param: expiration_month. Please verify request parameters."
+    CardResponseAssociate404:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:        
+            status:
+              type: string
+              description: Status
+              example: Not Found
+            status_code:
+              type: string
+              description: Código do erro
+              example: 404         
+            type:
+              type: string
+              description: Tipo de erro
+              example: invalid_request_error
+            category:
+              type: string
+              description: Categoria de erro
+              example: resource_not_found
+            message: 
+              type: string
+              description: Mensagem de erro
+              example: "Sorry, the token/customer (id: 86082ac13aea49d5b55543f96cb7b123) you are trying to use does not exist or has been deleted."
+    CardListResponse: 
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único do cartão
+          example: b351cbac25a84f289ba9f5339e8d6327
+        resource:
+          type: string
+          description: Tipo de recurso
+          example: card
+        description:
+          type: string
+          description: Descrição do cartão
+          example: null
+        card_brand:
+          type: string
+          description: Bandeira do cartão
+          example: Visa
+        first4_digits:
+          type: string
+          description: Primeiros 4 dígitos do cartão
+          example: "4929"        
+        last4_digits:
+          type: string
+          description: Primeiros 4 dígitos do cartão
+          example: "5497"
+        expiration_month:
+          type: string
+          description: Mês da expiração cartão
+          example: "1"
+        expiration_year:
+          type: string
+          description: Ano da expiração cartão
+          example: "2025"
+        holder_name:
+          type: string
+          example: Testes testes
+        is_active:
+          type: string
+          description: Ativo
+          example: true
+        is_valid:
+          type: string
+          description: Valido
+          example: true
+        is_verified:
+          type: string
+          description: Verificado
+          example: false
+        customer:
+          type: string
+          description: ID do customer
+          example: 047cf3697440496fa588672f76c0e3db
+        fingerprint:
+          type: string
+          description: Digital
+          example: f689b03585fce7e8a1836366ffe1ad1255f4df8735b5462f6204a3a8a3474a12  
+        address:
+          type: string
+          description: Endereço
+          example: null
+        verification_checklist:
+          type: object
+          properties:
+            postal_code_check:
+              type: string
+              description: Verificação de código postal
+              example: unchecked
+            security_code_check: 
+              type: string
+              description: Verificação do código de segurança
+              example: fail
+            address_line1_check:
+              type: string
+              description: Verificação de endereço
+              example: unchecked
+        metadata:
+          type: object
+        uri:
+          type: string
+          example: "/v1/marketplaces/4efbad0e595343fbbe9f9725d6fc9769/cards/b351cbac25a84f289ba9f5339e8d6327"
+        created_at:
+          type: string
+          format: dateTim
+          example: 2021-06-11T13:39:34+00:00 
+        updated_at:
+          type: string
+          format: dateTime
+          example: 2021-06-11T13:39:38+00:00
+    CardListResponse404:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:        
+            status:
+              type: string
+              description: Status
+              example: Not Found
+            status_code:
+              type: string
+              description: Código do erro
+              example: 404
+            type:
+              type: string
+              description: Tipo de erro
+              example: invalid_request_error
+            category:
+              type: string
+              description: Categoria de erro
+              example: resource_not_found
+            message: 
+              type: string
+              description: Mensagem de erro
+              example: "Sorry, the resource you are trying to use does not exist or has been deleted."
+    CardRemove:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único do cartão
+          example: 8eb14e4ed16248bc8b6260dd02fba203
+        resource:
+          type: string
+          description: Tipo do recurso
+          example: card
+        deleted:
+          type: string
+          description: cartão deletado
+          example: true
+    CardRemove404:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:        
+            status:
+              type: string
+              description: Status
+              example: Not Found
+            status_code:
+              type: string
+              description: Código do erro
+              example: 404
+            type:
+              type: string
+              description: Tipo de erro
+              example: invalid_request_error
+            category:
+              type: string
+              description: Categoria de erro
+              example: resource_not_found
+            message: 
+              type: string
+              description: Mensagem de erro
+              example: "Sorry, the resource you are trying to use does not exist or has been deleted."
+              
     LetterCancelResponse:
       type: object
       properties:
