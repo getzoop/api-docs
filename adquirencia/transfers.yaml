@@ -1,0 +1,1472 @@
+swagger: '2.0'
+host: api.zoop.ws
+info:
+  title: Repasses e transferências
+  version: "1.1"
+
+securityDefinitions:
+  basicAuth:
+    type: basic
+security:
+  - basicAuth: []
+
+schemes:
+  - https
+
+
+tags:
+  - name: 'Saldo de Conta'
+    description: Saldo de conta 
+  - name: 'Transferências'
+    description: Depósitos para conta bancária e conta de cartão
+  - name: 'Antecipação sob demanda'
+    description: Solicitação antecipação sob demanda
+  - name: 'Cobranças & Ajustes'
+    description: Ajuste de cobrança realizados entre contas
+  - name: 'Política de Recebimento'
+    description: Política de Recebimento de vendas
+  - name: 'Lançamentos Futuros'
+    description: Lançamentos Futuros 
+
+
+paths:
+  '/v1/marketplaces/{marketplaceId}/buyers/{buyer_id}/balances':
+    parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: buyer_id
+        in: path
+        description: identificador do buyer
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Saldo de Conta'
+      summary: 'Lista contas por buyer'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Saldo recuperado com sucesso
+        '404':
+          description: Marketplace/Buyer não encontrado
+  '/v1/marketplaces/{marketplaceId}/balances/{balance_id}/history':
+    parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: balance_id
+        in: path
+        description: identificador da conta
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Saldo de Conta'
+      summary: 'Listar histórico de lançamentos pelo identificador da conta'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Histórico recuperado com sucesso
+        '404':
+          description: Marketplace/Saldo não encontrado
+  '/v1/marketplaces/{marketplaceId}/sellers/{seller_id}/balances/history':
+    parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: seller_id
+        in: path
+        description: identificador do seller
+        required: true
+        type: string
+      - $ref: '#/parameters/createdDateRangeGTEParam'
+      - $ref: '#/parameters/createdDateRangeLTEParam'
+    get:
+      tags:
+        - 'Saldo de Conta'
+      summary: 'Listar histórico de lançamentos de conta por seller'
+      description: 'Listagem de histórico da conta principal do seller'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Histórico recuperado com sucesso
+        '404':
+          description: Marketplace/Seller não encontrado
+  '/v1/marketplaces/{marketplaceId}/buyers/{buyer_id}/balances/history':
+    parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: buyer_id
+        in: path
+        description: identificador do buyer
+        required: true
+        type: string
+      - $ref: '#/parameters/createdDateRangeGTEParam'
+      - $ref: '#/parameters/createdDateRangeLTEParam'
+    get:
+      tags:
+        - 'Saldo de Conta'
+      summary: 'Listar histórico de lançamentos de conta por buyer'
+      description: 'Listagem de histórico da conta principal do buyer'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Histórico recuperado com sucesso
+        '404':
+          description: Marketplace/Seller não encontrado
+  /v1/marketplaces/{marketplace_id}/bank_accounts/{bank_account_id}/transfers:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: bank_account_id
+        in: path
+        description: identificador da conta bancária
+        required: true
+        type: string
+    post:
+      tags:
+        - 'Transferências'
+      summary: 'Criar transferência para conta bancária'
+      parameters:
+        - in: body
+          name: body
+          description: Document object
+          required: true
+          schema:
+            $ref: '#/definitions/Transfer'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transferências recuperadas com sucesso
+        '404':
+          description: Marketplace/Conta bancária não encontrado
+  /v1/marketplaces/{marketplace_id}/sellers/{seller_id}/transfers:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador do seller
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Transferências'
+      summary: 'Listar transferências por seller'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transferências encontradas
+        '404':
+          description: Marketplace/Seller não encontrado
+  /v1/marketplaces/{marketplace_id}/transfers:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Transferências'
+      summary: 'Listar transferências por marketplace'
+      description: ''
+      parameters:
+        - $ref: "#/parameters/limitParam"
+        - $ref: "#/parameters/sortParam"
+        - $ref: "#/parameters/offsetParam"
+        - $ref: "#/parameters/dateRangeParam"
+        - $ref: "#/parameters/dateRangeGTParam"
+        - $ref: "#/parameters/dateRangeGTEParam"
+        - $ref: "#/parameters/dateRangeLTParam"
+        - $ref: "#/parameters/dateRangeLTEParam"
+        - $ref: "#/parameters/transferStatus"
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transferências recuperadas com sucesso
+        '404':
+          description: Marketplace não encontrado
+  /v1/marketplaces/{marketplace_id}/transfers/{transfer_id}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: transfer_id
+        in: path
+        description: identificador da transferência
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Transferências'
+      summary: 'Recuperar detalhes de transferência'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transferência recuperada com sucesso
+        '404':
+          description: Marketplace/Transferência não encontrada
+    delete:
+      tags:
+        - 'Transferências'
+      summary: 'Cancelar transferência agendada anteriormente à data prevista para efetivação'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transferência cancelada com sucesso
+        '400':
+          description: Transferência já efetuada
+        '404':
+          description: Marketplace/Transferência não encontrada
+          
+  /v1/marketplaces/{marketplace_id}/transfers/{transfer_id}/transactions:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: transfer_id
+        in: path
+        description: identificador da transferência
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Transferências'
+      summary: 'Listar transações associadas a transferência'
+      description: ''
+      deprecated: false
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transferência recuperada com sucesso
+        '404':
+          description: Marketplace/Transferência não encontrada
+          
+  /v1/marketplaces/{marketplace_id}/adjustments/{owner}/to/{receiver}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: owner
+        in: path
+        description: identificador do customer pagador
+        required: true
+        type: string
+      - name: receiver
+        in: path
+        description: identificador do customer recebedor
+        required: true
+        type: string
+    post:
+      tags:
+        - "Cobranças & Ajustes"
+      summary: 'Criar ajuste de cobrança informando pagador e recebedor'
+      description: 'Criação de um ajuste de cobrança do valor informado, a ser debitado da conta do pagador e creditado na conta do recebedor'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: CreateAdjustmentRequest
+          required: true
+          schema:
+            $ref: '#/definitions/CreateAdjustmentRequest'
+      responses:
+        '200':
+          description: Ajuste de cobrança criado com sucesso
+        '404':
+          description: Marketplace/Customer não encontrado
+  /v1/marketplaces/{marketplace_id}/adjustments/{owner}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: owner
+        in: path
+        description: identificador do customer pagador
+        required: true
+        type: string
+    post:
+      tags:
+        - "Cobranças & Ajustes"
+      summary: 'Criar ajuste de cobrança informando somente pagador'
+      description: 'Criação de um ajuste de cobrança do valor informado, a ser debitado da conta do pagador e creditado na conta Master do Marketplace'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: CreateAdjustmentRequest
+          required: true
+          schema:
+            $ref: '#/definitions/CreateAdjustmentRequest'
+      responses:
+        '200':
+          description: Ajuste de cobrança criado com sucesso
+        '404':
+          description: Marketplace/Customer não encontrado
+  /v1/marketplaces/{marketplace_id}/adjustments:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Cobranças & Ajustes'
+      summary: 'Listar ajustes de cobrança por marketplace'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transferências recuperadas com sucesso
+        '404':
+          description: Marketplace não encontrado
+  /v1/marketplaces/{marketplace_id}/adjustments/{adjustment_id}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: adjustment_id
+        in: path
+        description: identificador do ajuste de cobrança
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Cobranças & Ajustes'
+      summary: 'Recuperar detalhes de ajuste de cobrança'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Ajuste de cobrança recuperado com sucesso
+        '404':
+          description: Marketplace/Transferência não encontrada
+    delete:
+      tags:
+        - 'Cobranças & Ajustes'
+      summary: 'Cancelar ajuste de cobrança agendado anteriormente à data prevista para efetivação'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Ajuste de cobrança cancelado com sucesso
+        '400':
+          description: Ajuste de cobrança já efetuado
+        '404':
+          description: Marketplace/Transferência não encontrada
+  /v2/marketplaces/{marketplace_id}/sellers/{seller_id}/future-transfers:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador do seller
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Lançamentos Futuros'
+      summary: 'Listar lançamentos futuros por seller'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Lançamentos futuros recuperados com sucesso
+        '404':
+          description: Seller não encontrado
+  /v1/marketplaces/{marketplace_id}/sellers/{seller_id}/receiving_policy:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: ID do marketplace
+        required: true
+        type: string
+      - name: seller_id
+        in: path
+        description: identificador da seller
+        required: true
+        type: string
+    get:
+      tags:
+        - "Política de Recebimento"
+      summary: 'Recuperar política de recebimento por seller'
+      description: ''
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Politica recuperada com sucesso
+        '404':
+          description: Marketplace/Seller não encontrado
+    post:
+      tags:
+        - "Política de Recebimento"
+      summary: 'Alterar política de recebimento por seller'
+      description: ''
+      parameters:
+        - in: body
+          name: body
+          description: Receiving Policy object
+          required: true
+          schema:
+            $ref: '#/definitions/ReceivingPolicy'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Politica alterada com sucesso
+        '404':
+          description: Marketplace/Seller não encontrado
+  /v2/marketplaces/{marketplace_id}/transfers/{owner}/to/{receiver}:
+    parameters:
+      - name: marketplace_id
+        in: path
+        description: identificador do marketplace
+        required: true
+        type: string
+      - name: owner
+        in: path
+        description: identificador do customer pagador
+        required: true
+        type: string
+      - name: receiver
+        in: path
+        description: identificador do customer recebedor
+        required: true
+        type: string
+    post:
+      deprecated: true
+      tags:
+        - "Transferências"
+      summary: 'Criar transferência P2P'
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: TransferP2P object
+          required: true
+          schema:
+            $ref: '#/definitions/TransferP2P'
+      responses:
+        '200':
+          description: Transferência criada com sucesso
+        '404':
+          description: Marketplace/Customer não encontrado
+  /v1/marketplaces/{marketplaceId}/prepayments:
+    post:
+      tags:
+      - 'Antecipação sob demanda'
+      summary: "Criação de novo pedido de antecipação"
+      description: "Cria um novo pedido de antecipação, que será posteriormente simulado e terá aprovação financeira para realizar a antecipação de fato."
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Solicitação de antecipação, com filtros de escolha de recebíveis"
+        required: true
+        schema:
+          $ref: "#/definitions/PrepaymentRequest"
+      responses:
+        200:
+          description: "Sucesso na criação da antecipação"
+          schema:
+            $ref: "#/definitions/Prepayment"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace ou Seller não encontrado"
+
+    get:
+      tags:
+      - 'Antecipação sob demanda'
+      summary: "Listagem de antecipações do Marketplace"
+      description: "Lista as antecipações sob demanda solicitadas pelo Marketplace"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Sucesso na recuperação das antecipações"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Prepayment"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace não encontrado"
+  /v1/marketplaces/{marketplaceId}/sellers/{sellerId}/prepayments:
+    get:
+      tags:
+      - "Antecipação sob demanda"
+      summary: "Listagem de antecipações do Seller"
+      description: "Lista as antecipações sob demanda solicitadas pelo Marketplace, para o Seller"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: "sellerId"
+        in: "path"
+        description: "ID do Seller"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Sucesso na recuperação das antecipações"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Prepayment"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace ou Seller não encontrado"
+  /v1/marketplaces/{marketplaceId}/sellers/{sellerId}/prepayments/info:
+    get:
+      tags:
+      - "Antecipação sob demanda"
+      summary: "Recupera informações da agenda futura do Seller"
+      description: "Recupera informações da agenda futura do Seller"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: "sellerId"
+        in: "path"
+        description: "ID do Seller"
+        required: true
+        type: "string"
+      - name: "prepayment_date"
+        in: "query"
+        required: true
+        description: "Data para a qual os recebíveis serão antecipados. Caso não seja preenchido, é considerado *D0*."
+        type: "string"
+      - name: "partner_fee"
+        in: "query"
+        required: false
+        description: "Taxa de antecipação do parceiro"
+        type: "number"
+        format: "float"
+      - name: "min_transaction_date"
+        in: "query"
+        required: false
+        description: "Apenas considerar recebíveis de vendas realizadas após esta data (inclusive). Caso não seja preenchida, é considerada a data da venda mais antiga com recebíveis não liquidados."
+        type: "string"
+      - name: "max_transaction_date"
+        in: "query"
+        required: false
+        description: "Apenas considerar recebíveis de vendas realizadas até esta data (inclusive). Caso não seja preenchida, é considerado *D-1*. Este também é o valor máximo para este campo."
+        type: "string"
+      - name: "min_expected_date"
+        in: "query"
+        required: false
+        description: "Apenas considerar recebíveis cuja agenda original de liquidação seja após esta data (inclusive). Caso não seja preenchida, é considerado *D+1* do campo prepayment_date. Este também é o valor mínimo para este campo."
+        type: "string"
+      - name: "max_expected_date"
+        in: "query"
+        required: false
+        description: "Apenas considerar recebíveis cuja agenda original de liquidação seja até esta data (inclusive). Caso não seja preenchida, é considerada a data de liquidação do recebível mais tardio."
+        type: "string"
+      - name: "entry_modes"
+        in: "query"
+        required: false
+        description: "Apenas considerar recebíveis de transações cujo entry mode está entre os especificados. Valores possíveis: chip, magstripe, magstripe_fallback, manually_keyed. Caso não seja preenchido, considera todos os tipos de entry mode."
+        type: "array"
+        items:
+          type: "string"
+          enum:
+            - "chip"
+            - "magstripe"
+            - "magstripe_fallback"
+            - "manually_keyed"
+      responses:
+        200:
+          description: "Sucesso na recuperação das informações de antecipação"
+          schema:
+            $ref: "#/definitions/PrepaymentInfoResponse"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace ou Seller não encontrado"
+  /v2/marketplaces/{marketplaceId}/sellers/{sellerId}/prepayments:
+    get:
+      tags:
+      - "Antecipação sob demanda"
+      summary: "Listagem paginada de antecipações do Seller"
+      description: "Lista as antecipações sob demanda solicitadas pelo Marketplace, para o Seller. Aceita parâmetros de paginação."
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: "sellerId"
+        in: "path"
+        description: "ID do Seller"
+        required: true
+        type: "string"
+      - name: "expected_on_range"
+        in: "query"
+        description: "Filtra pela Data Prevista do Pagamento do objeto. É possível adicionar ao final da chave (expected_on_range) os valores: [gt], [gte], [lt] e [lte] de forma que a data prevista do pagamento seja posterior a, posterior ou igual a, anterior a, ou anterior ou igual a, respectivamente, o valor informado para o filtro."
+        type: string
+        format: date
+      - name: "created_at_range"
+        in: "query"
+        description: "Filtra pela Data de Criação do objeto."
+        type: string
+        format: date
+      - name: "status"
+        in: "query"
+        description: "Filtra pelo Status do objeto."
+        type: string
+      - name: "sort"
+        in: "query"
+        description: "Ordena pela data de criação dos recebíveis."
+        type: string
+      responses:
+        200:
+          description: "Sucesso na recuperação das antecipações"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/PrepaymentResponse"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace ou Seller não encontrado"
+  /v1/marketplaces/{marketplaceId}/prepayments/{prepaymentId}:
+    get:
+      tags:
+      - "Antecipação sob demanda"
+      summary: "Detalhe de antecipação"
+      description: "Busca os detalhes de uma antecipação solicitada"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: "prepaymentId"
+        in: "path"
+        description: "ID da Antecipação"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Sucesso na recuperação da antecipação"
+          schema:
+            $ref: "#/definitions/Prepayment"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace ou Antecipação não encontrada"
+  /v1/marketplaces/{marketplaceId}/prepayments/{prepaymentId}/commit:
+    post:
+      tags:
+      - "Antecipação sob demanda"
+      summary: "Atualização de status da antecipação"
+      description: "Atualiza uma antecipação simulada para pronta."
+      produces:
+      - "application/json"
+      parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: "prepaymentId"
+        in: "path"
+        description: "ID da Antecipação"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Sucesso na atualização do status da antecipação"
+          schema:
+            $ref: "#/definitions/Prepayment"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace ou Antecipação não encontrada"
+  /v1/marketplaces/{marketplaceId}/sellers/{customerId}/receivables:
+    get:
+      tags:
+      - 'Antecipação sob demanda'
+      summary: "Verificando Recebíveis Aptos a Antecipação"
+      description: "Verificando recebíveis Aptos"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: "customerId"
+        in: "path"
+        description: "ID do Customer"
+        required: true
+        type: "string"
+      - name: "prepayable_for"
+        in: "query"
+        description: "Retorna os recebíveis que estão aptos ao participar de uma antecipação, a parir da data informada"
+        required: true
+        type: "string"  
+      responses:
+        200:
+          description: "Sucesso na recuperação dos recebiveis aptos"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Prepayable"
+        400:
+          description: "Requisição inválida"
+        404:
+          description: "Marketplace ou Seller não encontrado"
+  /v1/marketplaces/{marketplaceId}/sellers/{seller_id}/balances:
+    parameters:
+      - name: "marketplaceId"
+        in: "path"
+        description: "ID do Marketplace"
+        required: true
+        type: "string"
+      - name: seller_id
+        in: path
+        description: identificador do seller
+        required: true
+        type: string
+    get:
+      tags:
+        - 'Saldo de Conta'
+      summary: 'Recuperar saldo de conta por seller'
+      description: 'Recupera o saldo corrente e saldo total de conta'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Saldo recuperado com sucesso
+        '404':
+          description: Marketplace/Seller não encontrado
+
+
+parameters:
+  limitParam:
+    name: limit
+    in: query
+    description: Limita o número de objetos retornados, podendo ser entre 1 e 100
+    required: false
+    type: number
+    format: int32
+    default: 20
+  sortParam:
+    name: sort
+    in: query
+    description: Determinar como ordenar a lista em relação a data de criação do objeto
+    required: false
+    type: string
+    enum:
+      - time-descending
+      - time-ascending
+    default: time-descending
+  offsetParam:
+    name: offset
+    in: query
+    description: Determina o ponto de inicio dos registros retornados
+    required: false
+    type: number
+    format: int32
+    default: 0
+  dateRangeParam:
+    name: date_range
+    in: query
+    description: Filtro na lista base de objetos pela data de criação. O valor pode ser uma string com um horário em UTC timestamp, ou pode ser uma lista com os parametros abaixo
+    required: false
+    type: number
+  dateRangeGTParam:
+    name: date_range[gt]
+    in: query
+    description: Retorna valores onde a data maior que o timestamp informado
+    required: false
+    type: number
+  dateRangeGTEParam:
+    name: date_range[gte]
+    in: query
+    description: Retorna valores onde a data for maior ou igual que o timestamp informado
+    required: false
+    type: number
+  dateRangeLTParam:
+    name: date_range[lt]
+    in: query
+    description: Retorna valores onde a data for menor que o timestamp informado
+    required: false
+    type: number
+  dateRangeLTEParam:
+    name: date_range[lte]
+    in: query
+    description: Retorna valores onde a data for menor ou igual que o timestamp informado
+    required: false
+    type: number
+  createdDateRangeGTEParam: 
+    name: created_date_range[gte]
+    in: query
+    description: Retorna valores onde a data for maior ou igual que o timestamp informado
+    required: false
+    type: number
+  createdDateRangeLTEParam: 
+    name: created_date_range[lte]
+    in: query
+    description: Retorna valores onde a data for menor ou igual que o timestamp informado
+    required: false
+    type: number
+  transferStatus:
+    name: status
+    in: query
+    description: Retorna transferência onde o status for igual o informado.
+    required: false
+    type: string
+    enum: [
+      "created",
+      "confirmed",
+      "succeeded",
+      "pending",
+      "failed"
+      ]    
+  marketplaceID:
+    name: marketplace_id
+    in: path
+    description: ID do marketplace
+    required: true
+    type: string
+  sellerID:
+    name: seller_id
+    in: path
+    description: ID do estabelecimento
+    required: true
+    type: string
+  cardID:
+    name: card_id
+    in: path
+    description: ID do cartão pré-pago
+    required: true
+    type: integer
+    format: int64
+    
+definitions:
+  Transfer:
+    type: object
+    properties:
+      amount:
+        type: integer
+        example: 3500
+        description: 'Valor'
+      statement_descriptor:
+        type: string
+        description: Identificação de quem está enviando a transferência.
+        example: Zoop Tecnologia
+      description:
+        type: string
+        example: Saque dia 24.09.2017
+  TransferP2P:
+    type: object
+    properties:
+      amount:
+        type: integer
+        example: 3500
+        description: 'Valor' 
+      description:
+        type: string
+        example: Cobrança de mensalidade
+  CreateAdjustmentRequest:
+    type: object
+    properties:
+      amount:
+        type: integer
+        example: 3500
+        description: 'Valor'
+      description:
+        type: string
+        example: Cobrança de mensalidade
+        description: 'Descrição'
+      transfer_date:
+        type: string
+        format: date
+        example: Data para agendamento do ajuste
+        description: 'Data para agendamento do ajuste'
+  ReceivingPolicy:
+    type: object
+    properties:
+      transfer_interval:
+        type: string
+        enum:
+          - daily
+          - weekly
+          - monthly
+        default: daily
+        example: daily
+      transfer_day:
+        type: integer
+        example: 1
+      transfer_enabled:
+        type: boolean
+        example: true
+      minimum_transfer_value:
+        type: integer
+        example: 100
+  BankAccount:
+    type: object
+    properties:
+      customer:
+        type: string
+        example: 064bf90479e34865afb90cc4a0efe2cc
+        description: 'id do seller ou buyer'
+      token:
+        type: string
+        example: 2d55be7859544074a7ae9ffe60fdf6d9
+  Subscription:
+    type: object
+    properties:
+      customer:
+        type: string
+        example: 064bf90479e34865afb90cc4a0efe2cc
+        description: 'Id do seller'    
+      plan:
+        type: string
+        example: PLAN
+        description: 'Id do plano'
+      quantity:
+        type: integer
+        example: 1
+        description: 'Valor padrão: "1"'
+  Prepayment:
+    type: "object"
+    required:
+    - "customer"
+    - "prepayment_date"
+    properties:
+      id:
+        description: "ID da Antecipação."
+        type: "string"
+        example: "e8caee4290f28d4c96c451d93c2d2787"
+      customer:
+        description: "ID do Customer"
+        type: "string"
+        example: "e8caee4290f28d4c96c451d93c2d2787"
+      prepayment_date:
+        description: "Data para a qual os recebíveis serão antecipados."
+        type: "string"
+        format: "date"
+        example: "2018-01-19"
+      status:
+        description: "Status da solicitação de antecipação. Após sua criação, entra no status de solicitada (*requested*), onde fica passível de simulação por rotina automática. Após a simulação, entra no status de simulada (*simulated*), onde passam a ser preenchidos os campos de taxas aplicadas, valor total aplicado à antecipação e recebíveis selecionados. Fica então passível de aprovação do Financeiro da Zoop, que pode torná-la aprovada (*approved*) ou rejeitada (*rejected*) dependendo da análise. Uma vez aprovada, fica passível de realização de fato da antecipação, após o qual fica com o status de realizada (*succeeded*). É possível utilizar o endpoint de exclusão de solicitação a qualquer momento até sua realização, momento em que não será mais possível realizar o cancelamento. Caso seja utilizado este endpoint, o status da solicitação vai para cancelada (*canceled*). Caso a solicitação de antecipação não seja aprovada até a data selecionada para sua realização, a solicitação vai para o status de expirada (*expired*). Caso ocorra alguma situação no processo que impeça a antecipação de ser realizada (por exemplo se algum de seus recebíveis tiver sido cancelado por motivo de estorno/chargeback ou mesmo se outra antecipação tiver sido realizada com recebíveis utilizados nesta simulação), esta vai para o estado de inválida (*invalid*)."
+        type: "string"
+        enum:
+        - "requested"
+        - "simulated"
+        - "approved"
+        - "succeeded"
+        - "canceled"
+        - "rejected"
+        - "invalid"
+        - "expired"
+      status_detail:
+        description: "Detalhamento do status da antecipação. Em caso de antecipação rejeitada, aparecerá o informe do Financeiro que explica o motivo da rejeição. Em caso de antecipação inválida, provê detalhes para identificar o motivo da invalidação."
+        type: "string"
+        example: "Antecipação solicitada."
+      prepayment_gross_amount:
+        description: "Valor total, em centavos de Reais, dos recebíveis selecionados na simulação (ou antecipados, caso a antecipação já tenha sido realizada), antes de aplicadas as taxas de antecipação."
+        type: "integer"
+        example: "500000"
+      prepayment_net_amount:
+        description: "Valor total, em centavos de Reais, dos recebíveis selecionados na simulação (ou antecipados, caso a antecipação já tenha sido realizada), após aplicadas as taxas de antecipação. É o valor que o Seller receberá de fato pela antecipação."
+        type: "integer"
+        example: "476534"
+      receivables_count:
+        description: "Total de recebíveis selecionados na simulação (ou antecipados, caso a antecipação já tenha sido realizada)."
+        type: "integer"
+        example: "5"
+      zoop_fee:
+        description: "Taxa percentual de 30 dias da Zoop aplicada à antecipação."
+        type: "number"
+        format: "float"
+        example: "0.0169"
+      partner_fee:
+        description: "Taxa percentual de 30 dias do Marketplace Zoop aplicada à antecipação."
+        type: "number"
+        format: "float"
+        example: "0.0081"
+      auto_commit:
+        description: "Informa se o transito automático do status `simulated` para `ready` esta ativo ou inativo. O valor default é `true`"
+        type: "boolean"
+        example: "true|false"
+      created_at:
+        description: "Data e hora da criação da solicitação de antecipação."
+        type: "string"
+        format: "date"
+        example: "2018-01-19 19:47:07"
+      updated_at:
+        description: "Data e hora da última atualização do status da antecipação."
+        type: "string"
+        format: "date"
+        example: "2018-01-19 19:47:07"
+  Prepayable:
+    type: "object"
+    properties:
+      id:
+        description: "ID da Recebivel."
+        type: "string"
+        example: "026937979d3b48d2831b145185d38ab3"
+      resource:
+        description: "ID da Recebivel."      
+        type: "string"
+        example: "receivable"
+      status:
+        description: "Status do Recebivel"      
+        type: "string"
+        example: "pending"
+      recipient:
+        description: "Id do recipient"      
+        type: "string"
+        example: "047cf3697440496fa588672f76c0e3db"
+      transaction:
+        description: "Id da Transação"      
+        type: "string"
+        example: "443796d192c24f18a961b485da3f49d7"
+      split_rule:
+        description: "Id do Split"      
+        type: "string"
+        example: "null"
+      installment:
+        description: "Parcelamento"      
+        type: "string"
+        example: "null"
+      liable:
+        description: "Indica que em caso de chargeback o vendendor irá arcar com a devolução"
+        type: "boolean"
+        example: "true"
+      amount:
+        description: "Valor do recebível"
+        type: "number"
+        format: "float"
+        example: "11.52"
+      gross_amount:
+        description: "Valor do Bruto"
+        type: "number"
+        format: "float"
+        example: "12.00"
+      anticipation_fee: 
+        description: "Taxa de antecipação"
+        type: "number"
+        format: "float"
+        example: "0.00"
+      paid_at:
+        description: "Data do pagamento"
+        type: "string"
+        format: "date"
+        example: "null"
+      created_at:
+        description: "Data do pagamento"
+        type: "string"
+        format: "date"
+        example: "2020-09-10T13:42:52+00:00"
+      transaction_created_at:
+        description: "Data da criação da transação"
+        type: "string"
+        format: "date"
+        example: "2020-09-10T13:42:49+00:00"
+      canceled_at:
+        description: "Data do cancelamento"
+        type: "string"
+        format: "date"
+        example: "null"
+      expected_on:
+        description: "Data prevista de pagamento"
+        type: "string"
+        format: "date"
+        example: "2020-10-12T00:00:00+00:00"
+      authorization_code:
+        description: "Código de autorização da venda"
+        type: "string"
+        example: "Z133937-000260004"
+      id_original_receivable:
+        description: "Id do recebivel original"
+        type: "string"
+        example: "null"
+      prepaid:
+        description: "Indica se o recebivel foi antecipado ou não"
+        type: "boolean"
+        example: "false"
+  PrepaymentRequest:
+    type: "object"
+    required:
+    - "customer"
+    - "prepayment_date"
+    properties:
+      customer:
+        description: "ID do Seller que terá seus recebíveis antecipáveis."
+        type: "string"
+        example: "28d4c96c451d93c2d2787e8caee4290f"
+      prepayment_date:
+        description: "Data para a qual os recebíveis serão antecipados. Caso não seja preenchido, é considerado *D0*."
+        type: "string"
+        format: "date"
+        example: "2018-01-19"
+      min_transaction_date:
+        description: "Apenas considerar recebíveis de vendas realizadas após esta data (inclusive). Caso não seja preenchida, é considerada a data da venda mais antiga com recebíveis não liquidados."
+        type: "string"
+        format: "date"
+        example: "2018-01-19"
+      max_transaction_date:
+        description: "Apenas considerar recebíveis de vendas realizadas até esta data (inclusive). Caso não seja preenchida, é considerado *D-1*."
+        type: "string"
+        format: "date"
+        example: "2018-01-19"
+      min_expected_date:
+        description: "Apenas considerar recebíveis cuja agenda original de liquidação seja após esta data (inclusive). Caso não seja preenchida, é considerado *D+1* do campo prepayment_date. Este também é o valor mínimo para este campo."
+        type: "string"
+        format: "date"
+        example: "2018-01-19"
+      max_expected_date:
+        description: "Apenas considerar recebíveis cuja agenda original de liquidação seja até esta data (inclusive). Caso não seja preenchida, é considerada a data de liquidação do recebível mais tardio."
+        type: "string"
+        format: "date"
+        example: "2018-01-19"
+      receivables:
+        description: "Lista de IDs de recebíveis que deverão ser incluídos na solicitação de antecipação"
+        type: "array"
+        items:
+          type: "string"
+          example: "6c451d93c2d278728d4c9e8caee4290f"
+      transactions:
+        description: "Lista de IDs de transações cujos recebíveis deverão ser incluídos na solicitação de antecipação"
+        type: "array"
+        items:
+          type: "string"
+          example: "4290f3c2d2787e8c28d4c96c451d9aee"
+      target_amount:
+        description: "Valor alvo, em centavos de Reais, para escolha dos recebíveis a antecipar mediante algoritmo de busca, que seleciona recebíveis incrementalmente até atingir este valor alvo, até o limite percentual da margem (campo *margin*). Recebíveis que façam o valor total de antecipação ultrapassar o valor alvo com a margem incluída não são incluídos na antecipação. Caso um recebível faça o valor da antecipação atingir o intervalo entre o valor alvo e a margem, o algoritmo é interrompido e a simulação é concluída com os recebíveis selecionados."
+        type: "integer"
+        example: "500000"
+      margin:
+        description: "Margem para seleção de recebíveis caso seja solicitado o filtro de valor alvo (*target_amount*). Caso não seja preenchido, é considerado 0.01 (1%). Isto significa que no caso de uma antecipação solicitada com *target_amount* de 500000 (R$5.000,00) e sem margem definida, o algoritmo selecionará recebíveis até atingir o valor de R$5.000,00, porém nunca ultrapassando o valor de R$5.050,00 (recebíveis que ultrapassariam este valor são descartados - pulados). Mesmo que o valor final seja inferior ao valor alvo solicitado, a antecipação é considerada simulada e fica apta à aprovação."
+        type: "number"
+        format: "float"
+        example: "0.01"
+      order:
+        description: "Indica a prioridade de seleção dos recebíveis na antecipação por valor alvo. Como os recebíveis são selecionados um por um até atingir-se o valor alvo, pode-se utilizar este campo para forçar uma seleção dos recebíveis que estejam vencendo primeiro (*expected_date_ascending*), vencendo por último (*expected_date_descending*) ou mesmo priorizar recebíveis de vendas mais antigas (*transaction_date_ascending*), o que na prática fará com que todos os recebíveis de uma venda sejam antecipados em conjunto antes de partir para os recebíveis da próxima venda (exceto se o somatório dos recebíveis de uma venda ultrapasse o limite da margem do valor alvo). Caso não seja preenchido, é considerada a ordenação *expected_date_ascending*"
+        type: "string"
+        enum:
+        - "expected_date_ascending"
+        - "expected_date_descending"
+        - "transaction_date_ascending"
+      partner_fee:
+        description: "Permite que o Marketplace cadastre, ou altere, sua taxa para ser aplicada em cima da antecipação requisitada pelo Estabelacimento. Essa taxa não afeta a taxa da Zoop"
+        type: "number"
+        format: "float"
+        example: "0.0094"
+      entry_modes:
+        description: "Lista de métodos de captura de transação que poderão ter seus recebíveis antecipados"
+        type: "array"
+        items:
+          type: "string"
+          enum:
+            - "chip"
+            - "magstripe"
+            - "magstripe_fallback"
+            - "manually_keyed"
+      auto_commit:
+        description: "Permite desativar o transito automático do status `simulated` para `ready`. Se a requisição enviar em seu payload `auto_commit`=false, o status permanecerá `simulated` aguardando a confirmação do usuário da API através da requisição `/commit`.
+          A operação `/commit` transita somente do status `simulated` para o status `ready`.  O valor default é `true`."
+        type: "boolean"
+        example: "true|false"
+      fail_on_receivable_invalid:
+        description: "Com o valor default *false* a solicitação retornará sucesso e adicionará a resposta a propriedade *rejected_transactions* que conterá uma lista detalhada dos erros que invalidam as transações e/ou seus recebíveis.  Com valor *true*, a requisição falhará e não sera criada a solicitação, a mensagem de error conterá os detalhes da invalidação para cada transação e/ou seus recebíveis."
+        type: "boolean"
+        example: "true|false"
+        default: "false"
+  PrepaymentInfoResponse:
+    type: "object"
+    properties:
+      customer:
+        description: "ID do cliente"
+        type: "string"
+        example: "66c20f661f7945b5adb4ce8fc01a3879"
+      receivables_count:
+        description: "Quantidade de recebíveis antecipáveis segundo os filtros"
+        type: "integer"
+        example: "1000"
+      total_gross_amount:
+        description: "Valor bruto a ser antecipado"
+        type: "integer"
+        example: "500000"
+      total_net_amount_before_prepayment_fees:
+        description: "Valor líquido a ser antecipado antes da aplicação das taxas de antecipação"
+        type: "integer"
+        example: "480000"
+      total_net_amount_after_prepayment_fees:
+        description: "Valor líquido a ser antecipado depois de aplicadas as taxas de antecipação"
+        type: "integer"
+        example: "470000"
+  PrepaymentResponse:
+    type: object
+    properties:
+      resource:
+        type: string
+      uri:
+        type: string
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Prepayment"
+      has_more:
+        type: boolean
+      limit:
+        type: integer
+      total_pages:
+        type: integer
+      page:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: string
+      query_count:
+        type: string
+
+  CardAssociation:
+    type: object
+    properties:
+      card_id:
+        type: integer
+        description: ID do cartão exibido na parte de trás do cartão
+      seller_document:
+        type: string
+        description: CPF ou CNPJ do solicitante.
+      mothers_name:
+        type: string
+        description: Nome da mãe da pessoa portadora do cartão
+      resource:
+        type: string
+      uri:
+        type: string
+    example:
+      seller_document: 6
+      resource: resource
+      uri: uri
+      card_id: 0
+  CardActivate:
+    type: object
+    properties:
+      pin_code:
+        type: integer
+        description: Senha de 4 dígitos
+    example:
+      pin_code: 1234
+  Card:
+    type: object
+    properties:
+      bank_account_id:
+        type: string
+        description: Bank account associado ao cartão
+      card_id:
+        type: integer
+        description: Número do cartão exibido no verso do cartão
+      card_mask_number:
+        type: string
+        description: Os números do cartão de forma mascarada
+      card_name:
+        type: string
+        description: Nome do (a) Holder no cartão
+      balance:
+        type: string
+        description: Saldo do cartão
+      status:
+        type: string
+        description: Status do cartão pré-pago
+        enum:
+        - pending
+        - active
+        - blocked
+      resource:
+        type: string
+      uri:
+        type: string
+    example:
+      bank_account_id: bankaccountid
+      balance: balance
+      resource: resource
+      card_name: card_name
+      uri: uri
+      card_id: 123456
+      card_mask_number: card_mask_number
+      status: pending
+  CardDetail:
+    type: object
+    properties:
+      card_id:
+        type: integer
+        description: Número do cartão exibido no verso do cartão
+      card_mask_number:
+        type: string
+        description: Os números do cartão de forma mascarada
+      holder_name:
+        type: string
+        description: Nome do (a) Holder no cartão
+      document:
+        type: object
+        description: Documento do portador
+        properties: {}
+      valid_date:
+        type: string
+        description: Data de validade do cartão
+      last_4_digit:
+        type: string
+        description: Últimos 4 digitos do cartão
+      status:
+        type: string
+        description: Status do cartão pré-pago
+        enum:
+        - inactive
+        - active
+        - blocked
+      resource:
+        type: string
+      uri:
+        type: string
+    example:
+      valid_date: valid_date
+      last_4_digit: last_4_digit
+      resource: resource
+      document: "{}"
+      uri: uri
+      card_id: 0
+      card_mask_number: card_mask_number
+      holder_name: holder_name
+      status: inactive
+  Cards:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          "$ref": "#/definitions/Card"
+      resource:
+        type: string
+      uri:
+        type: string
+      limit:
+        type: integer
+      offset:
+        type: integer
+      has_more:
+        type: boolean
+      query_count:
+        type: integer
+      total:
+        type: integer
+    example:
+      card_number_first: 1
+      resource: resource
+      id: 0
+      card_number_last: 5
+      uri: uri
+      card_id: 6
+      establishment_name: establishment_name
+      status: pending
