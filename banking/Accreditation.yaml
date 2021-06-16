@@ -5,7 +5,8 @@ info:
 
 security:
  - basicAuth: []
-
+ 
+    
 tags:
  - name: Criação de contas
    description: Credenciamento e criação de contas 
@@ -46,6 +47,24 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/IndividualHolderResponse'
                   - $ref: '#/components/schemas/BusinessHolderResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message400Holder"
+        '404':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message404Holder"
+        '500':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message500Holder"
     get:
       summary: Consultar portadores do marketplace
       tags:
@@ -61,7 +80,7 @@ paths:
                   $ref: '#/components/schemas/HolderResponse'
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}":
     put:
-      summary: Alterar portador 
+      summary: Alterar cadastro do portador 
       tags:
         - Credenciamento portador
       parameters:
@@ -84,6 +103,26 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/IndividualHolderResponse'
                   - $ref: '#/components/schemas/BusinessHolderResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Message400HolderPF'
+                  - $ref: '#/components/schemas/Message400HolderPJ'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Message404Holder'
+        '500':
+          description: "Internal Server Error"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                  $ref: '#/components/schemas/Message500Holder'
     get:
       summary: Consultar portador 
       tags:
@@ -98,6 +137,12 @@ paths:
             application/json;charset=UTF-8:
               schema:
                   $ref: '#/components/schemas/IndividualHolderResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                  $ref: '#/components/schemas/MessageNotFound404'
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/phones":
     post:
       summary: Cadastrar telefone do portador 
@@ -119,6 +164,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PhonesHolderResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message400HolderPhone'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message404Holder'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message500Holder'
     get:
       summary: Consultar telefone do portador 
       tags:
@@ -133,6 +196,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PhonesHoldersResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message404Holder'
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/phones/{phone_id}":
     put:
       summary: Alterar telefone do portador 
@@ -155,6 +224,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PhonesHolderResponse'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhonesHolderPutResponse'
+        '400':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message400HolderPhone'
+        '404':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message404Holder'
+        '500':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message500Holder'
     delete:
       summary: Apagar telefone do portador 
       tags:
@@ -227,6 +320,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AddressHoldersResponse'
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressHolders202Response'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message404Holder'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message500Holder'
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/addresses/{address_id}":
     get:
       summary: Consulta endereço do portador por ID 
@@ -243,6 +354,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AddressHolderResponse'
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressHolders202Response'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message404Holder'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message500Holder'
     put:
       summary: Alterar endereço do portador por ID 
       tags:
@@ -264,6 +393,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AddressHolderResponse'
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressHolders202Response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound400'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message404Holder'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message500Holder'
     delete:
       summary: Apagar endereço do portador por ID 
       tags:
@@ -324,6 +477,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DocumentsHolderResponse'
+        '400':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDocuments400'
+        '404':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDocuments404'
+        '412':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDocuments412'
+        '500':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message500Holder'
     get:
       summary: Consulta documentação do portador 
       tags:
@@ -331,7 +508,6 @@ paths:
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
-        - $ref: "#/components/parameters/type"
       responses:
         '200':
           description: OK
@@ -339,6 +515,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HolderResponse'
+        '404':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDocuments404'
+        '500':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message500Holder'
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/documents/{documents_id}":
     get:
       summary: Consultar endereço do portador 
@@ -526,8 +714,56 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/IndividualHolderPartnerResponse'
+                  - $ref: '#/components/schemas/IndividualHolderPartnerResponseSemOwner'
                   - $ref: '#/components/schemas/BusinessHolderPartnerResponse'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/IndividualHolderPartnerResponseComOwner'
+                  - $ref: '#/components/schemas/BusinessHolderPartnerResponse'
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/IndividualHolderPartnerResponseSemOwner'
+                  - $ref: '#/components/schemas/BusinessHolderPartnerResponse'
+        '302':
+          description: Found
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/IndividualHolderPartnerResponseComOwner'
+                  - $ref: '#/components/schemas/BusinessHolderPartnerResponse'
+        '400':
+          description: Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message400Holder'
+        '404':
+          description: Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message404Holder'
+        '412':
+          description: Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageNotFound412'
+        '500':
+          description: Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message500Holder'
     get:
       summary: Consultar sócio (somente tipo PJ) 
       tags:
@@ -544,6 +780,18 @@ paths:
             application/json;charset=UTF-8:
               schema:
                   $ref: '#/components/schemas/PartnerResponse'
+        '404':
+          description: Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message404Holder'
+        '500':
+          description: Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message500Holder'
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}":
     get:
       summary: Consultar sócio por ID 
@@ -559,7 +807,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                  $ref: '#/components/schemas/IndividualHolderPartnerResponse'
+                  $ref: '#/components/schemas/IndividualHolderPartnerResponseSemOwner'
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}/phones":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
@@ -610,15 +858,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                   _embedded:
-                     type: object
-                     properties:
-                       phones:
-                         type: array
-                         items:
-                           $ref: '#/components/schemas/PhonesPartnerResponse'
+                $ref: '#/components/schemas/PhonesPartnerResponse'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhonesPartnerResponse201'
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}/phones/{phone_id}":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
@@ -1859,7 +2105,7 @@ components:
         schema:
           type: string
       policyID:
-        name: policy_id
+        name: policy_Id
         in: path
         description: Id da politica de embossamento 
         required: true
@@ -2309,6 +2555,26 @@ components:
           example: True
         _links:
           $ref: '#/components/schemas/LinksPhones'
+    PhonesHolderPutResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "6e5d49ca5af1444fb2baa1f1d3bdb81d"
+        area_code:
+          type: string
+          example: "21"
+        country_code:
+          type: string
+          example: "55"
+        number:
+          type: string
+          example: "98767777"
+        main:
+          type: string
+          example: True
+        _links:
+          $ref: '#/components/schemas/LinkPutPhone'
     PhonesHoldersResponse:
       type: object
       properties:
@@ -2454,6 +2720,42 @@ components:
             number:
               type: number
               example: 0
+    AddressHolders202Response:
+      type: object
+      properties:
+         id:
+           type: string
+           example: "85b006901d034e18a235bd995b0d6352"
+         street:
+           type: string
+           example: "Av das Américas"
+           description: Logradouro do endereço 
+         number:
+           type: string
+           description: Número do endereço.
+           example: "100" 
+         city:
+           type: string
+           description: Cidade
+           example: "Rio de Janeiro" 
+         complement:
+           type: string
+           description: Complemento do endereço
+           example: "Do lado Citta América" 
+         state:
+           type: string
+           description: Estado
+           example: "Rio de Janeiro" 
+         postal_code:
+           type: string
+           description: CEP
+           example: "22783450" 
+         country:
+           type: string
+           description: Pais do endereço
+           example: "Brasil" 
+         _links:
+           $ref: '#/components/schemas/LinksPhones'
     AddressHolderResponse:
       type: object
       properties:
@@ -2619,7 +2921,7 @@ components:
           description: Renda média do portador (tipo individual) da conta ou receita média da empresa (tipo business) 
           format: double
           example: "5500.00" 
-    IndividualHolderPartnerResponse:
+    IndividualHolderPartnerResponseSemOwner:
       type: object
       properties:
         type:
@@ -2658,6 +2960,45 @@ components:
           example: "252505"
         _links:
           $ref: '#/components/schemas/LinksPartners'
+    IndividualHolderPartnerResponseComOwner:
+      type: object
+      properties:
+        type:
+          type: string
+          example: individual
+        id:
+          type: string
+          example: "85b006901d034e18a235bd995b0d6352"
+        name:
+          type: string
+          example: "João Silva"
+        revenue:
+          type: number
+          format: double
+          example: 5500.50
+        email:
+          type: string
+          example: "joao.silva@gmail.com"
+        nationalRegistration:
+          type: string
+          example: "10057698007"
+        birthday:
+          type: string
+          example: "1982-12-15"
+        mothers_name:
+          type: string
+          example: "Maria da Silva"
+        identity_card:
+          type: string
+          example: "156032898"
+        pep:
+          type: string
+          example: "false"
+        cbo:
+          type: string
+          example: "252505"
+        _links:
+          $ref: '#/components/schemas/LinksPartnersComOwner'
     BusinessHolderPartnerResponse:
       type: object
       properties:
@@ -2774,6 +3115,26 @@ components:
           example: True
         _links:
           $ref: '#/components/schemas/LinksPhonesPartners'
+    PhonesPartnerResponse201:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "85b006901d034e18a235bd995b0d6352"
+        area_code:
+          type: string
+          example: "21"
+        country_code:
+          type: string
+          example: "55"
+        number:
+          type: string
+          example: "33093829"
+        main:
+          type: string
+          example: True
+        _links:
+          $ref: '#/components/schemas/LinksPhonesPartners201'
     DocumentsPartnerResponse:
       type: object
       properties:
@@ -3119,6 +3480,146 @@ components:
           example: "1010"
 
 
+    Message400Holder:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "bad_request"
+        type:
+          type: string
+          example: "invalid_request"
+        message:
+          type: string
+          example: "Validation field error"
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: number
+          example: 400
+        fields:
+          type: object
+          properties:
+            email: 
+              type: string 
+              example: "Required field"
+            establishment.format:
+              type: string 
+              example: "Not supported format"
+    Message404Holder:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "not_found"
+        type:
+          type: string
+          example: "invalid_request"
+        message:
+          type: string
+          example: "Holder not found"
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: number
+          example: 404
+    Message500Holder:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "internal_server_error"
+        type:
+          type: string
+          example: "server_error"
+        message:
+          type: string
+          example: "Internal Server Error"
+        category:
+          type: string
+          example: "unexpected"
+        status_code:
+          type: number
+          example: 500
+    Message400HolderPF:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "bad_request"
+        type:
+          type: string
+          example: "invalid_request"
+        message:
+          type: string
+          example: "Validation field error"
+        category:
+          type: string
+          example: "individual"
+        status_code:
+          type: number
+          example: 400
+        fields:
+          type: object
+          properties:
+            birthday: 
+              type: string 
+              example: "99-04-03"
+    Message400HolderPJ:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "bad_request"
+        type:
+          type: string
+          example: "invalid_request"
+        message:
+          type: string
+          example: "Validation field error"
+        category:
+          type: string
+          example: "individual"
+        status_code:
+          type: number
+          example: 400
+        fields:
+          type: object
+          properties:
+            birthday: 
+              type: string 
+              example: "20-12-29"
+
+    Message400HolderPhone:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "bad_request"
+        type:
+          type: string
+          example: "invalid_request"
+        message:
+          type: string
+          example: "Validation field error"
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: number
+          example: 400
+        fields:
+          type: object
+          properties:
+            number: 
+              type: string 
+              example: "Number is required"
+            country_code:
+              type: string 
+              example: "Country code must have only number characters"
+
     MessageNotFound400:
       type: object
       properties:
@@ -3157,7 +3658,7 @@ components:
           example: "not_found"
         message:
           type: string
-          example: "Holder not found"
+          example: "Holder 85b006901d034e18a235bd995b0d6352 not found"
         category:
           type: string
           example: "business"
@@ -3200,6 +3701,61 @@ components:
         status_code:
           type: number
           example: 500
+
+    MessageDocuments400:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "bad_request"
+        type:
+          type: string
+          example: "invalid_request"
+        message:
+          type: string
+          example: "Invalid document format"
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: number
+          example: 400
+    MessageDocuments404:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "not_found"
+        type:
+          type: string
+          example: "invalid_request"
+        message:
+          type: string
+          example: "Holder not found"
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: number
+          example: 404
+    MessageDocuments412:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "pre_condition_failed"
+        type:
+          type: string
+          example: "invalid_request"
+        message:
+          type: string
+          example: "It is not possible to add documents to the holder in its current state. Contact support to make this request."
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: number
+          example: 412
 
     _links:
           $ref: '#/components/schemas/Links'
@@ -3252,6 +3808,9 @@ components:
     LinksPhones:
       type: object
       $ref: '#/components/schemas/LinkPhone'
+    LinksPutPhones:
+      type: object
+      $ref: '#/components/schemas/LinkPutPhone'
     LinkPhone:
       type: object
       properties:
@@ -3271,6 +3830,29 @@ components:
             href: 
               type: string
               example: "https://localhost/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/a391eb48b731455da7b9efe649b822ca"
+            
+            type: 
+              type: string
+              example: "GET"
+    LinkPutPhone:
+      type: object
+      properties:
+        self:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://localhost/v2/marketplaces/6e5d49ca5af1444fb2baa1f1d3bdb81d/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352"
+            
+            type: 
+              type: string
+              example: "GET"
+        holder:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://localhost/v2/marketplaces/6e5d49ca5af1444fb2baa1f1d3bdb81d/banking/accreditation/holders/a391eb48b731455da7b9efe649b822ca"
             
             type: 
               type: string
@@ -3314,6 +3896,7 @@ components:
       type: object
       $ref: '#/components/schemas/LinksPartner'
 
+
     LinksPartner:
       type: object
       properties:
@@ -3351,6 +3934,78 @@ components:
             href: 
               type: string
               example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/documents"
+            type: 
+              type: string
+              example: "GET"
+        holder:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/"
+            type: 
+              type: string
+              example: "GET"
+
+    LinksPartnersComOwner:
+      type: object
+      $ref: '#/components/schemas/LinksPartnerComOwner'
+
+    LinksPartnerComOwner:
+      type: object
+      properties:
+        self:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352"
+            
+            type: 
+              type: string
+              example: "GET"
+        phones:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/phones"
+            type: 
+              type: string
+              example: "GET"
+        adresses:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/addresses"
+            type: 
+              type: string
+              example: "GET"        
+        documents:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/documents"
+            type: 
+              type: string
+              example: "GET"
+        main:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/88c2d6c89ef24c4c861e2dbafc32336e/partners/0b4a40d89e004b4bba626c50e2dd77f2/main"
+            type: 
+              type: string
+              example: "GET"
+        owner:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://apigw-sandbox.zoop.ws/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/88c2d6c89ef24c4c861e2dbafc32336e"
             type: 
               type: string
               example: "GET"
@@ -3431,7 +4086,7 @@ components:
       type: object
       $ref: '#/components/schemas/LinksPhonesPartner'
       
-    LinksPhonesPartner:
+    LinksPhonesPartner201:
       type: object
       properties:
         self:
@@ -3440,6 +4095,16 @@ components:
             href: 
               type: string
               example: "https://localhost/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/partners/82a2be6013ef4b01aaa8dcb4efcd6a8e/phones/a06f744df0944111b8da58daff18d8c2"
+            
+            type: 
+              type: string
+              example: "GET"
+        main:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://localhost/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/partners/82a2be6013ef4b01aaa8dcb4efcd6a8e/phones/a06f744df0944111b8da58daff18d8c2/main"
             
             type: 
               type: string
@@ -3462,4 +4127,6 @@ components:
             type: 
               type: string
               example: "GET"
+              
 
+      
