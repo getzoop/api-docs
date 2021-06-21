@@ -37,7 +37,7 @@ paths:
     post:
       tags:
         - 'Tokenização de cartão'
-      summary: 'Criar novo token de cartão'
+      summary: Criar novo token de cartão
       description: ''
       requestBody:
         content:
@@ -52,7 +52,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/TokenCardResponse"
         '400':
-          description: "Requisição/Missing required param:  Please verify request parameters."
+          description: Token não criado
           content:
             application/json:
               schema:
@@ -66,7 +66,7 @@ paths:
       deprecated: true
       tags:
         - 'Tokenização de cartão'
-      summary: 'Listar detalhes de token de cartão/conta bancária'
+      summary: Listar detalhes de token de cartão/conta bancária
       description: ''
       responses:
         '200':
@@ -92,13 +92,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CardResponseAssociate"
+                $ref: "#/components/schemas/CardAssociateResponse"
         "404":
           description: Cartão associado sem sucesso
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CardResponseAssociate404"
+                $ref: "#/components/schemas/CardAssociateResponse404"
   '/v1/marketplaces/{marketplace_id}/cards/{card_id}':
     parameters:
       - $ref: '#/components/parameters/marketplaceID'
@@ -132,13 +132,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CardRemove"
+                $ref: "#/components/schemas/CardRemoveResponse"
         "404":
           description: Cartão removido sem sucesso
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CardRemove404"
+                $ref: "#/components/schemas/CardRemoveResponse404"
 
   "/v1/marketplaces/{marketplace_id}/transactions":
     parameters: 
@@ -460,8 +460,16 @@ paths:
       responses:
         "200":
           description: Boleto enviado por email
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BoletoEmailResponse"
         "404":
-          description: Marketplace/Boleto não encontrado
+          description: Boleto não enviado por email
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BoletoEmailResponse404"
   "/v1/marketplaces/{marketplace_id}/boletos/{boleto_id}":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
@@ -479,8 +487,17 @@ paths:
       responses:
         "200":
           description: Boleto recuperado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListarBoletosResponse"
+                
         "404":
           description: Marketplace/Boleto não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListarBoletosResponse404"
   "/v1/marketplaces/{marketplace_id}/transactions/{transaction_id}/approve":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
@@ -501,11 +518,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Transactions"
+                $ref: "#/components/schemas/AprovarBoletoResponse"
 
         "404":
           description: Marketplace/Boleto não encontrado
-
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AprovarBoletoResponse404"
   "/v1/marketplaces/{marketplace_id}/terminals/pairing":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
@@ -1367,39 +1387,44 @@ components:
       properties:
         holder_name:
           type: string
-          description: "Nome no cartão"
+          description: Nome do portador do cartão
+          example: Julio Alvarenga
         expiration_month:
           type: string
-          description: "Mês de vencimento. Ex.: 9"
-          example: "9"
+          description: Mês de expiração
+          example: 9
         expiration_year:
           type: string
-          description: "Ano de vencimento. Ex.: 2027"
-          example: "2027"
+          description: Ano de expiração do cartão (AAAA)
+          example: 2027
         security_code:
           type: string
-          description: "Código de segurança (CVV) que fica atrás do cartão"
+          description: Código de segurança do cartão (CVC)
+          example: 123
     SimpleCardResponse:
       type: object
       description: "Objeto agrupador dos dados de cartão do pagador da transação"
       properties:
         id: 
           type: string
-          description: "Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador"
+          description: Identificador do cartão retornado no momento da associação do mesmo à carteira digital do comprador
+          example: 54f5445fd4544b454654fdf46545465g
         holder_name:
           type: string
-          description: "Nome no cartão"
+          description: Nome do portador do cartão
+          example: Julio Alvarenga
         expiration_month:
           type: string
-          description: "Mês de vencimento. Ex.: 9"
-          example: "9"
+          description: Mês de expiração
+          example: 9
         expiration_year:
           type: string
-          description: "Ano de vencimento. Ex.: 2027"
-          example: "2027"
+          description: Ano de vencimento
+          example: 2027
         security_code:
           type: string
-          description: "Código de segurança (CVV) que fica atrás do cartão"
+          description: Código de segurança do cartão (CVC)
+          example: 123
     ReceivableResponse:
       type: object
       properties:
@@ -1453,8 +1478,8 @@ components:
           example: null
         created_at:
           type: string
-          description: "Data de criação do recebível"
-          example: "2020-07-09T19:04:30+00:00"
+          description: Criado em 
+          example: 2019-05-27T17:40:06+00:00
         transaction_created_at:
           type: string
           description: "Data da criação da transação"
@@ -1486,12 +1511,12 @@ components:
       properties:
         token:
           type: string
-          example: "822a8bda73c546a8b2f12a5ebcce7732"
+          example: 822a8bda73c546a8b2f12a5ebcce7732
           description: "Identificador retornado na tokenização do cartão"
         customer:
           type: string
-          example: "822a8bda73c546a8b2f12a5ebcce7732"
-          description: "Identificador do cliente dono da carteira digital"
+          description: ID do customer
+          example: 54f5445fd4544b454654fdf46545465g
         source:
           type: object
           description: "Objeto agrupador das informações de fonte de pagamento da transação"
@@ -1536,8 +1561,9 @@ components:
               type: string
               description: "Modo de cobrança de juros no parcelamento, sendo pago pelo comprador quando with_interest e pelo lojista quando interest_free"
             number_installments:
-              type: string
-              description: "Quantidade de parcelas"
+              type: integer
+              description: Número de parcelas (1-12)
+              example: 5
             description:
               type: string
               description: "Uma descrição breve do parcelamento"
@@ -1645,7 +1671,7 @@ components:
             id:
               type: string
               example: 2f008ac254964e658be566241cc87c1a
-            resource:
+            resource: 
               type: string
               example: card
             description:
@@ -1662,25 +1688,32 @@ components:
               example: null
             expiration_month:
               type: string
-              example: "7"
+              description: Mês de expiração
+              example: 7
             expiration_year:
               type: string
-              example: "2023"
+              description: Ano de expiração do cartão (AAAA)
+              example: 2023
             holder_name:
               type: string
-              example: LEITE/ANDRE S DE M
+              description: Nome do portador do cartão
+              example: Julio Alvarenga
             is_active:
               type: boolean
+              description: Ativo
               example: false
             is_valid:
               type: boolean
+              description: Valido
               example: true
             is_verified:
               type: boolean
+              description: Verificado
               example: false
             customer:
               type: string
-              example: e4e8c5b569da48b28d896385f5481bcf
+              description: ID do customer
+              example: 54f5445fd4544b454654fdf46545465g
             fingerprint:
               type: string
               example: 9f2843f0c1b08d6018927b4e5e884a869ae49
@@ -1691,12 +1724,12 @@ components:
               type: object
             created_at:
               type: string
-              format: dateTime
-              example: 2015-04-17T06:39:52+00:00
+              description: Criado em
+              example: 2019-05-27T17:40:06+00:00
             updated_at:
               type: string
-              format: dateTime
-              example: 2015-04-17T06:39:52+00:00
+              description: Atualizado em
+              example: 2019-10-22T13:31:25+00:00
         point_of_sale:
           type: object
           properties:
@@ -1758,12 +1791,12 @@ components:
           example: 2015-04-17T06:39:52+00:00
         created_at:
           type: string
-          format: dateTime
-          example: 2015-04-17T06:39:52+00:00
+          description: Criado em 
+          example: 2019-05-27T17:40:06+00:00
         updated_at:
           type: string
-          format: dateTime
-          example: 2015-04-17T06:39:52+00:00
+          description: Atualizado em
+          example: 2019-10-22T13:31:25+00:00
     TransactionBoletoResponse:
       type: object
       properties:
@@ -1791,6 +1824,7 @@ components:
           example: Venda
         payment_type:
           type: string
+          description: Tipo do pagamento 
           example: boleto
         transaction_number:
           type: string
@@ -1821,7 +1855,8 @@ components:
           example: 1e5ee2e290d040769806c79e6ef94ee1
         customer:
           type: string
-          example: 3d5ccfdfcdc74918982276c933842a98
+          description: ID do customer
+          example: 54f5445fd4544b454654fdf46545465g
         statement_descriptor:
           type: string
           example: SuaMarcaAqui
@@ -1830,7 +1865,7 @@ components:
           properties:
             id:
               type: string
-              example: 0195470428304b368e98bede3316ac5d
+              example: 54f5445fd4544b454654fdf46545465g
             zoop_boleto_id:
               type: string
               example: null
@@ -1848,41 +1883,47 @@ components:
               example: "10672107"
             expiration_date:
               type: string
-              format: dateTime
-              example: 2021-03-06T00:00:00+00:00
+              description: Data de vencimento
+              example: 2019-05-29T00:00:00+00:00
             payment_limit_date:
               type: string
-              format: dateTime
-              example: null
+              description: Data limite de pagamento
+              example: 2019-06-01T00:00:00+00:00
             recipient:
               type: string
               example: "Estabelecimento L P Silva"
             bank_code:
               type: string
-              example: "109"
+              description: Codigo do banco
+              example: 109
             customer:
               type: string
-              example: "3d5ccfdfcdc74918982276c933842a98"
+              description: ID do customer
+              example: 54f5445fd4544b454654fdf46545465g
             address:
               type: string
+              description: Endereço 
               example: null
             sequence:
               type: string
-              example: "148824"
+              description: Sequencia
+              example: 20373
             url:
               type: string
+              description: URL do boleto gerado
               example: "https://api-boleto-production.s3.amazonaws.com/4efbad0e595343fbbe9f9725d6fc5769/047cf3697440496fa588672f76c0e3db/603fc5b4cb2de307ddda3ca1.html"
             barcode:
               type: string
+              description: Representação númerica do código de barras do boleto
               example: "34191091076721074893431977690002185510000000300"
             created_at:
               type: string
-              format: dateTime
-              example: 2015-04-17T06:39:52+00:00
+              description: Criado em 
+              example: 2019-05-27T17:40:06+00:00
             updated_at:
               type: string
-              format: dateTime
-              example: 2015-04-17T06:39:52+00:00
+              description: Atualizado em
+              example: 2019-10-22T13:31:25+00:00
             status:
               type: string
               example: "not_paid"
@@ -1938,12 +1979,12 @@ components:
           example: null
         created_at:
           type: string
-          format: dateTime
-          example: 2021-03-03T17:21:55+00:00
+          description: Criado em  
+          example: 2019-05-27T17:40:06+00:00
         updated_at:
           type: string
-          format: dateTime
-          example: 2021-03-03T17:21:55+00:00
+          description: Atualizado em
+          example: 2019-10-22T13:31:25+00:00
         payment_authorization:
           type: string
           example: null
@@ -1954,10 +1995,10 @@ components:
             properties:
               id:
                 type: string
-                example: 754e145a117949228e79a99773e46d60
+                example: 54f5445fd4544b454654fdf46545465g
               transaction:
                 type: string
-                example: 0009462369b14ee596aabfd27faa97f7
+                example: 54f5445fd4544b454654fdf46545465g
               amount:
                 type: string
                 example: "3.00"
@@ -1990,8 +2031,8 @@ components:
                 example: "null"
               created_at:
                 type: string
-                format: dateTime
-                example: 2021-03-03T17:21:55+00:00
+                description: Criado em 
+                example: 2019-05-27T17:40:06+00:00
 
     TransactionUpdateRequest:
       type: object
@@ -2010,7 +2051,7 @@ components:
         on_behalf_of:
           type: string
           description: Identificador do seller responsável pela venda
-          example: 1e5ee2e290d040769806c79e6ef94ee1
+          example: 54f5445fd4544b454654fdf46545465g
         amount:
           type: integer
           description: valor da venda a ser estornado em centavos
@@ -2024,7 +2065,7 @@ components:
         recipient:
           type: string
           description: Identificador do seller participante do split
-          example: 1e9ee3e290d040769806c79e6ef94ee3
+          example: 54f5445fd4544b454654fdf46545465g
         amount:
           type: integer
           description: valor da venda a ser estornado em centavos
@@ -2037,7 +2078,7 @@ components:
         on_behalf_of:
           type: string
           description: Identificador do seller responsável pela venda
-          example: 1e5ee2e290d040769806c79e6ef94ee1
+          example: 54f5445fd4544b454654fdf46545465g
         amount:
           type: integer
           description: valor da venda a ser capturado em centavos. para captura parcial
@@ -2051,7 +2092,7 @@ components:
         recipient:
           type: string
           description: Identificador do seller recebedor
-          example: 1e5ee2e290d040769806c79e6ef94ee1
+          example: 54f5445fd4544b454654fdf46545465g
         liable:
           type: boolean
           description: define se o recebedor arca com prejuízo em caso de chargeback ou
@@ -2087,11 +2128,11 @@ components:
         seller:
           type: string
           description: Identificador do seller
-          example: 005846dadde34e28ba7b9fecfccc989a
+          example: 54f5445fd4544b454654fdf46545465g
         marketplace_id:
           type: boolean
           description: Identificador do seller
-          example: 3249465a7753536b62545a6a684b0000
+          example: 54f5445fd4544b454654fdf46545465g
         token:
           type: string
           description: Identificador do seller
@@ -2109,17 +2150,18 @@ components:
         token:
           type: string
           description: Identificador do token de cartão a ser associado ao customer
-          example: 1e5ee2e290d040769806c79e6ef94ee1
+          example: 54f5445fd4544b454654fdf46545465g
         customer:
           type: string
-          description: Identificador do customer
+          description: ID do customer
+          example: 54f5445fd4544b454654fdf46545465g
     CardResponse:
       type: object
       properties:
         id:
           type: string
           description: Identificador único do cartão
-          example: 1e5ee2e290d040769806c79e6ef94ee1
+          example: 54f5445fd4544b454654fdf46545465g
         resource:
           type: string
           description: Tipo de recurso
@@ -2139,33 +2181,39 @@ components:
         fingerprint:
           type: string
           description: Identificador de segurança da transação
-          example: 1e5ee2e290d040769806c79e6ef94ee1
+          example: 54f5445fd4544b454654fdf46545465g
         customer:
           type: string
-          description: Identificador do customer
-          example: 1e5ee2e290d040769806c79e6ef94ee1
+          description: ID do customer
+          example: 54f5445fd4544b454654fdf46545465g
         expiration_month:
           type: string
-          description: Mês da expiração cartão
-          example: "9"
+          description: Mês de expiração
+          example: 9
         expiration_year:
           type: string
-          description: Ano da expiração cartão
-          example: "2020"
+          description: Ano de expiração do cartão (AAAA)
+          example: 2020
         holder_name:
           type: string
-          example: Joao da Silva
+          description: Nome do portador do cartão
+          example: Julio Alvarenga
         is_active:
           type: boolean
+          description: Ativo
           example: true
         is_valid:
           type: boolean
+          description: Valido
           example: true
         is_verified:
           type: boolean
-          example: true
+          description: Verificado
+          example: false
         address:
           type: string
+          description: Endereço 
+          example: null
         verification_checklist:
           type: object
           properties:
@@ -2185,16 +2233,18 @@ components:
           example: /v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/02ec41795637446d805b6795b3b3331e
         created_at:
           type: string
-          example: 2019-05-06T12:39:27+00:00
+          description: Criado em 
+          example: 2019-05-27T17:40:06+00:00
         updated_at:
           type: string
-          example: 2019-05-06T12:39:34+00:00
+          description: Atualizado em
+          example: 2019-10-22T13:31:25+00:00
     SourceResponse:
       type: object
       properties:
         id:
           type: string
-          example: 0009462369b14ee596aabfd27faa97f7
+          example: 54f5445fd4544b454654fdf46545465g
         status:
           type: string
           enum:
@@ -2232,7 +2282,7 @@ components:
             ser capturada a posteriori
         on_behalf_of:
           type: string
-          example: 1e5ee2e290d040769806c79e6ef94ee1
+          example: 54f5445fd4544b454654fdf46545465g
         reference_id:
           type: string
           example: "10902"
@@ -2243,7 +2293,7 @@ components:
           properties:
             id:
               type: string
-              example: 2f008ac254964e658be566241cc87c1a
+              example: 54f5445fd4544b454654fdf46545465g
             amount:
               type: string
               example: "1.00"
@@ -2265,25 +2315,32 @@ components:
               example: null
             expiration_month:
               type: string
-              example: "7"
+              description: Mês de expiração
+              example: 7
             expiration_year:
               type: string
-              example: "2023"
+              description: Ano de expiração do cartão (AAAA)
+              example: 2025
             holder_name:
               type: string
-              example: LEITE/ANDRE S DE M
+              description: Nome do portador do cartão
+              example: Julio Alvarenga
             is_active:
               type: boolean
+              description: Ativo
               example: false
             is_valid:
               type: boolean
+              description: Valido
               example: true
             is_verified:
               type: boolean
+              description: Verificado
               example: false
             customer:
               type: string
-              example: e4e8c5b569da48b28d896385f5481bcf
+              description: ID do customer
+              example: 54f5445fd4544b454654fdf46545465g
             fingerprint:
               type: string
               example: 9f2843f0c1b08d6018927b4e5e884a869ae49
@@ -2294,47 +2351,49 @@ components:
               type: object
             created_at:
               type: string
-              format: dateTime
-              example: 2015-04-17T06:39:52+00:00
+              description: Criado em 
+              example: 2019-05-27T17:40:06+00:00
             updated_at:
               type: string
-              format: dateTime
-              example: 2015-04-17T06:39:52+00:00
+              description: Atualizado em
+              example: 2019-10-22T13:31:25+00:00
         installment_plan:
           type: object
           properties:
             number_installments:
               type: integer
-              description: número de parcelas (1-12)
+              description: Número de parcelas (1-12)
+              example: 5
         statement_descriptor:
           type: string
           example: CORRENTISTA 03  3011
         customer:
-          type: object
-          description: identificador do comprador que será cobrado
+          type: string
+          description: ID do customer
+          example: 54f5445fd4544b454654fdf46545465g
           properties:
             id:
               type: string
-              example: 1e5ee2e290d040769806c79e6ef94ee1
+              example: 54f5445fd4544b454654fdf46545465g
               description: identificador do comprador que será cobrado para source tipo
                 customer, wallet e card_and_wallet
             amount:
               type: integer
               example: 100
-              description: valor a ser cobrado neste customer (opcional)
+              description: Valor a ser cobrado neste customer (opcional)
         token:
           type: object
-          description: identificador do token de cartão que será cobrado obrigatorio no
+          description: Identificador do token de cartão que será cobrado obrigatorio no
             source tipo token
           properties:
             id:
               type: string
-              description: identificador do cartão para source tipo card
-              example: 1e5ee2e290d040769806c79e6ef94ee1
+              description: Identificador do cartão para source tipo card
+              example: 54f5445fd4544b454654fdf46545465g
             amount:
               type: integer
               example: 100
-              description: valor a ser cobrado neste token (opcional)
+              description: Valor a ser cobrado neste token (opcional)
         uri:
           type: string
           example: >
@@ -2343,12 +2402,12 @@ components:
           type: object
         created_at:
           type: string
-          format: dateTime
-          example: 2015-04-17T06:39:52+00:00
+          description: Criado em 
+          example: 2019-05-27T17:40:06+00:00
         updated_at:
           type: string
-          format: dateTime
-          example: 2015-04-17T06:39:52+00:00
+          description: Atualizado em
+          example: 2019-10-22T13:31:25+00:00
     SourceRequest:
       type: object
       required:
@@ -2365,15 +2424,15 @@ components:
         amount:
           type: integer
           example: 100
-          description: valor em centavos a ser cobrado na venda (opcional)
+          description: Valor em centavos a ser cobrado na venda (opcional)
         currency:
           type: string
           example: BRL
-          description: moeda do valor a ser cobrado na venda
+          description: Moeda do valor a ser cobrado na venda
         description:
           type: string
           example: BRL
-          description: descrição da venda quando gerada (opcional)
+          description: Descrição da venda quando gerada (opcional)
         type:
           type: string
           enum:
@@ -2386,72 +2445,79 @@ components:
             ser capturada a posteriori
         on_behalf_of:
           type: string
-          example: 1e5ee2e290d040769806c79e6ef94ee1
+          example: 54f5445fd4544b454654fdf46545465g
         reference_id:
           type: string
           example: "10902"
           description: ID referência da sua aplicação VARCHAR(500)
         card:
           type: object
-          description: objeto obrigatório no tipo card e card_and_wallet
+          description: Objeto obrigatório no tipo card e card_and_wallet
           properties:
             id:
               type: string
-              example: 8c795953db6342be9fc14a36d5308bed
-              description: identificador do cartão para source tipo card
+              example: 54f5445fd4544b454654fdf46545465g
+              description: Identificador do cartão para source tipo card
             amount:
               type: integer
               example: 100
-              description: valor a ser cobrado neste cartao (opcional)
+              description: Valor a ser cobrado neste cartao (opcional)
             holder_name:
               type: string
+              description: Nome do portador do cartão
+              example: Julio Alvarenga
             expiration_month:
               type: string
-              description: mês de expiração do cartão (MM)
+              description: Mês de expiração
+              example: 12
             expiration_year:
               type: string
-              description: ano de expiração do cartão (AAAA)
+              description: Ano de expiração do cartão (AAAA)
+              example: 2025
             card_number:
               type: string
               description: Número do cartão
             security_code:
               type: string
               description: Código de segurança do cartão (CVC)
+              example: 123
         installment_plan:
           type: object
           properties:
             number_installments:
               type: integer
-              description: número de parcelas (1-12)
+              description: Número de parcelas (1-12)
+              example: 5
         statement_descriptor:
           type: string
           example: CORRENTISTA 03  3011
         customer:
-          type: object
-          description: identificador do comprador que será cobrado
+          type: string
+          description: ID do customer
+          example: 54f5445fd4544b454654fdf46545465g
           properties:
             id:
               type: string
               example: 1e5ee2e290d040769806c79e6ef94ee1
-              description: identificador do comprador que será cobrado para source tipo
+              description: Identificador do comprador que será cobrado para source tipo
                 customer, wallet e card_and_wallet
             amount:
               type: integer
               example: 100
-              description: valor a ser cobrado neste customer (opcional)
+              description: Valor a ser cobrado neste customer (opcional)
         token:
           type: object
-          description: identificador do token de cartão que será cobrado obrigatorio no
+          description: Identificador do token de cartão que será cobrado obrigatorio no
             source tipo token
           properties:
             id:
               type: string
-              description: identificador do cartão para source tipo card
-              example: 1e5ee2e290d040769806c79e6ef94ee1
+              description: Identificador do cartão para source tipo card
+              example: 54f5445fd4544b454654fdf46545465g
             amount:
               type: integer
               example: 100
-              description: valor a ser cobrado neste token (opcional)
+              description: Valor a ser cobrado neste token (opcional)
         metadata:
           type: object
     TransactionCNPRequest:
@@ -2466,7 +2532,7 @@ components:
         amount:
           type: integer
           example: 100
-          description: valor em centavos a ser cobrado pela transação
+          description: Valor em centavos a ser cobrado pela transação
         currency:
           type: string
           example: BRL
@@ -2475,6 +2541,7 @@ components:
           example: Venda pelo site
         payment_type:
           type: string
+          description: Tipo do pagamento 
           enum:
             - credit
             - boleto
@@ -2486,7 +2553,7 @@ components:
             ser capturada a posteriori
         on_behalf_of:
           type: string
-          example: 1e5ee2e290d040769806c79e6ef94ee1
+          example: 54f5445fd4544b454654fdf46545465g
         reference_id:
           type: string
           example: "10902"
@@ -2496,8 +2563,8 @@ components:
           properties:
             expiration_date:
               type: string
-              example: 20170410
-              description: Data de vencimento utilizado nas vendas por boleto
+              description: Data de vencimento
+              example: 2019-05-29T00:00:00+00:00
             top_instructions:
               type: array
               description: Instruções para o comprador utilizado nas vendas por boleto
@@ -2510,7 +2577,8 @@ components:
           properties:
             number_installments:
               type: integer
-              description: número de parcelas (1-12)
+              description: Número de parcelas (1-12)
+              example: 5
         statement_descriptor:
           type: string
           example: SuaMarcaAqui
@@ -2518,12 +2586,12 @@ components:
             sobrescreve a informação do cadastro do Vendedor.
         customer:
           type: string
-          description: identificador do comprador que será cobrado
-          example: 1e5ee2e290d040769806c79e6ef94ee1
+          description: ID do customer
+          example: 54f5445fd4544b454654fdf46545465g
         token:
           type: string
-          description: identificador do token de cartão que será cobrado
-          example: 1e5ee2e290d040769806c79e6ef94ee1
+          description: Identificador do token de cartão que será cobrado
+          example: 54f5445fd4544b454654fdf46545465g
         metadata:
           type: object
                   
@@ -2540,21 +2608,21 @@ components:
         on_behalf_of:
           type: string
           example: "822a8bda73c546a8b2f12a5ebcce7732"
-          description: "Identificador do seller responsável pela venda."
+          description: Identificador do seller responsável pela venda.
         description:
           type: string
-          example: "Uma descrição breve da motivação da sua transação"
+          example: Uma descrição breve da motivação da sua transação
         statement_descriptor:
           type: string
           example:  "Loja do Joao"
-          description: "Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor.."
+          description: Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor..
         payment_type:
           type: string
+          description: Tipo do pagamento 
           enum:
             - credit
             - boleto
           default: "credit"
-          description: Tipo de pagamento
         capture:
           type: boolean
           example: true
@@ -2577,7 +2645,7 @@ components:
             currency: 
               type: string
               example: "BRL"
-              description: 'Moeda do valor a ser cobrado na venda "BRL"'
+              description: Moeda do valor a ser cobrado na venda BRL
             type:
               type: string 
               example: "card"
@@ -2590,26 +2658,27 @@ components:
                   description: Número do cartão
                 holder_name: 
                   type: string
-                  example: "João Silva"
-                  description: Nome do portador do cartão.
+                  description: Nome do portador do cartão
+                  example: Julio Alvarenga
                 expiration_month:  
                   type: string
-                  example: "03"
-                  description: mês de expiração do cartão (MM)
+                  description: Mês de expiração
+                  example: 3
                 expiration_year:  
                   type: string
-                  example: "2027"
-                  description: ano de expiração do cartão (AAAA)
+                  description: Ano de expiração do cartão (AAAA)
+                  example: 2027
                 security_code:  
                   type: string
-                  example: "123"
                   description: Código de segurança do cartão (CVC)
+                  example: 123
         installment_plan:
           type: object
           properties:
             number_installments:
               type: integer
-              description: número de parcelas (1-12)
+              description: Número de parcelas (1-12)
+              example: 5
     TransactionDisposableTokenRequest:
       type: object
       title: Token descartavel
@@ -2622,12 +2691,12 @@ components:
       properties:
         on_behalf_of:   
           type: string
-          example: "822a8bda73c546a8b2f12a5ebcce7732"
-          description: "Identificador do seller responsável pela venda."
+          example: 54f5445fd4544b454654fdf46545465g
+          description: Identificador do seller responsável pela venda.
         token:   
           type: string
-          example: "822a8bda73c546a8b2f12a5ebcce7732"
-          description: "Id do token de cartão gerado. Após o uso é descartado."
+          example: 54f5445fd4544b454654fdf46545465g
+          description: Id do token de cartão gerado. Após o uso é descartado.
         amount:   
           type: string
           example: 300
@@ -2635,21 +2704,21 @@ components:
         currency:   
           type: string
           example: "BRL"
-          description: 'Moeda do valor a ser cobrado na venda "BRL"'
+          description: Moeda do valor a ser cobrado na venda BRL
         description:   
           type: string
-          example: "Uma descrição breve da motivação da sua transação"
+          example: Uma descrição breve da motivação da sua transação
         statement_descriptor:   
           type: string
           example: "Loja do Joao"
-          description: "Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor.."
+          description: Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor..
         payment_type:   
-          type: string 
+          type: string
+          description: Tipo do pagamento 
           enum:
             - credit
             - boleto
-          default: "credit"
-          description: Tipo de pagamento
+          default: credit
         capture:
           type: boolean
           example: true
@@ -2664,7 +2733,8 @@ components:
           properties:
             number_installments:
               type: integer
-              description: número de parcelas (1-12)
+              description: Número de parcelas (1-12)
+              example: 5
     TransactionDigitalWalletRequest:
       type: object
       title: Usando Customer ID
@@ -2677,12 +2747,12 @@ components:
       properties:
         on_behalf_of:  
           type: string
-          example: "822a8bda73c546a8b2f12a5ebcce7732"
-          description: "Identificador do seller responsável pela venda."
+          example: 54f5445fd4544b454654fdf46545465g
+          description: Identificador do seller responsável pela venda.
         customer:  
           type: string
-          example: "c07ee65cda84495787cd091fea554549"
-          description: "identificador do comprador que será cobrado."
+          description: ID do customer
+          example: 54f5445fd4544b454654fdf46545465g
         amount:  
           type: number
           example: 300
@@ -2690,21 +2760,21 @@ components:
         currency:  
           type: string
           example: "BRL"
-          description: 'Moeda do valor a ser cobrado na venda "BRL"'
+          description: Moeda do valor a ser cobrado na venda BRL
         description:  
           type: string
-          example: "Uma descrição breve da motivação da sua transação"
+          example: Uma descrição breve da motivação da sua transação
         statement_descriptor:  
           type: string
           example: "Loja do Joao"
-          description: "Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor.."
+          description: Nome da empresa que aparecerá na fatura. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor..
         payment_type: 
-          type: string 
+          type: string
+          description: Tipo do pagamento 
           enum:
             - credit
             - boleto
           default: "credit"
-          description: Tipo de pagamento
         capture:
           type: boolean
           example: true
@@ -2719,7 +2789,8 @@ components:
           properties:
             number_installments:
               type: integer
-              description: número de parcelas (1-12)
+              description: Número de parcelas (1-12)
+              example: 5
     TransactionDigitalWalletSecondaryRequest: 
       type: object
       title: Usando card ID
@@ -2749,11 +2820,11 @@ components:
           description: Valor em centavos a ser cobrado pela transação
         payment_type: 
           type: string
+          description: Tipo do pagamento 
           enum:
             - credit
             - boleto
           default: "credit"
-          description: Tipo de pagamento
         source:
           type: object
           properties:
@@ -2766,7 +2837,7 @@ components:
               properties:
                 id:  
                   type: string
-                  example: "822a8bda73c546a8b2f12a5ebcce7732"
+                  example: 54f5445fd4544b454654fdf46545465g
                   description: identificador do cartão para source tipo card
         capture:
           type: boolean
@@ -2782,7 +2853,8 @@ components:
           properties:
             number_installments:
               type: integer
-              description: número de parcelas (1-12)
+              description: Número de parcelas (1-12)
+              example: 5
     TransactionSimpleBoletoTransactionRequest:
       type: object
       title: Boleto Simples
@@ -2800,8 +2872,8 @@ components:
           description: "Identificador do seller responsável pela venda."
         customer:    
           type: string
-          example: "573e2aa71cb94ecda8dee14087327b48"
-          description: "identificador do comprador que será cobrado."
+          description: ID do customer
+          example: 54f5445fd4544b454654fdf46545465g
         amount:    
           type: number
           example: 300
@@ -2837,12 +2909,12 @@ components:
       properties:
         on_behalf_of:     
           type: string
-          example: "573e2aa71cb94ecda8dee14087327b48"
+          example: 54f5445fd4544b454654fdf46545465g
           description: "Identificador do seller responsável pela venda."
         customer:     
           type: string
-          example: "573e2aa71cb94ecda8dee14087327b48"
-          description: "identificador do comprador que será cobrado."
+          description: ID do customer
+          example: 54f5445fd4544b454654fdf46545465g
         amount:     
           type: number
           example: 300
@@ -2867,12 +2939,12 @@ components:
           properties:
             expiration_date:      
               type: string
-              example: "2018-11-20"
-              description: Data de expiração do boleto no formato (AAAA-MM-DD)
+              description: Data de vencimento
+              example: 2019-05-29T00:00:00+00:00
             payment_limit_date:       
               type: string
-              example: "2018-11-20"
-              description: Data limite para o pagamento do boleto (AAAA-MM-DD)
+              description: Data limite para pagamento
+              example: 2019-06-01T00:00:00+00:00D)
             body_instructions:       
               type: array
               items:
@@ -2987,7 +3059,7 @@ components:
           type: string
           format: uuid
           readOnly: true
-          example: d290f1ee6c544b0190e6d701748f0851
+          example: 54f5445fd4544b454654fdf46545465g
         frequency:
           description: Frequencia que o plano será cobrado
           type: string
@@ -3040,11 +3112,13 @@ components:
           type: string
           example: plan
         created_at:
-          type: integer
-          format: datetime
+          type: string
+          description: Criado em 
+          example: 2019-05-27T17:40:06+00:00
         updated_at:
-          type: integer
-          format: datetime
+          type: string
+          description: Atualizado em
+          example: 2019-10-22T13:31:25+00:00
         uri:
           type: string
           example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/plan/73c0789594c1470cb10cc957f2435c00"
@@ -3055,17 +3129,16 @@ components:
           description: referência a um plano existente
           type: string
           format: uuid
-          example: d290f1ee6c544b0190e6d701748f0851
+          example: 54f5445fd4544b454654fdf46545465g
         on_behalf_of:
-          description: referência a um vendedor existente
+          description: Referência a um vendedor existente
           type: string
           format: uuid
-          example: d290f1ee6c544b0190e6d701748f0851
+          example: 54f5445fd4544b454654fdf46545465g
         customer:
-          description: referência a um comprador existente
           type: string
-          format: uuid
-          example: d290f1ee6c544b0190e6d701748f0851
+          description: ID do customer
+          example: 54f5445fd4544b454654fdf46545465g
         payment_method:
           description: método de pagamento
           type: string
@@ -3078,10 +3151,9 @@ components:
           format: date
           example: 2017-07-21
         expiration_date:
-          description: data final da assinatura
           type: string
-          format: date
-          example: 2017-07-25
+          description: Data de vencimento
+          example: 2019-05-29T00:00:00+00:00
         amount:
           description: valor em centavos
           type: integer
@@ -3124,22 +3196,21 @@ components:
         uuid:
           type: string
           format: uuid
-          example: d290f1ee6c544b0190e6d701748f0851
+          example: 54f5445fd4544b454654fdf46545465g
         plan:
           description: referência a um plano existente
           type: string
           format: uuid
-          example: d290f1ee6c544b0190e6d701748f0851
+          example: 54f5445fd4544b454654fdf46545465g
         on_behalf_of:
-          description: referência a um vendedor existente
+          description: Referência a um vendedor existente
           type: string
           format: uuid
-          example: d290f1ee6c544b0190e6d701748f0851
+          example: 54f5445fd4544b454654fdf46545465g
         customer:
-          description: referência a um comprador existente
           type: string
-          format: uuid
-          example: d290f1ee6c544b0190e6d701748f0851
+          description: ID do customer
+          example: 54f5445fd4544b454654fdf46545465g
         description:
           description: descrição da assinatura
           type: string
@@ -3161,10 +3232,9 @@ components:
           format: date
           example: 2017-07-21
         expiration_date:
-          description: data final da assinatura
           type: string
-          format: date
-          example: 2017-07-25
+          description: Data de vencimento
+          example: 2019-05-29T00:00:00+00:00
         amount:
           description: valor em centavos
           type: integer
@@ -3186,12 +3256,12 @@ components:
           example: subscription
         created_at:
           type: string
-          format: date-time
-          example: 2017-07-25
+          description: Criado em 
+          example: 2019-05-27T17:40:06+00:00
         updated_at:
           type: string
-          format: date-time
-          example: 2017-07-25
+          description: Atualizado em
+          example: 2019-10-22T13:31:25+00:00
         suspended_at:
           type: string
           format: date-time
@@ -3208,15 +3278,14 @@ components:
           format: uuid
           example: d290f1ee-6c54-4b01-90e6-d701748f0851
         on_behalf_of:
-          description: referência a um vendedor existente
+          description: Referência a um vendedor existente
           type: string
           format: uuid
           example: d290f1ee-6c54-4b01-90e6-d701748f0851
         customer:
-          description: referência a um comprador existente
           type: string
-          format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+          description: ID do customer
+          example: 54f5445fd4544b454654fdf46545465g
         description:
           description: descrição da assinatura
           type: string
@@ -3233,10 +3302,9 @@ components:
           format: date
           example: 2017-07-21
         expiration_date:
-          description: data de vencimento cobrança
           type: string
-          format: date
-          example: 2017-07-25
+          description: Data de vencimento
+          example: 2019-05-29T00:00:00+00:00
         amount:
           description: valor em centavos
           type: integer
@@ -3313,15 +3381,14 @@ components:
           format: uuid
           example: d290f1ee6c544b0190e6d701748f0851
         on_behalf_of:
-          description: referência a um vendedor existente
+          description: Referência a um vendedor existente
           type: string
           format: uuid
           example: d290f1ee6c544b0190e6d701748f0851
         customer:
-          description: referência a um comprador existente
           type: string
-          format: uuid
-          example: d290f1ee6c544b0190e6d701748f0851
+          description: ID do customer
+          example: 54f5445fd4544b454654fdf46545465g
         invoice_customer:
           description: dados do comprador associado a assinaturas
           $ref: '#/components/schemas/InvoiceCustomer'
@@ -3341,10 +3408,9 @@ components:
           format: date
           example: 2017-07-21
         expiration_date:
-          description: data de vencimento cobrança
           type: string
-          format: date
-          example: 2017-07-25
+          description: Data de vencimento
+          example: 2019-05-29T00:00:00+00:00
         amount:
           description: valor em centavos
           type: integer
@@ -3388,13 +3454,13 @@ components:
           items:
             type: object
         created_at:
-          readOnly: true
           type: string
-          format: date-time
+          description: Criado em
+          example: 2019-05-27T17:40:06+00:00
         updated_at:
-          readOnly: true
           type: string
-          format: date-time
+          description: Atualizado em
+          example: 2019-10-22T13:31:25+00:00
         uri:
           type: string
           example: "/v2/marketplaces/820a6bda73c546a8b2f12a5ebcae7732/invoice/73c0789594c1470cb10cc957f2435c00"
@@ -3480,26 +3546,30 @@ components:
       properties:
         holder_name: 
           type: string
-          description: Nome do portador
+          description: Nome do portador do cartão
+          example: Julio Alvarenga
         expiration_month:
           type: string
-          description: mês de expiração do cartão (MM)
+          description: Mês de expiração
+          example: 12
         expiration_year:
           type: string
-          description: ano de expiração do cartão (AAAA)
+          description: Ano de expiração do cartão (AAAA)
+          example: 2027
         card_number:
           type: string
           description: Número do cartão
         security_code:
           type: string
           description: Código de segurança do cartão (CVC)
+          example: 123
     TokenCardResponse:
       type: object
       properties:
         id: 
           type: string
           description: Id do token
-          example: 1e5ee2e290d040769806c79e6ef94ee1
+          example: 54f5445fd4544b454654fdf46545465g
         resource:
           type: string
           description: Tipo de recurso
@@ -3518,7 +3588,7 @@ components:
             id:
               type: string
               description: Id do cartão
-              example: 2f008ac254964e658be566241cc87c1a
+              example: 54f5445fd4544b454654fdf46545465g
             resource:
               type: string
               description: Tipo de recurso
@@ -3537,40 +3607,40 @@ components:
               example: 4539
             expiration_month:
               type: string
-              description: Mês de expiração.
+              description: Mês de expiração
               example: 12
             expiration_year:
               type: string
-              description: Ano de expiração.
-              example: 12
+              description: Ano de expiração do cartão (AAAA)
+              example: 2027
             holder_name:
               type: string
-              description: Nome do portador
+              description: Nome do portador do cartão
               example: Julio Alvarenga
             is_active:
-              type: string
+              type: boolean
               description: Ativo
               example: false
             is_valid:
-              type: string
-              description: valido
+              type: boolean
+              description: Valido
               example: true
             is_verified:
-              type: string
-              description: verificado
+              type: boolean
+              description: Verificado
               example: false
             customer:
               type: string
-              description: ""
-              example: Null
+              description: ID do customer
+              example: 54f5445fd4544b454654fdf46545465g
             fingerprint:
               type: string
               description: Digital
               example: f689b03585fce7e8a1836366ffe1ad1255f4df8735b5462f6204a3a8a3474a12
             address:
               type: string
-              description: ""
-              example: Null
+              description: Endereço
+              example: null
             verification_checklist:
               type: object
             postal_code_check:
@@ -3592,31 +3662,31 @@ components:
               example: /v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/2f008ac254964e658be566241cc87c1a
             created_at:
               type: string
-              format: dateTime
-              example: 2015-04-17T06:39:52+00:00  
+              description: Criado em 
+              example: 2019-05-27T17:40:06+00:00 
             updated_at:
               type: string
-              format: dateTime
-              example: 2015-04-17T06:39:52+00:00        
+              description: Atualizado em
+              example: 2019-10-22T13:31:25+00:00        
         uri:
           type: string
           example: /v1/marketplaces/3249465a7753536b62545a6a684b0000/cards/2f008ac254964e658be566241cc87c1a
         created_at:
-          type: string 
-          format: dateTime
-          example: 2015-04-17T06:39:52+00:00  
+          type: string
+          description: Data da criação do recebível 
+          example: 2019-05-27T17:40:06+00:00 
         updated_at:
           type: string
-          format: dateTime
-          example: 2015-04-17T06:39:52+00:00       
+          description: Atualizado em
+          example: 2019-10-22T13:31:25+00:00      
           
-    CardResponseAssociate:
+    CardAssociateResponse:
       type: object
       properties:
         id:
           type: string
           description: ID do token
-          example: dab47c14aa284bcd874dbeda519f735c
+          example: 54f5445fd4544b454654fdf46545465g
         resource:
           type: string
           description: Tipo de recurso
@@ -3639,32 +3709,32 @@ components:
           example: 5497
         expiration_month:
           type: string
-          description: Mês de expiração.
+          description: Mês de expiração
           example: 1
         expiration_year:
           type: string
-          description: Ano de expiração.
+          description: Ano de expiração do cartão (AAAA)
           example: 2025
         holder_name:
           type: string
-          description: Nome do portador
+          description: Nome do portador do cartão
           example: Julio Alvarenga
         is_active:
-          type: string
+          type: boolean
           description: Ativo
           example: true
         is_valid:
-          type: string
-          description: valido
+          type: boolean
+          description: Valido
           example: true
         is_verified:
-          type: string
-          description: verificado
+          type: boolean
+          description: Verificado
           example: false
         customer:
           type: string
           description: ID do customer
-          example: 005846dadde34e28ba7b9fecfccc989a
+          example: 54f5445fd4544b454654fdf46545465g
         fingerprint:
           type: string
           description: Digital
@@ -3672,7 +3742,7 @@ components:
         address:
           type: string
           description: Endereço
-          example: Null
+          example: null
         verification_checklist:
           type: object
           properties:
@@ -3695,12 +3765,12 @@ components:
           example: /v1/marketplaces/4efbad0e595343fbbe9f9725d6fc9769/cards/dab47c14aa284bcd874dbeda519f735c"
         created_at:
           type: string
-          format: dateTim
-          example: 2021-06-10T19:02:46+00:00 
+          description: Criado em 
+          example: 2019-05-27T17:40:06+00:00 
         updated_at:
           type: string
-          format: dateTime
-          example: 2021-06-10T19:03:18+00:00    
+          description: Atualizado em
+          example: 2019-10-22T13:31:25+00:00   
     TokenCardResponse400:
       type: object
       properties:
@@ -3727,7 +3797,7 @@ components:
               type: string
               description: Mensagem de erro
               example: "Missing required param: expiration_month. Please verify request parameters."
-    CardResponseAssociate404:
+    CardAssociateResponse404:
       type: object
       properties:
         error:
@@ -3759,7 +3829,7 @@ components:
         id:
           type: string
           description: Identificador único do cartão
-          example: b351cbac25a84f289ba9f5339e8d6327
+          example: 54f5445fd4544b454654fdf46545465g
         resource:
           type: string
           description: Tipo de recurso
@@ -3782,31 +3852,32 @@ components:
           example: "5497"
         expiration_month:
           type: string
-          description: Mês da expiração cartão
-          example: "1"
+          description: Mês de expiração
+          example: 1
         expiration_year:
           type: string
-          description: Ano da expiração cartão
-          example: "2025"
+          description: Ano de expiração do cartão (AAAA)
+          example: 2025
         holder_name:
           type: string
-          example: Testes testes
+          description: Nome do portador do cartão
+          example: Julio Alvarenga
         is_active:
-          type: string
+          type: boolean
           description: Ativo
           example: true
         is_valid:
-          type: string
+          type: boolean
           description: Valido
           example: true
         is_verified:
-          type: string
+          type: boolean
           description: Verificado
           example: false
         customer:
           type: string
           description: ID do customer
-          example: 047cf3697440496fa588672f76c0e3db
+          example: 54f5445fd4544b454654fdf46545465g
         fingerprint:
           type: string
           description: Digital
@@ -3837,12 +3908,12 @@ components:
           example: "/v1/marketplaces/4efbad0e595343fbbe9f9725d6fc9769/cards/b351cbac25a84f289ba9f5339e8d6327"
         created_at:
           type: string
-          format: dateTim
-          example: 2021-06-11T13:39:34+00:00 
+          description: Criado em
+          example: 2019-05-27T17:40:06+00:00 
         updated_at:
           type: string
-          format: dateTime
-          example: 2021-06-11T13:39:38+00:00
+          description: Atualizado em
+          example: 2019-10-22T13:31:25+00:00
     CardListResponse404:
       type: object
       properties:
@@ -3869,13 +3940,13 @@ components:
               type: string
               description: Mensagem de erro
               example: "Sorry, the resource you are trying to use does not exist or has been deleted."
-    CardRemove:
+    CardRemoveResponse:
       type: object
       properties:
         id:
           type: string
           description: Identificador único do cartão
-          example: 8eb14e4ed16248bc8b6260dd02fba203
+          example: 54f5445fd4544b454654fdf46545465g
         resource:
           type: string
           description: Tipo do recurso
@@ -3884,7 +3955,7 @@ components:
           type: string
           description: cartão deletado
           example: true
-    CardRemove404:
+    CardRemoveResponse404:
       type: object
       properties:
         error:
@@ -3910,12 +3981,506 @@ components:
               type: string
               description: Mensagem de erro
               example: "Sorry, the resource you are trying to use does not exist or has been deleted."
-              
+    BoletoEmailResponse:
+      type: object
+      properties:
+        message: 
+          type: string
+          description: Mensagem
+          example: success
+    BoletoEmailResponse404:
+       type: object
+       properties:
+        error:
+          type: object
+          properties:        
+            status:
+              type: string
+              description: Status
+              example: Not Found
+            status_code:
+              type: string
+              description: Código do erro
+              example: 404
+            type:
+              type: string
+              description: Tipo de erro
+              example: invalid_request_error
+            category:
+              type: string
+              description: Categoria de erro
+              example: resource_not_found
+            message: 
+              type: string
+              description: Mensagem de erro
+              example: 'Sorry, the boleto you are trying to use does not exist or has been deleted.'
+    ListarBoletosResponse:
+      type: object
+      properties:
+        id: 
+          type: string
+          description: ID do boleto
+          example: 8b913f4854814892ae1a753947cd727a
+        resource:
+          type: string
+          description: Tipo do recurso
+          example: Boleto
+        description:
+          type: string
+          description: Descrição
+          example: Venda de ingressos para o show do dia 30
+        reference_number:
+          type: string
+          description: Numero de referência
+          example: 712820
+        document_number:
+          type: string
+          description: Numero do documento
+          example: 712820
+        expiration_date: 
+          type: string
+          description: Data de vencimento
+          example: 2019-05-29T00:00:00+00:00
+        recipient: 
+          type: string
+          description: Nome do recebedor
+          example: leonardoteste
+        bank_code: 
+          type: string
+          description: Codigo do banco
+          example: 109
+        customer: 
+          type: string
+          description: ID do customer
+          example: 54f5445fd4544b454654fdf46545465g
+        address: 
+          type: string
+          description: Endereço 
+          example: null
+        sequence:
+          type: string
+          description: Sequencia
+          example: 20373
+        url: 
+          type: string
+          description: URL do boleto gerado 
+          example: 'https://api-boleto-production.s3.amazonaws.com/4efbad0e595343fbbe9f9725d6fc9769/047cf3697440496fa588672f76c0e3db/5cec4b26902fa60b8faefeb1.html'
+        accepted: 
+          type: string
+          description: Aceite
+          example: false
+        printed:
+          type: string
+          description: Impresso
+          example: false
+        downloaded: 
+          type: string
+          description: Download
+          example: false
+        fingerprint: 
+          type: string
+          description: Digital
+          example: null
+        paid_at: 
+          type: string
+          example: null
+        uri: 
+          type: string
+          example: '/v1/marketplaces/4efbad0e595343fbbe9f9725d6fc9769/boletos/8b913f4854814892ae1a753947cd727a'
+        barcode:
+          type: string
+          description: Representação númerica do código de barras do boleto
+          example: 34191090087128202893631339210002779040000000300
+        metadata: 
+          type: object
+        created_at:
+          type: string
+          description: Criado em
+          example: 2019-05-27T17:40:06+00:00
+        updated_at: 
+          type: string
+          description: Atualizado em
+          example: 2019-10-22T13:31:25+00:00
+    ListarBoletosResponse404:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:        
+            status:
+              type: string
+              description: Status
+              example: Not Found
+            status_code:
+              type: string
+              description: Código do erro
+              example: 404
+            type:
+              type: string
+              description: Tipo de erro
+              example: invalid_request_error
+            category:
+              type: string
+              description: Categoria de erro
+              example: resource_not_found
+            message: 
+              type: string
+              description: Mensagem de erro
+              example: "Sorry, the boleto you are trying to use does not exist or has been deleted"
+    AprovarBoletoResponse:
+      type: object
+      properties: 
+        id: 
+          type: string
+          description: id do boleto
+          example: 21e5a0c71fc34c51b591943a1e7043c5
+        resource:
+          type: string
+          description: Recurso
+          example: transaction
+        status:
+          type: string
+          description: Status
+          example: succeeded
+        amount:
+          type: string
+          description: Valor liquido da transação
+          example: 3.00
+        original_amount:
+          type: string
+          description: Valor original liquido da transação
+          example: 3.00
+        currency: 
+          type: string
+          description: Moeda do valor a ser cobrado na venda
+          example: BRL
+        description:
+          type: string
+          description: Descrição
+          example: Boleto transaction updated manually
+        payment_type:
+          type: string
+          description: Tipo do pagamento
+          example: boleto
+        transaction_number:
+          type: string
+          description: Número da transação
+          example: null
+        gateway_authorizer:
+          type: string
+          description: Autorizador
+          example: itau
+        app_transaction_uid:
+          type: string
+          example: null
+        refunds:
+          type: string
+          example: null
+        rewards: 
+          type: string
+          example: null
+        pre_authorization:
+          type: string
+          example: null        
+        sales_receipt:
+          type: string
+          example: null        
+        on_behalf_of:
+          type: string
+          description: Referência a um vendedor existente
+          example: 047cf3697440496fa588672f76c0e3db        
+        customer: 
+          type: string
+          description: ID do comprador
+          example: 3c07f95d7d8a4ae5a698d7347971f5a6
+        statement_descriptor: 
+          type: string
+          description: "Nome da empresa que aparecerá no boleto. Utilizando esse campo você sobrescreve a informação do cadastro do Vendedor"
+          example: Estabelecimento L P Silva
+        payment_method:
+          type: object
+          properties:
+            id: 
+              type: string
+              description: ID do boleto
+              example: 0e919b2e95554e8ba9225d30d33ccdfc
+            zoop_boleto_id:
+              type: string
+              example: null
+            resource: 
+              type: string
+              description: Recurso
+              example: boleto
+            description:
+              type: string
+              description: Descrição
+              example: venda         
+            reference_number:
+                type: string
+                description: Número de referência
+                example: 13290047
+            document_number:
+              type: string
+              description: Número do documento 
+              example: 13290047        
+            expiration_date:
+              type: string
+              description: Data de vencimento
+              example: "2021-06-17T00:00:00+00:00"
+            payment_limit_date:
+              type: string
+              description: Data limite para o pagamento do boleto
+              example: null
+            recipient:
+              type: string
+              description: Identificador do recebedor
+              example: Estabelecimento L P Silva
+            bank_code:
+              type: string
+              description: Código do banco
+              example: 109
+            customer:
+              type: string
+              description: ID do comprador
+              example: 3c07f95d7d8a4ae5a698d7347971f5a6
+            address: 
+              type: string
+              description: Endereço
+              example: null          
+            sequence:
+              type: string
+              description: Sequencia
+              example: 206028
+            url:
+              type: string
+              description: URL do boleto
+              example: "https://api-boleto-production.s3.amazonaws.com/4efbad0e595343fbbe9f9725d6fc9769/047cf3697440496fa588672f76c0e3db/60c75042ae3faf0801cdaa3a.html"
+            accepted:
+              type: boolean
+              description: Aceite
+              example: false
+            printed:
+              type: boolean
+              description: Impresso
+              example: false
+            downloaded:
+              type: boolean
+              description: Download
+              example: false
+            fingerprint:
+              type: string
+              description: Identificador de segurança da transação
+              example: null
+            paid_at:
+              type: string
+              description: Data de pagamento
+              example: null
+            uri:
+              type: string
+              example: /v1/marketplaces/4efbad0e595343fbbe9f9725d6fc9769/boletos/0e919b2e95554e8ba9225d30d33ccdfc
+            barcode:
+              type: string
+              description: Representação númerica do código de barras do boleto
+              example: 34191091312900475893331339210002686540000000300
+            metadata:
+              type: object
+            created_at:
+              type: string
+              description: Data da criação do boleto
+              format: dateTime
+              example: 2021-06-14T09:49:07+00:00  
+            updated_at:
+              type: string
+              description: Data de pagamento
+              format: dateTime
+              example: 2021-06-14T12:55:55+00:00 
+            status:
+              type: string
+              description: Status
+              example: paid    
+        source:
+          type: object
+          description: Objeto agrupador das informações de fonte de pagamento da transação
+          example: null
+        point_of_sale:
+          type: object
+          properties:
+            entry_mode:
+              type: string
+              description: Modo de entrada
+              example: barcode
+            identification_number:
+              type: string
+              description: Número de identificação
+              example: null
+        installment_plan:
+          type: string
+          example: null
+        refunded:
+          type: boolean
+          description: Reembolso
+          example: false
+        voided:
+          type: boolean
+          description: Estorno 
+          example: false
+        captured:
+          type: boolean
+          description: Capturado
+          example: true
+        fees: 
+          type: string
+          description: Valor de taxa
+          example: 4.86
+        fee_details: 
+          type: object
+          properties: 
+            amount:
+              type: string
+              description: Valor de taxa cobrada
+              example: 1.10
+            prepaid:
+              type: boolean
+              description: Antecipado
+              example: true
+            currency:
+              type: string
+              description: Moeda do valor a ser cobrado na venda
+              example: BRL
+            type:
+              type: string
+              description: Nome do plano
+              example: zoop_credit_fee_d0
+            is_gateway_fee:
+              type: boolean
+              description: Taxa do autorizador
+              example: false  
+            description:
+              type: string
+              description: Descrição
+              example: Zoop Fee for Btf Plano Bit Fuel Prata Novo Pro Boleto fee and MCC Comércio (PSP)
+        location_latitude:
+          description: Latitude de localização
+          example: null
+        location_longitude:
+          description: Longitude de localização
+          example: null
+        uri:
+          type: string
+          example: /v1/marketplaces/4efbad0e595343fbbe9f9725d6fc9769/transactions/21e5a0c71fc34c51b591943a1e7043c5
+        metadata: 
+          type: object
+          properties: 
+            bank_id:
+              type: integer
+              description: ID do banco
+              example: "000"
+            payment_date:
+              type: string
+              description: Data de pagamento
+              example: "2021-06-14T12:55:55+0000"
+        expected_on:
+          type: string
+          description: Expectativa de liquidação
+          example: 2021-06-14T00:00:00+00:00
+        created_at:
+          type: string
+          description: Criado em
+          example: 2021-06-14T00:00:00+00:00
+        updated_at:
+          type: string
+          description: Atualizado em
+          example: 2021-06-14T00:00:00+00:00
+        payment_authorization: 
+          type: string
+          description: Autorização de pagamento
+          example: null
+        history:
+          type: object
+          properties:
+            id:
+              type: string
+              description: ID
+              example: 95a182fa449f44eaa2c0eeb30b92f177
+            transaction:
+              type: string
+              description: ID da transação
+              example: 21e5a0c71fc34c51b591943a1e7043c5
+            amount:
+              type: string
+              description: Valor do boleto
+              example: 3.00
+            operation_type:
+              type: string
+              description: Tipo da operação
+              example: created
+            status:
+              type: string
+              description: Status
+              example: succeeded
+            response_code:
+              type: string
+              description: Código de resposta
+              example: null
+            response_message:
+              type: string
+              description: Mensagem de resposta
+              example: null
+            authorization_code:
+              type: string
+              description: Código de autorização
+              example: null
+            authorizer_id:
+              type: string
+              description: ID do autorizador
+              example: null
+            authorization_nsu:
+              type: string
+              description: NSU da autorização
+              example: null
+            gatewayResponseTime:
+              type: string
+              description: Tempo de resposta do autorizador
+              example: null
+            authorizer:
+              type: string
+              description: Autorizador
+              example: null
+            created_at:
+              type: string
+              description: Data de criação
+              example: 2021-06-14 12:49:05  
+    AprovarBoletoResponse404:
+      type: object
+      properties: 
+        error:
+          type: object
+          properties:        
+            status:
+              type: string
+              description: Status
+              example: Not Found
+            status_code: 
+              type: string
+              description: Código do erro
+              example: 404
+            type:
+              type: string
+              description: Tipo do erro
+              example: invalid_request_error
+            category:
+              type: string
+              description: Categoria do erro
+              example: resource_not_found
+            message:
+              type: string
+              description: Mensagem do erro
+              example: "Sorry, the transaction (id: 21e5a0c71fc34c51b591943a1e7043cl) you are trying to use does not exist or has been deleted."
     LetterCancelResponse:
       type: object
       properties:
-            url:
-              type: string
-              example: "https://zoop-cancelled-letters-prod.s3.amazonaws.com/Carta_Cancelamento_Venda_fe39ddda9b384ddc91c6efab6b74dc8e_2021-02-27T14%3A03%3A54.pdf?AWSAccessKeyId=AKIAUYSUHOIR5WKLRRHD&Expires=1614866804&Signature=qN0EzTrPqOV8Iov%2BMwVjxb3q4AY%3D"
+        url:
+          type: string
+          example: "https://zoop-cancelled-letters-prod.s3.amazonaws.com/Carta_Cancelamento_Venda_fe39ddda9b384ddc91c6efab6b74dc8e_2021-02-27T14%3A03%3A54.pdf?AWSAccessKeyId=AKIAUYSUHOIR5WKLRRHD&Expires=1614866804&Signature=qN0EzTrPqOV8Iov%2BMwVjxb3q4AY%3D"
 
           
