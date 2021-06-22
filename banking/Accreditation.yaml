@@ -2326,6 +2326,7 @@ components:
       title: Individual
       required:
         - cbo
+        - birthday
         - email
         - name
         - revenue
@@ -2399,30 +2400,10 @@ components:
           type: string
           description: email do portador da conta.
           example: "joao.silva@gmail.com" 
-        birthday:
-          type: string
-          description: Data de nascimento do portador da conta.
-          example: "1982-12-15" 
-        identity_card:
-          type: string
-          description: RG do portador da conta (Somente para type "individual") 
-          example: 156032898
         national_registration:
           type: string
           description: CPF do portador da conta.
           example: "10057698007" 
-        cbo:
-          type: string
-          description: Código de ocupação do portador da conta. Valor disponível em Listar CBO (Somente para type "individual")
-          example: "252505"
-        pep:
-          type: boolean
-          default: false
-          description: Declaração se o portador da conta é uma pessoa exposta politicamente. 
-        mothers_name:
-          type: string
-          description: Nome da mãe do portador da conta 
-          example: "Maria Silva"
         revenue:
           type: number
           description: Renda média do portador (tipo individual) da conta ou receita média da empresa (tipo business) 
