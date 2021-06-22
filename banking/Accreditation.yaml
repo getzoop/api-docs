@@ -779,7 +779,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                  $ref: '#/components/schemas/PartnerResponse'
+                $ref: '#/components/schemas/PartnerResponse'
         '404':
           description: Found
           content:
@@ -1173,12 +1173,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AddressHolderResponse'
-        '201':
-          description: Created - Payload de um endereço secundário
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PhonesPartnerResponse'
         '404':
           description: Not Found
           content:
@@ -1351,10 +1345,12 @@ paths:
                    _embedded:
                      type: object
                      properties:
-                       phones:
+                       documents:
                          type: array
                          items:
-                           $ref: '#/components/schemas/PhonesPartnerResponse'
+                           $ref: '#/components/schemas/Links'
+                   _links:
+                       $ref: '#/components/schemas/LinksDocs'
   "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}/documents/{documents_id}":
     parameters:
       - $ref: "#/components/parameters/type"
@@ -1991,17 +1987,6 @@ paths:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
         - $ref: "#/components/parameters/externalKEY"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                address_id:
-                  type: string
-                  example: "1010"
-                  description: Senha do cartão a ser criado (4 dígitos não sequenciais).
 
       responses:
         '200':
@@ -2012,24 +1997,13 @@ paths:
                 $ref: '#/components/schemas/CardActivationResponse'
   "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/delivery":
     get:
-      summary: Obter dados de um cartão
+      summary: Obter dados do processo de impressão do cartão
       tags:
         - Cartão pré-pago
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
         - $ref: "#/components/parameters/externalKEY"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                address_id:
-                  type: string
-                  example: "1010"
-                  description: Senha do cartão a ser criado (4 dígitos não sequenciais).
 
       responses:
         '200':
@@ -2037,7 +2011,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CardActivationResponse'
+                $ref: '#/components/schemas/CardDeliveryResponse'
   "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/accounts/{account_id}/cards":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
@@ -3079,7 +3053,7 @@ components:
              partners:
                type: array
                items:
-                 $ref: '#/components/schemas/IndividualHolderPartnerResponse'
+                 $ref: '#/components/schemas/IndividualHolderPartnerResponseSemOwner'
         page: 
           type: object
           properties:
@@ -3134,7 +3108,7 @@ components:
           type: string
           example: True
         _links:
-          $ref: '#/components/schemas/LinksPhonesPartners201'
+          $ref: '#/components/schemas/LinksPhonesPartner201'
     DocumentsPartnerResponse:
       type: object
       properties:
@@ -3347,6 +3321,54 @@ components:
         updated_at:
           type: string
           example: "2020-11-06T12:54:11.336975"
+        uri:
+          type: string
+          example: "//marketplaces/f8c2bfb8-84e4-486c-8e0e-ee15be5c3ab1/holders/a6d7c42c-661b-4e76-bd6b-77a9c09e82e1/cards/037d9fe3-2bab-48ff-815c-26bd5deda824"
+    CardDeliveryResponse:
+      type: object
+      properties:
+        holder_id:
+          type: string
+          example: "a6d7c42c661b4e76bd6b77a9c09e82e1"
+        card_key:
+          type: string
+          example: "037d9fe32bab48ff815c26bd5deda824"
+        marketplace_id:
+          type: string
+          example: "f8c2bfb884e4486c8e0eee15be5c3ab1"
+        status:
+          type: string
+          example: "RECEIVED"
+        mailing_address:
+          type: object
+          properties:
+            postal_code:
+              type: string
+              example: "22783450"
+            street:
+              type: string
+              example: "Av da América"
+            number:
+              type: string
+              example: "100"
+            complement:
+              type: string
+              example: "Do lado Cittar América"
+            reference_point:
+              type: string
+              example: ""
+            neighborhood:
+              type: string
+              example: "Barra da Tijuca5"
+            city:
+              type: string
+              example: "Rio de Janeiro"
+            state:
+              type: string
+              example: "Rio de Janeiro"
+            country:
+              type: string
+              example: "Brasil"
         uri:
           type: string
           example: "//marketplaces/f8c2bfb8-84e4-486c-8e0e-ee15be5c3ab1/holders/a6d7c42c-661b-4e76-bd6b-77a9c09e82e1/cards/037d9fe3-2bab-48ff-815c-26bd5deda824"
@@ -4086,6 +4108,48 @@ components:
       type: object
       $ref: '#/components/schemas/LinksPhonesPartner'
       
+    LinksPhonesPartner:
+      type: object
+      properties:
+        self:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://localhost/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/partners/82a2be6013ef4b01aaa8dcb4efcd6a8e/phones/a06f744df0944111b8da58daff18d8c2"
+            
+            type: 
+              type: string
+              example: "GET"
+        main:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://localhost/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/85b006901d034e18a235bd995b0d6352/partners/82a2be6013ef4b01aaa8dcb4efcd6a8e/phones/a06f744df0944111b8da58daff18d8c2/main"
+            
+            type: 
+              type: string
+              example: "GET"
+        partner:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://localhost/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/a391eb48b731455da7b9efe649b822ca/partners/82a2be6013ef4b01aaa8dcb4efcd6a8e"
+            type: 
+              type: string
+              example: "GET"
+        holder:
+          type: object
+          properties: 
+            href: 
+              type: string
+              example: "https://localhost/v2/marketplaces/f8c2bfb884e4486c8e0eee15be5c3ab1/banking/accreditation/holders/a391eb48b731455da7b9efe649b822ca"
+            type: 
+              type: string
+              example: "GET"
+
     LinksPhonesPartner201:
       type: object
       properties:
