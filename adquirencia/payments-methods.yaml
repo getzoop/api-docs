@@ -559,7 +559,11 @@ paths:
       description: ""
       responses:
         "200":
-          description: Terminal alterado com sucesso
+          description: Busca de informações com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConsultaTerminalPorIDResponse"
         "400":
           description: Missing required param
         "404":
@@ -2131,11 +2135,11 @@ components:
           example: 54f5445fd4544b454654fdf46545465g
         marketplace_id:
           type: boolean
-          description: Identificador do seller
+          description: Identificador do marketplace
           example: 54f5445fd4544b454654fdf46545465g
         token:
           type: string
-          description: Identificador do seller
+          description: Identificador do token
           example: 123456
         isStaging:
           type: boolean
@@ -4482,5 +4486,75 @@ components:
         url:
           type: string
           example: "https://zoop-cancelled-letters-prod.s3.amazonaws.com/Carta_Cancelamento_Venda_fe39ddda9b384ddc91c6efab6b74dc8e_2021-02-27T14%3A03%3A54.pdf?AWSAccessKeyId=AKIAUYSUHOIR5WKLRRHD&Expires=1614866804&Signature=qN0EzTrPqOV8Iov%2BMwVjxb3q4AY%3D"
-
-          
+    ConsultaTerminalPorIDResponse:
+      type: object 
+      properties:     
+        id:
+          type: string
+          description: ID indentificador do terminal na Zoop
+          example: c8aa28a7358d49efaf1c96c89535b666
+        resource: 
+          type: string
+          description: Recurso
+          example: terminal
+        code: 
+          type: string
+          description: ""
+          example: POI14101        
+        status:
+          type: string      
+          description: Status do terminal
+          example: active
+        serial_number:
+          type: string
+          description: Numero do serial
+          example: 64746566
+        terminal_model:
+          type: string
+          description: Modelo do terminal
+          example: D180
+        manufacturer:
+          type: string
+          description: ""
+          example: ""
+        customer:
+          type: string
+          description: ID do comprador
+          example: c86674eb39b0483684cb066efea46666
+        pin_capability:
+          type: string
+          description: Mostra que o terminal está pronto para uso
+          example: capable
+        contactless_enabled:
+          type: boolean
+          description: Pagamento por aproximação
+          example: false
+        application_version:   
+          type: string
+          description: Versão da aplicação
+          example: 001.22 141123
+        emv_lib_version:
+          type: string
+          description: ""
+          example: null
+        firmware_version:   
+          type: string
+          description: Versão da firmeware
+          example: 1.10
+        hardware_version: 
+          type: string
+          description: Versão do hardware
+          example: null
+        specification_version:   
+          type: string
+          description: Versão da especificação
+          example: 1.08
+        metadata: 
+          type: string
+          description: Metadados a serem inseridos
+          example: Terminal principal da loja
+        created_at:
+          type: string
+          description: Data da criação do boleto
+          format: dateTime
+          example: 2021-06-14T09:49:07+00:00
