@@ -419,6 +419,15 @@ paths:
         description: identificador do seller
         required: true
         type: string
+      - $ref: '#/parameters/expectedOnRangeGTParam'  
+      - $ref: '#/parameters/expectedOnRangeGTEParam'
+      - $ref: '#/parameters/expectedOnRangeLTParam'
+      - $ref: '#/parameters/expectedOnRangeLTEParam'
+      - $ref: '#/parameters/createdAtRangeGTParam'
+      - $ref: '#/parameters/createdAtRangeGTEParam'
+      - $ref: '#/parameters/createdAtRangeLTParam'
+      - $ref: '#/parameters/createdAtRangeLTEParam'
+      
     get:
       tags:
         - 'Lançamentos Futuros'
@@ -629,7 +638,7 @@ paths:
       - name: "prepayment_date"
         in: "query"
         required: true
-        description: "Data para a qual os recebíveis serão antecipados. Caso não seja preenchido, é considerado *D0*."
+        description: "Data para a qual os recebíveis serão antecipados. Caso não seja preenchido, é considerado D+1."
         type: "string"
       - name: "partner_fee"
         in: "query"
@@ -948,6 +957,54 @@ parameters:
     required: true
     type: integer
     format: int64
+  expectedOnRangeGTParam: 
+    name: expected_on_range[gt]
+    in: query
+    description: Retorna valores onde a data for maior que o timestamp informado
+    required: false
+    type: number  
+  expectedOnRangeGTEParam: 
+    name: expected_on_range[gte]
+    in: query
+    description: Retorna valores onde a data for maior ou igual que o timestamp informado
+    required: false
+    type: number
+  expectedOnRangeLTParam: 
+    name: expected_on_range[lt]
+    in: query
+    description: Retorna valores onde a data for menor que o timestamp informado
+    required: false
+    type: number  
+  expectedOnRangeLTEParam: 
+    name: expected_on_range[lte]
+    in: query
+    description: Retorna valores onde a data for menor ou igual que o timestamp informado
+    required: false
+    type: number
+  createdAtRangeGTParam: 
+    name: created_at_range[gt]
+    in: query
+    description: Retorna valores onde a data for maior que o timestamp informado
+    required: false
+    type: number   
+  createdAtRangeGTEParam: 
+    name: created_at_range[gte]
+    in: query
+    description: Retorna valores onde a data for maior ou igual que o timestamp informado
+    required: false
+    type: number
+  createdAtRangeLTParam:
+    name: created_at_range[lt]
+    in: query
+    description: Retorna valores onde a data for menor que o timestamp informado
+    required: false
+    type: number  
+  createdAtRangeLTEParam: 
+    name: created_at_range[lte]
+    in: query
+    description: Retorna valores onde a data for menor ou igual que o timestamp informado
+    required: false
+    type: number    
     
 definitions:
   Transfer:
