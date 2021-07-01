@@ -19,7 +19,7 @@ tags:
     description: Dados bancários dos estabelecimentos comerciais
   - name: 'Plano de Vendas'
     description: Plano de taxas de venda
-  - name: 'Cria acesso Minha Conta'
+  - name: 'Criar acesso Minha Conta'
     description: Possibilita criar acesso ao minhaconta (dashboard do EC)
 
 schemes:
@@ -269,7 +269,7 @@ paths:
     get:
       tags:
         - 'Vendedores'
-      summary: Listando vendedores
+      summary: Listar vendedores
       produces:
         - application/json
       responses:
@@ -293,7 +293,7 @@ paths:
     get:
       tags:
         - 'Vendedores'
-      summary: Buscando vendedor por CPF/CNPJ
+      summary: Buscar vendedor por CPF/CNPJ
       consumes:
         - application/json
       produces:
@@ -379,7 +379,7 @@ paths:
         - $ref: '#/parameters/dateRangeLTEParam'
       tags:
         - 'Compradores'
-      summary: 'Listando compradores'
+      summary: 'Listar compradores'
       description: ''
       produces:
         - application/json
@@ -802,7 +802,7 @@ paths:
   '/v1/marketplaces/{marketplace_id}/sellers/{seller_id}/users':
     post:
       tags:
-        - 'Cria acesso Minha Conta'
+        - 'Criar acesso Minha Conta'
       summary: Conceder acesso ao minhaconta 
       parameters:
         - $ref: '#/parameters/marketplaceId'
