@@ -226,7 +226,7 @@ paths:
     get:
       tags:
         - 'Vendedores'
-      summary: Recupera detalhes de vendedor por ID.
+      summary: Recuperar detalhes de vendedor por ID.
       produces:
         - application/json
       responses:
@@ -239,7 +239,7 @@ paths:
     delete:
       tags:
         - 'Vendedores'
-      summary: Deleta vendedor por ID
+      summary: Deletar vendedor por ID
       produces:
         - application/json
       responses:
@@ -419,7 +419,7 @@ paths:
     get:
       tags:
         - 'Compradores'
-      summary: 'Recuperar detalhes de comprador'
+      summary: 'Recuperar detalhes de comprador por ID'
       description: ''
       produces:
         - application/json
