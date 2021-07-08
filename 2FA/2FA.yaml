@@ -182,6 +182,118 @@ paths:
               schema:
                 $ref: '#/components/schemas/2faCellPhoneValidateResponse'
           description: OK
+  "/v1/api/user/totp":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Solicitar sessão de usuário por TOTP
+      tags:
+        - Autenticação
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/2faSessionTOTPRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faSessionTOTPResponse'
+        '401':
+          description: 
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Por SMS
+                properties:
+                  status:
+                    type: string
+                    example: 401
+                  response_code:
+                    type: string
+                    example: -99
+                  Message:
+                    type: string
+                    example: "Token is expired, Token invalid or incorrect secret, Token invalid"
+        '412':
+          description: 
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Por SMS
+                properties:
+                  status:
+                    type: string
+                    example: 412
+                  response_code:
+                    type: string
+                    example: -99
+                  Message:
+                    type: string
+                    example: "Application Token incorrect number  // Application Token not found  // 
+                    Unique Identifier not found // UniqueIdentifier min length X  // User not exists."
+  "/v1/api/user/totp/validate":
+    post:
+      parameters:
+        - $ref: "#/components/parameters/XApiKey"
+        - $ref: "#/components/parameters/XAuthToken"
+      summary: Validar o código TOTP 
+      tags:
+        - Autenticação
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/2faTOTPValidateResquest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/2faTOTPValidateResponse'
+          description: OK
+        '401':
+          description: 
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Por SMS
+                properties:
+                  status:
+                    type: string
+                    example: 401
+                  response_code:
+                    type: string
+                    example: -99
+                  Message:
+                    type: string
+                    example: "Token is expired, Token invalid or incorrect secret, Token invalid"
+        '412':
+          description: 
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Por SMS
+                properties:
+                  status:
+                    type: string
+                    example: 412
+                  response_code:
+                    type: string
+                    example: -99
+                  Message:
+                    type: string
+                    example: "Application Token incorrect number  // Application Token not found  // 
+                    Unique Identifier not found // UniqueIdentifier min length X  // User not exists."
   "/v1/api/user/email/session":
     post:
       parameters:
@@ -1070,6 +1182,59 @@ components:
         CreationDate:
           type: string
           example: "2020-01-01T12:00:00.000000Z"
+    2faSessionTOTPRequest:
+      type: object
+      properties:
+        UserSessionToken:
+          type: string
+          description: "Token de sessão validado"  
+          example: "AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+        UserToken:
+          type: string
+          description: "Token do usuário. Mascara: AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"  
+          example: "AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+        KeyPublic:
+          type: string
+          description: "Chave do tipo RSA publica 2048"
+          example: "RSA Key Public 2048"
+    2faSessionTOTPResponse:
+      type: object
+      properties:
+        UserToken:
+          type: string
+          description: "Token de sessão validado"  
+          example: "AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+        PasswordLength:
+          type: number
+          example: 6
+        SeedRSA:
+          type: string
+          example: "Seed RSA Public Key"
+    2faTOTPValidateResquest:
+      type: object
+      properties:
+        UserSessionToken:
+          type: string
+          description: "Token de sessão validado"  
+          example: "AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+        UserToken:
+          type: string
+          description: "Token do usuário. Mascara: AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"  
+          example: "AAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+        TOTP:
+          type: string
+          description: "Código TOTP"
+          example: "123456"
+    2faTOTPValidateResponse:
+      type: object
+      properties:
+        ResponseCode:
+          type: number
+          description: "Token de sessão validado"  
+          example: 0
+        Message:
+          type: string
+          example: "TOTP Validated Successfully"
     2faCellPhoneValidateResponse:
       type: object
       properties:
