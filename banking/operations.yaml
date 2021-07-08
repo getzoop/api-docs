@@ -47,6 +47,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/billPaymentResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/billPaymentBadRequestResponse'
   "/v2/marketplaces/{marketplace_id}/accounts/{account_id}/payments/{payment_id}":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
@@ -570,6 +576,28 @@ components:
             resource:
               type: string
               example: "payment_account.payment"
+    billPaymentBadRequestResponse:
+      type: object
+      properties: 
+        status:
+          type: string
+          example: "bad_request"
+        type:
+          type: string
+          example: "invalid_request"
+        message:
+          type: string
+          example: "Bill amount must be a positive number // 
+          Param barcode is required, should contain only numbers, be at least 35 characters and maximum length of 60. Check the Febraban standard //
+          Bill already paid  //
+          Payment window is not valid"
+        category:
+          type: string
+          example: "business"
+        status_code:
+          type: integer
+          description: Valor discriminado de desconto utilizado no calculo do valor
+          example: 400
 
     billTransferRequest:
       type: object

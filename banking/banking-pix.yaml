@@ -27,13 +27,14 @@ servers: [
     
 paths:
   "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/entries":
+    parameters:
+      - $ref: "#/components/parameters/XAuthTokenReading"
+      - $ref: "#/components/parameters/XSessionToken"
     post:
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
         - $ref: "#/components/parameters/accountID"
-        - $ref: "#/components/parameters/XAuthTokenReading"
-        - $ref: "#/components/parameters/XSessionToken"
       summary: Criar chave de endereçamento
       tags:
         - Dict
@@ -583,21 +584,29 @@ paths:
           application/json:
             schema:
                anyOf:
-                 - $ref: '#/components/schemas/pixRequest'
+                 - $ref: '#/components/schemas/pixRequestbykey'
                  - $ref: '#/components/schemas/pixAccountRequest'
+                 - $ref: '#/components/schemas/pixRequestStaticQRCode'
+                 - $ref: '#/components/schemas/pixRequestDynamicQRCode'
       responses:
-        '200':
-          description: OK - A chave de endereçamento foi incluída com sucesso e está pronta para o uso
+        '201':
+          description: Created - A transação foi incluída com sucesso e está pronta para ser executada
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/pixResponse'
+        '202':
+          description: Accepted - O pagamento foi criado com sucesso
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
                   $ref: '#/components/schemas/PixTransferError400Response'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
         '404':
           description: Not Found
           content:
@@ -1324,7 +1333,7 @@ components:
           type: string
           example: "2020-01-17T10:00:00Z"
 
-    pixRequest:
+    pixRequestbykey:
       title: Pix por Chave
       required:
         - amount
@@ -1332,10 +1341,6 @@ components:
         - key
       type: object
       properties:
-        transaction_id:
-          type: string
-          description: Campo usado pelo recebedor do Pix para identificar uma transação no seu legado. 
-          example: "d747dc8fffec48a69830b40af4078fe1"
         amount:
           type: integer
           description: Valor do pagamento em centavos. 
@@ -1368,7 +1373,7 @@ components:
               - national_registration
             value:
               type: string
-              description: Representa o valor da chave de endereçamento. Seu formato e tamanho variam conforme o tipo escolhido anteriormente. Para phone a mascara é +9999999999999. Para email a mascara é xxxxxxxxxx@xxxxxxx.xx.xx com máximo de 77 caracteres. Para evp, não deve ser informado nenhum valor. Para national_registration, não deve ser informado nenhum valor.
+              description: Representa o valor da chave de endereçamento. Phone +99999999999999, email xxxxxxxxxxxx@xxxxxxxxxxxx.com.br, evp xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx e national_registration xxxxxxxxxxx e xxxxxxxxxxxxxx - Parâmetro pertencente ao objeto key
               example: "+552198744587"
     pixAccountRequest:
       title: Pix por dados da conta
@@ -1408,14 +1413,80 @@ components:
                type: string
                description: Código da instituição participante do Pix onde a conta do recebedor está criada - Parâmetro pertencente ao objeto creditor.
                example: "60746948" 
-        transaction_id:
-          type: string
-          description: Campo usado pelo recebedor do Pix para identificar uma transação no seu legado. 
-          example: "d747dc8fffec48a69830b40af4078fe1"
         description:
           type: string
           description: Descrição do pagamento. Não é permitido caracteres especiais. 
           example: "Churrasco fim pandemia"
+    pixRequestStaticQRCode:
+      title: Pix por QRCode Estático
+      required:
+        - amount
+        - creditor
+        - key
+      type: object
+      properties:
+        amount:
+          type: integer
+          description: Valor do pagamento em centavos. 
+          example: 12050
+        description:
+          type: string
+          description: Descrição do pagamento. Não é permitido caracteres especiais. 
+          example: "Churrasco fim pandemia"
+        creditor:
+          type: object
+          properties:
+            national_registration:
+               type: string
+               description: Representa o CPF/CNPJ do recebedor do Pix - Parâmetro pertencente ao objeto creditor. 
+               example: "84154427008"
+            psp:
+               type: string
+               description: Código da instituição participante do Pix onde a conta do recebedor está criada - Parâmetro pertencente ao objeto creditor.
+               example: "60746948" 
+        qrcode_type:
+          type: string
+          description: Identifica o QRCode do tipo estático. 
+          example: "static"
+        transaction_id:
+          type: string
+          description: Campo usado pelo recebedor do Pix para identificar uma transação no seu legado. Máximo de 25 caracteres.  
+          example: "d747dc8fffec48a69830b40af"
+    pixRequestDynamicQRCode:
+      title: Pix por QRCode Dinâmico
+      required:
+        - amount
+        - creditor
+        - key
+      type: object
+      properties:
+        amount:
+          type: integer
+          description: Valor do pagamento em centavos. 
+          example: 12050
+        description:
+          type: string
+          description: Descrição do pagamento. Não é permitido caracteres especiais. 
+          example: "Churrasco fim pandemia"
+        creditor:
+          type: object
+          properties:
+            national_registration:
+               type: string
+               description: Representa o CPF/CNPJ do recebedor do Pix - Parâmetro pertencente ao objeto creditor. 
+               example: "84154427008"
+            psp:
+               type: string
+               description: Código da instituição participante do Pix onde a conta do recebedor está criada - Parâmetro pertencente ao objeto creditor.
+               example: "60746948" 
+        qrcode_type:
+          type: string
+          description: Identifica o QRCode do tipo estático. 
+          example: "dynamic"
+        transaction_id:
+          type: string
+          description: Campo usado pelo recebedor do Pix para identificar uma transação no seu legado. Mímimo de 26 e máximo de 35 caracteres.  
+          example: "d747dc8fffec48a69830b40af0000124765"
     pixResponse:
       type: object
       properties:
