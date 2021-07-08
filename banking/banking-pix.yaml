@@ -1352,29 +1352,21 @@ components:
         creditor:
           type: object
           properties:
-            national_registration:
-               type: string
-               description: Representa o CPF/CNPJ do recebedor do Pix - Parâmetro pertencente ao objeto creditor. 
-               example: "84154427008"
-            psp:
-               type: string
-               description: Código da instituição participante do Pix onde a conta do recebedor está criada - Parâmetro pertencente ao objeto creditor.
-               example: "60746948" 
-        key:
-          type: object
-          properties:
-            type:
-              type: string
-              description: "Representa o tipo de chave de endereçamento. Domínio: phone, email, evp e national_registration. Parâmetro pertencente ao objeto key." 
-              enum:
-              - phone
-              - email
-              - evp
-              - national_registration
-            value:
-              type: string
-              description: Representa o valor da chave de endereçamento. Phone +99999999999999, email xxxxxxxxxxxx@xxxxxxxxxxxx.com.br, evp xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx e national_registration xxxxxxxxxxx e xxxxxxxxxxxxxx - Parâmetro pertencente ao objeto key
-              example: "+552198744587"
+            key:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: "Representa o tipo de chave de endereçamento. Domínio: phone, email, evp e national_registration. Parâmetro pertencente ao objeto key." 
+                  enum:
+                  - phone
+                  - email
+                  - evp
+                  - national_registration
+                value:
+                  type: string
+                  description: Representa o valor da chave de endereçamento. Phone +99999999999999, email xxxxxxxxxxxx@xxxxxxxxxxxx.com.br, evp xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx e national_registration xxxxxxxxxxx e xxxxxxxxxxxxxx - Parâmetro pertencente ao objeto key
+                  example: "+552198744587"
     pixAccountRequest:
       title: Pix por dados da conta
       required:
@@ -1436,14 +1428,21 @@ components:
         creditor:
           type: object
           properties:
-            national_registration:
+            key:
                type: string
-               description: Representa o CPF/CNPJ do recebedor do Pix - Parâmetro pertencente ao objeto creditor. 
-               example: "84154427008"
-            psp:
-               type: string
-               description: Código da instituição participante do Pix onde a conta do recebedor está criada - Parâmetro pertencente ao objeto creditor.
-               example: "60746948" 
+               properties:
+                  type: 
+                    description: "Representa o tipo de chave de endereçamento. Domínio: phone, email, evp e national_registration. Parâmetro pertencente ao objeto key."
+                    example:
+                    enum:
+                      - phone
+                      - email
+                      - evp
+                      - national_registration
+                  value:
+                    type: string
+                    description: Representa o valor da chave de endereçamento. Phone +99999999999999, email xxxxxxxxxxxx@xxxxxxxxxxxx.com.br, evp xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx e national_registration xxxxxxxxxxx e xxxxxxxxxxxxxx - Parâmetro pertencente ao objeto key
+                    example: "phone" 
         qrcode_type:
           type: string
           description: Identifica o QRCode do tipo estático. 
@@ -1471,14 +1470,21 @@ components:
         creditor:
           type: object
           properties:
-            national_registration:
+            key:
                type: string
-               description: Representa o CPF/CNPJ do recebedor do Pix - Parâmetro pertencente ao objeto creditor. 
-               example: "84154427008"
-            psp:
-               type: string
-               description: Código da instituição participante do Pix onde a conta do recebedor está criada - Parâmetro pertencente ao objeto creditor.
-               example: "60746948" 
+               properties:
+                  type: 
+                    description: "Representa o tipo de chave de endereçamento. Domínio: phone, email, evp e national_registration. Parâmetro pertencente ao objeto key."
+                    example:
+                    enum:
+                      - phone
+                      - email
+                      - evp
+                      - national_registration
+                  value:
+                    type: string
+                    description: Representa o valor da chave de endereçamento. Phone +99999999999999, email xxxxxxxxxxxx@xxxxxxxxxxxx.com.br, evp xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx e national_registration xxxxxxxxxxx e xxxxxxxxxxxxxx - Parâmetro pertencente ao objeto key
+                    example: "phone" 
         qrcode_type:
           type: string
           description: Identifica o QRCode do tipo estático. 
