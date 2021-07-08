@@ -568,13 +568,13 @@ paths:
                 $ref: '#/components/schemas/DictKeyResponse412'
 
   "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/payments":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/holderID"
+      - $ref: "#/components/parameters/accountID"
+      - $ref: "#/components/parameters/XAuthTokenReading"
+      - $ref: "#/components/parameters/XSessionToken"
     post:
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-        - $ref: "#/components/parameters/accountID"
-        - $ref: "#/components/parameters/XAuthTokenReading"
-        - $ref: "#/components/parameters/XSessionToken"
       summary: Criar pagamento Pix 
       tags:
         - Pagamentos
