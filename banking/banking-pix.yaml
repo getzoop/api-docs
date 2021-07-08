@@ -1429,20 +1429,20 @@ components:
           type: object
           properties:
             key:
-               type: string
-               properties:
-                  type: 
-                    description: "Representa o tipo de chave de endereçamento. Domínio: phone, email, evp e national_registration. Parâmetro pertencente ao objeto key."
-                    example:
-                    enum:
-                      - phone
-                      - email
-                      - evp
-                      - national_registration
-                  value:
-                    type: string
-                    description: Representa o valor da chave de endereçamento. Phone +99999999999999, email xxxxxxxxxxxx@xxxxxxxxxxxx.com.br, evp xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx e national_registration xxxxxxxxxxx e xxxxxxxxxxxxxx - Parâmetro pertencente ao objeto key
-                    example: "phone" 
+              type: string
+              properties:
+                type: 
+                  description: "Representa o tipo de chave de endereçamento. Domínio: phone, email, evp e national_registration. Parâmetro pertencente ao objeto key."
+                  example:
+                  enum:
+                    - phone
+                    - email
+                    - evp
+                    - national_registration
+                value:
+                  type: string
+                  description: Representa o valor da chave de endereçamento. Phone +99999999999999, email xxxxxxxxxxxx@xxxxxxxxxxxx.com.br, evp xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx e national_registration xxxxxxxxxxx e xxxxxxxxxxxxxx - Parâmetro pertencente ao objeto key
+                  example: "phone" 
         qrcode_type:
           type: string
           description: Identifica o QRCode do tipo estático. 
@@ -1471,20 +1471,20 @@ components:
           type: object
           properties:
             key:
-               type: string
-               properties:
-                  type: 
-                    description: "Representa o tipo de chave de endereçamento. Domínio: phone, email, evp e national_registration. Parâmetro pertencente ao objeto key."
-                    example:
-                    enum:
-                      - phone
-                      - email
-                      - evp
-                      - national_registration
-                  value:
-                    type: string
-                    description: Representa o valor da chave de endereçamento. Phone +99999999999999, email xxxxxxxxxxxx@xxxxxxxxxxxx.com.br, evp xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx e national_registration xxxxxxxxxxx e xxxxxxxxxxxxxx - Parâmetro pertencente ao objeto key
-                    example: "phone" 
+              type: string
+              properties:
+                type: 
+                  description: "Representa o tipo de chave de endereçamento. Domínio: phone, email, evp e national_registration. Parâmetro pertencente ao objeto key."
+                  example:
+                  enum:
+                    - phone
+                    - email
+                    - evp
+                    - national_registration
+                value:
+                  type: string
+                  description: Representa o valor da chave de endereçamento. Phone +99999999999999, email xxxxxxxxxxxx@xxxxxxxxxxxx.com.br, evp xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx e national_registration xxxxxxxxxxx e xxxxxxxxxxxxxx - Parâmetro pertencente ao objeto key
+                  example: "phone" 
         qrcode_type:
           type: string
           description: Identifica o QRCode do tipo estático. 
