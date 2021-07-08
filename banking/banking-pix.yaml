@@ -1442,7 +1442,7 @@ components:
                 value:
                   type: string
                   description: Representa o valor da chave de endereçamento. Phone +99999999999999, email xxxxxxxxxxxx@xxxxxxxxxxxx.com.br, evp xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx e national_registration xxxxxxxxxxx e xxxxxxxxxxxxxx - Parâmetro pertencente ao objeto key
-                  example: "phone" 
+                  example: "" 
         qrcode_type:
           type: string
           description: Identifica o QRCode do tipo estático. 
@@ -1484,7 +1484,7 @@ components:
                 value:
                   type: string
                   description: Representa o valor da chave de endereçamento. Phone +99999999999999, email xxxxxxxxxxxx@xxxxxxxxxxxx.com.br, evp xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx e national_registration xxxxxxxxxxx e xxxxxxxxxxxxxx - Parâmetro pertencente ao objeto key
-                  example: "phone" 
+                  example: "" 
         qrcode_type:
           type: string
           description: Identifica o QRCode do tipo estático. 
