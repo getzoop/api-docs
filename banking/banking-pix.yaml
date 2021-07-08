@@ -1429,7 +1429,7 @@ components:
           type: object
           properties:
             key:
-              type: string
+              type: object
               properties:
                 type: 
                   description: "Representa o tipo de chave de endereçamento. Domínio: phone, email, evp e national_registration. Parâmetro pertencente ao objeto key."
@@ -1471,7 +1471,7 @@ components:
           type: object
           properties:
             key:
-              type: string
+              type: object
               properties:
                 type: 
                   description: "Representa o tipo de chave de endereçamento. Domínio: phone, email, evp e national_registration. Parâmetro pertencente ao objeto key."
