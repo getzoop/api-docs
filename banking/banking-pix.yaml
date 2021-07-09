@@ -159,17 +159,27 @@ paths:
       responses:
         '200':
           description: OK
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/DictKeyResponse400'
-                  - $ref: '#/components/schemas/DictKeyResponse4002'
-                  - $ref: '#/components/schemas/DictKeyResponse4003'
-                  - $ref: '#/components/schemas/DictKeyResponse4004'
-                  - $ref: '#/components/schemas/DictKeyResponse4005'
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/json": { 
+              "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": '#/components/schemas/DictKeyResponse400'},
+                    {
+                      "$ref": '#/components/schemas/DictKeyResponse4002'},
+                    {
+                      "$ref": '#/components/schemas/DictKeyResponse4003'},
+                    {
+                      "$ref": '#/components/schemas/DictKeyResponse4004'},
+                    {
+                      "$ref": '#/components/schemas/DictKeyResponse4005'}
+                ]
+              }
+            }
+          }
+        }
         '404':
           description: Not Found
           content:
@@ -1025,7 +1035,7 @@ components:
         updated_at:
           example: "2020-11-06T12:54:11.336975"
         key:
-          type: object
+          type: object  
           properties:
             value:
               example: "33580667033"
