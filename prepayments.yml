@@ -419,7 +419,7 @@ definitions:
         format: "date"
         example: "2018-01-19"
       min_expected_date:
-        description: "Apenas considerar recebíveis cuja agenda original de liquidação seja após esta data (inclusive). Caso não seja preenchida, é considerado *D+1* do campo prepayment_date. Este também é o valor mínimo para este campo."
+        description: "Apenas considerar recebíveis cuja agenda original de liquidação seja após esta data (inclusive). Caso não seja preenchida, é considerado *D+1* da criação. Este também é o valor mínimo para este campo."
         type: "string"
         format: "date"
         example: "2018-01-19"
