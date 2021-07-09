@@ -1,6 +1,6 @@
 openapi: 3.0.2
 info:
-  title: Criação de contas
+  title: Cartões
   version: "1.1"
 
 security:
@@ -8,8 +8,8 @@ security:
  
     
 tags:
- - name: Criação de contas
-   description: Credenciamento e criação de contas 
+ - name: Cartão
+   description: Geração e tratamento de cartões 
 
 servers: [
     {
@@ -23,1717 +23,499 @@ servers: [
     ]
     
 paths:
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders":
+
+  "/v2/marketplaces/{marketplace_id}/banking/cards/embossing/policies":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
     post:
-      summary: Cadastrar portador 
+      summary: Cadastrar politica de embossamento
       tags:
-        - Credenciamento portador
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
+        - Politica de Embossamento
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              anyOf: 
-                - $ref: '#/components/schemas/IndividualHolderRequest'
-                - $ref: '#/components/schemas/BusinessHolderRequest'
+               $ref: '#/components/schemas/embossingPolicesRequest'
       responses:
         '200':
-          description: OK
+          description: Ok
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/IndividualHolderResponse'
-                  - $ref: '#/components/schemas/BusinessHolderResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Message400Holder"
-        '404':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Message404Holder"
-        '500':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Message500Holder"
+                $ref: '#/components/schemas/embossingPolicesResponse'
     get:
-      summary: Consultar portadores do marketplace
+      summary: Listar politicas de embossamento
       tags:
-        - Credenciamento portador
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
+        - Politica de Embossamento
       responses:
         '200':
-          description: OK
+          description: Ok
           content:
             application/json:
               schema:
-                  $ref: '#/components/schemas/HolderResponse'
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}":
+                type: array
+                items:
+                  $ref: '#/components/schemas/embossingPolicesResponse'
+  "/v2/marketplaces/{marketplace_id}/banking/cards/embossing/policies/{policy_Id}/default":
+    parameters:
+      - $ref: "#/components/parameters/marketplaceID"
+      - $ref: "#/components/parameters/policyID"
+    get:
+      summary: Obter dados de uma politica de embossamento
+      tags:
+        - Politica de Embossamento
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/embossingPolicesResponse'
     put:
-      summary: Alterar cadastro do portador 
+      summary: Alterar politica de embossamento
       tags:
-        - Credenciamento portador
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
+        - Politica de Embossamento
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              oneOf:
-                - $ref: '#/components/schemas/IndividualHolderRequestPut'
-                - $ref: '#/components/schemas/BusinessHolderRequestPut'
-        required: true
+               $ref: '#/components/schemas/embossingPolicesRequest'
       responses:
         '200':
-          description: OK
+          description: Ok
           content:
-            application/json;charset=UTF-8:
+            application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/IndividualHolderResponse'
-                  - $ref: '#/components/schemas/BusinessHolderResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json;charset=UTF-8:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/Message400HolderPF'
-                  - $ref: '#/components/schemas/Message400HolderPJ'
-        '404':
-          description: Not Found
-          content:
-            application/json;charset=UTF-8:
-              schema:
-                $ref: '#/components/schemas/Message404Holder'
-        '500':
-          description: "Internal Server Error"
-          content:
-            application/json;charset=UTF-8:
-              schema:
-                  $ref: '#/components/schemas/Message500Holder'
-    get:
-      summary: Consultar portador 
+                $ref: '#/components/schemas/embossingPolicesResponse'
+  "/v2/marketplaces/{marketplace_id}/banking/cards/embossing/policies/{policy_Id}":
+    delete:
+      summary: Remover politica de embossamento
       tags:
-        - Credenciamento portador
+        - Politica de Embossamento
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/policyID"
       responses:
         '200':
-          description: OK
+          description: Ok
           content:
-            application/json;charset=UTF-8:
+            application/json:
               schema:
-                  $ref: '#/components/schemas/IndividualHolderResponse'
-        '404':
-          description: Not Found
-          content:
-            application/json;charset=UTF-8:
-              schema:
-                  $ref: '#/components/schemas/MessageNotFound404'
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/phones":
+                type: object 
+                properties:
+                  message:
+                    type: string
+                    example: "Politica de embossamento removida com sucesso"
+
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/requests":
     post:
-      summary: Cadastrar telefone do portador 
+      summary: Realizar Pedido de Cartão 
       tags:
-        - Credenciamento portador
+        - Cartão Físico
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PhonesHolderRequest'
-        required: true
+               $ref: '#/components/schemas/CardHolderRequest'
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PhonesHolderResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message400HolderPhone'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message404Holder'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message500Holder'
-    get:
-      summary: Consultar telefone do portador 
+                $ref: '#/components/schemas/CardHolderResponse'
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/activate":
+    post:
+      summary: Ativar cartão cartão
       tags:
-        - Credenciamento portador
+        - Cartão Físico
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address_id:
+                  type: string
+                  example: "1010"
+                  description: Senha do cartão a ser criado (4 dígitos não sequenciais).
+
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PhonesHoldersResponse'
-        '404':
-          description: Not Found
+                $ref: '#/components/schemas/CardActivationResponse'
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/block":
+    post:
+      summary: Bloquear um cartão
+      tags:
+        - Cartão Físico
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                observation:
+                  type: string
+                  description: Motivo do bloqueio (máximo 100 caracteres).
+
+      responses:
+        '200':
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Message404Holder'
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/phones/{phone_id}":
+                $ref: '#/components/schemas/CardBlockedResponse'
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/unblock":
+    post:
+      summary: Desbloquear um cartão
+      tags:
+        - Cartão Físico
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardActivationResponse'
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/cancel":
+    post:
+      summary: Cancelar um cartão 
+      tags:
+        - Cartão Físico
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                observation:
+                  type: string
+                  description: Motivo do bloqueio (máximo 100 caracteres).
+
+      responses:
+        '200':
+          description: OK
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/reissue":
+    post:
+      summary: Solicitar segunda via de um cartão 
+      tags:
+        - Cartão Físico
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/CardHolderReissueRequest'
+      responses:
+        '200':
+          description: OK
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/password":
     put:
-      summary: Alterar telefone do portador 
+      summary: Troca de senha cartão 
       tags:
-        - Credenciamento portador
+        - Cartão Físico
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
-        - $ref: "#/components/parameters/phoneID"
+        - $ref: "#/components/parameters/externalKEY"
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PhonesHolderRequest'
-        required: true
+              type: object
+              properties:
+                old_password:
+                  type: string
+                  description: Senha antiga do cartão que será trocada.
+                  example: "1010"
+                password:
+                  type: string
+                  description: Nova senha do cartão. Só pode conter valores numéricos não sequenciais no tamanho de 4 dígitos.
+                  example: "1020"
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PhonesHolderResponse'
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PhonesHolderPutResponse'
-        '400':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message400HolderPhone'
-        '404':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message404Holder'
-        '500':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message500Holder'
-    delete:
-      summary: Apagar telefone do portador 
-      tags:
-        - Credenciamento portador
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-        - $ref: "#/components/parameters/phoneID"
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Phone removed successfully"
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/MessageNotFound404"
-        '412':
-          description: Precondition Failed
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/MessageNotFound412"
-        '500':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/MessageNotFound500"
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/addresses":
-    post:
-      summary: Cadastrar endereço do portador 
-      tags:
-        - Credenciamento portador
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddressHolderRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddressHolderRequest'
-    get:
-      summary: Consultar endereço do portador 
-      tags:
-        - Credenciamento portador
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddressHoldersResponse'
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddressHolders202Response'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message404Holder'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message500Holder'
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/addresses/{address_id}":
-    get:
-      summary: Consulta endereço do portador por ID 
-      tags:
-        - Credenciamento portador
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-        - $ref: "#/components/parameters/adressID"
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddressHolderResponse'
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddressHolders202Response'
-        '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message404Holder'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message500Holder'
+  "/v3/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/password":
     put:
-      summary: Alterar endereço do portador por ID 
+      summary: Resetar senha do cartão
       tags:
-        - Credenciamento portador
+        - Cartão Físico
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
-        - $ref: "#/components/parameters/adressID"
+        - $ref: "#/components/parameters/externalKEY"
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddressHolderRequest'
-        required: true
+              type: object
+              properties:
+                password:
+                  type: number
+                  description: Senha nova a ser resetada. A senha deve ter 4 caracteres numéricos, onde eles não podem ser sequenciais (ex. 1234, 0123) e nem repetidos (ex. 0000, 9999).
+                  example: "1020"
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddressHolderResponse'
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddressHolders202Response'
+          description: OK - "Password reset succesfully"
         '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound400'
-        '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message404Holder'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message500Holder'
-    delete:
-      summary: Apagar endereço do portador por ID 
-      tags:
-        - Credenciamento portador
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-        - $ref: "#/components/parameters/adressID"
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Address removed successfully"
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/MessageNotFound404"
+          description: Bad Request - "The requested password does not follow security rules"
         '412':
-          description: Precondition Failed
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/MessageNotFound412"
-        '500':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/MessageNotFound500"
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/documents":
-    post:
-      summary: Cadastrar documento do portador 
-      tags:
-        - Credenciamento portador
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-        - $ref: "#/components/parameters/type"
-      requestBody:
-        content:
-          image/jpeg:
-            schema:
-              type: string
-              format: binary
-        required: true
-      responses:
-        '201':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DocumentsHolderResponse'
-        '400':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageDocuments400'
-        '404':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageDocuments404'
-        '412':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageDocuments412'
-        '500':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message500Holder'
+          description: Precondition Failed - "The card is in a state that cannot reset password"
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}":
     get:
-      summary: Consulta documentação do portador 
+      summary: Obter dados de um cartão
       tags:
-        - Credenciamento portador
+        - Cartão Físico
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HolderResponse'
-        '404':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageDocuments404'
-        '500':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message500Holder'
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/documents/{documents_id}":
+                $ref: '#/components/schemas/CardActivationResponse'
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/delivery":
     get:
-      summary: Consultar endereço do portador 
+      summary: Obter dados do processo de impressão do cartão
       tags:
-        - Credenciamento portador
+        - Cartão Físico
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
         - $ref: "#/components/parameters/holderID"
-        - $ref: "#/components/parameters/documentID"
-      responses:
-        '201':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DocumentsHolderResponse'
-    delete:
-      summary: Apagar endereço do portador 
-      tags:
-        - Credenciamento portador
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-        - $ref: "#/components/parameters/documentID"
+        - $ref: "#/components/parameters/externalKEY"
+
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Document  removed successfully"
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/MessageNotFound404"
-        '412':
-          description: Precondition Failed
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/MessageNotFound412"
-        '500':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/MessageNotFound500"
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/approval":
-    post:
-      summary: Solicitar aprovação do  portador 
-      tags:
-        - Credenciamento portador
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-      responses:
-        '202':
-          description: Accepted 
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Approval request accepted successfully. Processing analysis"
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "not_found"
-                  type:
-                    type: string
-                    example: "not_found"
-                  message:
-                    type: string
-                    example: "Holder not found"
-                  category:
-                    type: string
-                    example: "business"
-                  status_code:
-                    type: number
-                    example: 404
-        '411':
-          description: Length Required
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "pre_condition_failed"
-                  type:
-                    type: string
-                    example: "invalid_request"
-                  message:
-                    type: string
-                    example: "Missing documents"
-                  category:
-                    type: string
-                    example: "business"
-                  status_code:
-                    type: number
-                    example: 411
-                  documents:
-                    type: string
-                    example: "[Document type CCMEI is missing for holder 490f6c7c2b0b4046b3ec023c80923c0e,
-      Document type SELFIE is missing for partner e6c915d443ec434db41b64c122afd9a7]"
-        '412':
-          description: Precondition Failed
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "pre_condition_failed"
-                  type:
-                    type: string
-                    example: "invalid_request"
-                  message:
-                    type: string
-                    example: "Holder already approved."
-                  category:
-                    type: string
-                    example: "business"
-                  status_code:
-                    type: number
-                    example: 412
-        '500':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "internal_server_error"
-                  type:
-                    type: string
-                    example: "server_error"
-                  message:
-                    type: string
-                    example: "Intenal Server Error"
-                  category:
-                    type: string
-                    example: "unexpected"
-                  status_code:
-                    type: number
-                    example: 500
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners":
-    post:
-      summary: Cadastrar sócio 
-      tags:
-        - Credenciamento sócio
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-                - $ref: '#/components/schemas/IndividualHolderPartnerRequest'
-                - $ref: '#/components/schemas/BusinessHolderPartnerRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/IndividualHolderPartnerResponseSemOwner'
-                  - $ref: '#/components/schemas/BusinessHolderPartnerResponse'
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/IndividualHolderPartnerResponseComOwner'
-                  - $ref: '#/components/schemas/BusinessHolderPartnerResponse'
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/IndividualHolderPartnerResponseSemOwner'
-                  - $ref: '#/components/schemas/BusinessHolderPartnerResponse'
-        '302':
-          description: Found
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/IndividualHolderPartnerResponseComOwner'
-                  - $ref: '#/components/schemas/BusinessHolderPartnerResponse'
-        '400':
-          description: Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message400Holder'
-        '404':
-          description: Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message404Holder'
-        '412':
-          description: Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound412'
-        '500':
-          description: Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message500Holder'
-    get:
-      summary: Consultar sócio (somente tipo PJ) 
-      tags:
-        - Credenciamento sócio
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-        - $ref: "#/components/parameters/pageID"
-        - $ref: "#/components/parameters/sizeID"
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json;charset=UTF-8:
-              schema:
-                $ref: '#/components/schemas/PartnerResponse'
-        '404':
-          description: Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message404Holder'
-        '500':
-          description: Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message500Holder'
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}":
-    get:
-      summary: Consultar sócio por ID 
-      tags:
-        - Credenciamento sócio
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-        - $ref: "#/components/parameters/partnerID"
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json;charset=UTF-8:
-              schema:
-                  $ref: '#/components/schemas/IndividualHolderPartnerResponseSemOwner'
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}/phones":
+                $ref: '#/components/schemas/CardDeliveryResponse'
+  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/accounts/{account_id}/cards":
     parameters:
       - $ref: "#/components/parameters/marketplaceID"
       - $ref: "#/components/parameters/holderID"
-      - $ref: "#/components/parameters/partnerID"
-    post:
-      summary: Cadastrar telefone do socio 
-      tags:
-        - Credenciamento sócio
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PhonesHolderRequest'
-        required: true
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PhonesPartnerResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound400'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound500'
-    get:
-      summary: Consultar telefones do sócio 
-      tags:
-        - Credenciamento sócio
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PhonesPartnerResponse'
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PhonesPartnerResponse201'
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}/phones/{phone_id}":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/holderID"
-      - $ref: "#/components/parameters/partnerID"
-      - $ref: "#/components/parameters/phoneID"
-    put:
-      summary: Alterar telefone do sócio por ID 
-      tags:
-        - Credenciamento sócio
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PhonesHolderRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PhonesPartnerResponse'
-        '201':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PhonesPartnerResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "bad_request"
-                  type:
-                    type: string
-                    example: "invalid_request"
-                  message:
-                    type: string
-                    example: "Validation field error"
-                  category:
-                    type: string
-                    example: "business"
-                  status_code:
-                    type: number
-                    example: 400
-                  fields:
-                    type: object
-                    properties:
-                      state: 
-                        type: string
-                        example: "Number is required"
-                      posta_code: 
-                        type: string
-                        example: "Country code must have only number characters"
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound500'
-    get:
-      summary: Consultar telefone do sócio 
-      tags:
-        - Credenciamento sócio
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PhonesPartnerResponse'
-        '201':
-          description: Created - Payload de um telefone secundário
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PhonesPartnerResponse'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound500'
-    delete:
-      summary: Apagar telefone do sócio por ID 
-      tags:
-        - Credenciamento sócio
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-        - $ref: "#/components/parameters/adressID"
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Phone removed successfully"
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/MessageNotFound404"
-        '412':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "pre_condition_failed"
-                  type:
-                    type: string
-                    example: "invalid_request"
-                  message:
-                    type: string
-                    example: "At least one phone must be remaining"
-                  category:
-                    type: string
-                    example: "business"
-                  status_code:
-                    type: number
-                    example: 412
-        '500':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/MessageNotFound500"
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}/addresses":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/holderID"
-      - $ref: "#/components/parameters/partnerID"
-    post:
-      summary: Cadastrar endereço do socio 
-      tags:
-        - Credenciamento sócio
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddressHolderRequest'
-        required: true
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddressHolderResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound400'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound500'
-    get:
-      summary: Consultar telefone do sócio 
-      tags:
-        - Credenciamento sócio
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                   _embedded:
-                     type: object
-                     properties:
-                       phones:
-                         type: array
-                         items:
-                           $ref: '#/components/schemas/AddressHolderResponse'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound500'
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}/addresses/{address_id}":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/holderID"
-      - $ref: "#/components/parameters/partnerID"
-      - $ref: "#/components/parameters/adressID"
-    put:
-      summary: Alterar endereço do sócio por ID 
-      tags:
-        - Credenciamento sócio
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddressHolderRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddressHolderResponse'
-        '201':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddressHolderResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "bad_request"
-                  type:
-                    type: string
-                    example: "invalid_request"
-                  message:
-                    type: string
-                    example: "Validation field error"
-                  category:
-                    type: string
-                    example: "business"
-                  status_code:
-                    type: number
-                    example: 400
-                  fields:
-                    type: object
-                    properties:
-                      state: 
-                        type: string
-                        example: "State is required"
-                      posta_code: 
-                        type: string
-                        example: "Postal code must have only number characters"
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound500'
-    get:
-      summary: Consultar endereço do sócio por ID 
-      tags:
-        - Credenciamento sócio
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddressHolderResponse'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound500'
-    delete:
-      summary: Apagar endereço do sócio por ID 
-      tags:
-        - Credenciamento sócio
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Address removed successfully"
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "not_found"
-                  type:
-                    type: string
-                    example: "invalid_request"
-                  message:
-                    type: string
-                    example: "Address not found"
-                  category:
-                    type: string
-                    example: "business"
-                  status_code:
-                    type: number
-                    example: 404
-        '412':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "pre_condition_failed"
-                  type:
-                    type: string
-                    example: "invalid_request"
-                  message:
-                    type: string
-                    example: "At least one address must be remaining"
-                  category:
-                    type: string
-                    example: "business"
-                  status_code:
-                    type: number
-                    example: 412
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound500'
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}/documents":
-    parameters:
-      - $ref: "#/components/parameters/type"
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/holderID"
-      - $ref: "#/components/parameters/partnerID"
-    post:
-      summary: Cadastrar endereço do socio 
-      tags:
-        - Credenciamento sócio
-      requestBody:
-        content:
-          image/jpeg:
-            schema:
-              type: string
-              format: binary
-        required: true
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DocumentsHolderResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "bad_request"
-                  type:
-                    type: string
-                    example: "invalid_request"
-                  message:
-                    type: string
-                    example: "Validation document format"
-                  category:
-                    type: string
-                    example: "business"
-                  status_code:
-                    type: number
-                    example: 400
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound404'
-        '412':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "pre_condition_failed"
-                  type:
-                    type: string
-                    example: "invalid_request"
-                  message:
-                    type: string
-                    example: "It is not possible to add documents to the partner due to the holder status. Contact support to make this request."
-                  category:
-                    type: string
-                    example: "business"
-                  status_code:
-                    type: number
-                    example: 412
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound500'
-    get:
-      summary: Consultar telefone do sócio 
-      tags:
-        - Credenciamento sócio
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                   _embedded:
-                     type: object
-                     properties:
-                       documents:
-                         type: array
-                         items:
-                           $ref: '#/components/schemas/Links'
-                   _links:
-                       $ref: '#/components/schemas/LinksDocs'
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/holders/{holder_id}/partners/{partner_id}/documents/{documents_id}":
-    parameters:
-      - $ref: "#/components/parameters/type"
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/holderID"
-      - $ref: "#/components/parameters/partnerID"
-      - $ref: "#/components/parameters/documentID"
-    get:
-      summary: Consultar documentos do sócio por ID 
-      tags:
-        - Credenciamento sócio
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DocumentsPartnerResponse'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound500'
-    delete:
-      summary: Apagar documentos do sócio por ID 
-      tags:
-        - Credenciamento sócio
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Document removed successfully"
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "bad_request"
-                  type:
-                    type: string
-                    example: "invalid_request"
-                  message:
-                    type: string
-                    example: "Invalid document owner"
-                  category:
-                    type: string
-                    example: "business"
-                  status_code:
-                    type: number
-                    example: 400
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "not_found"
-                  type:
-                    type: string
-                    example: "invalid_request"
-                  message:
-                    type: string
-                    example: "Document not found"
-                  category:
-                    type: string
-                    example: "business"
-                  status_code:
-                    type: number
-                    example: 404
-        '412':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "pre_condition_failed"
-                  type:
-                    type: string
-                    example: "invalid_request"
-                  message:
-                    type: string
-                    example: "It is not possible to add documents to the partner due to the holder status. Contact support to make this request."
-                  category:
-                    type: string
-                    example: "business"
-                  status_code:
-                    type: number
-                    example: 412
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageNotFound500'
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/cbos":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/pageID"
-      - $ref: "#/components/parameters/sizeID"
-    get:
-      summary: Consultar CBO 
-      tags:
-        - Informações complementares
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                  $ref: '#/components/schemas/IndividualHolderResponse'
-  "/v2/marketplaces/{marketplace_id}/banking/accreditation/cnaes":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/pageID"
-      - $ref: "#/components/parameters/sizeID"
-    get:
-      summary: Consultar CNAEs 
-      tags:
-        - Informações complementares
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                  $ref: '#/components/schemas/IndividualHolderResponse'
-  "/v2/marketplaces/{marketplace_id}/holders/{holder_id}/accounts":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/holderID"
-    post:
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-      summary: Criação de conta digital 
-      tags:
-        - Contas
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AccountHolderRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DigitalAccountResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "bad_request"
-                  type:
-                    type: string
-                    example: "invalid_request"
-                  message:
-                    type: string
-                    example: "Invalid JSON"
-                  category:
-                    type: string
-                    example: "business"
-                  status_code:
-                    type: number
-                    example: 400
-    get:
-      parameters:
-        - $ref: "#/components/parameters/marketplaceID"
-        - $ref: "#/components/parameters/holderID"
-        - $ref: "#/components/parameters/limitID"
-        - $ref: "#/components/parameters/offsetID"
-      summary: Consultar contas do portador 
-      tags:
-        - Contas
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  items:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/DigitalAccountResponse'
-                  page: 
-                    type: object
-                    properties:
-                      has_more:
-                        type: boolean
-                        example: true
-                      limit:
-                        type: number
-                        example: 1
-                      total_pages:
-                        type: number
-                        example: 100
-                      page:
-                        type: number
-                        example: 0
-                      offset:
-                        type: number
-                        example: 0
-                      total:
-                        type: number
-                        example: 150
-                      query_count:
-                        type: number
-                        example: 150
-  "/v2/marketplaces/{marketplace_id}/accounts":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/offsetID"
-      - $ref: "#/components/parameters/limitID"
-    get:
-      summary: Listagem de contas digitais do marketplace
-      tags:
-        - Contas
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  items:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/DigitalAccountResponse'
-                  page: 
-                    type: object
-                    properties:
-                      has_more:
-                        type: boolean
-                        example: true
-                      limit:
-                        type: number
-                        example: 1
-                      total_pages:
-                        type: number
-                        example: 100
-                      page:
-                        type: number
-                        example: 0
-                      offset:
-                        type: number
-                        example: 0
-                      total:
-                        type: number
-                        example: 150
-                      query_count:
-                        type: number
-                        example: 150
-  "/v2/marketplaces/{marketplace_id}/accounts/{account_id}":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
       - $ref: "#/components/parameters/accountID"
     get:
-      summary: Recuperar detalhes de uma conta digital 
+      summary: Listar cartões físicos de uma conta
       tags:
-        - Contas
+        - Cartão Físico
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DigitalAccountResponse'
+                $ref: '#/components/schemas/CardActivationResponse'
+
+  "/v3/marketplaces/{marketplace_id}/holders/{holder_id}/cards/requests/virtual":
+    post:
+      summary: Realizar Pedido de Cartão Virtual
+      tags:
+        - Cartão Virtual
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/VirtualCardHolderRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VirtualCardHolderResponse'
         '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "not_found"
-                  type:
-                    type: string
-                    example: "invalid_request"
-                  message:
-                    type: string
-                    example: "Account with status active and id 0162893710a6495e86542eeff192baa1 not found in marketplace ceaeaa4a-f6d6-4d2d-a22a-da2944ceead6"
-                  category:
-                    type: string
-                    example: "business"
-                  status_code:
-                    type: number
-                    example: 404
-  "/v2/marketplaces/{marketplace_id}/accounts/{account_id}/operations":
-    parameters:
-      - $ref: "#/components/parameters/marketplaceID"
-      - $ref: "#/components/parameters/accountID"
-      - $ref: "#/components/parameters/typeOpID"
-      - $ref: "#/components/parameters/created_date_rangeID"
-      - $ref: "#/components/parameters/created_date_rangeGTID"
-      - $ref: "#/components/parameters/created_date_rangeLTID"
-      - $ref: "#/components/parameters/created_date_rangeGTEID"
-      - $ref: "#/components/parameters/created_date_rangeLTEID"
-      - $ref: "#/components/parameters/offsetID"
-      - $ref: "#/components/parameters/limitID"
-    get:
-      summary: Extrato de operações por conta 
+          description: Not Found - O marketplaceId ou holderId ou política de embossamento não foram encontrados
+  "/v3/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/activate/virtual":
+    post:
+      summary: Ativar cartão 
       tags:
-        - Contas
+        - Cartão Virtual
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  resource:
-                    type: string
-                    example: "list"
-                  uri:
-                    type: string
-                    example: "/v2/marketplaces/303102c1161c450f94d72b30f9903f89/accounts/496a00f3ab5b4fe7ac8351d449e5fd1f/operations"
-                  items:
-                    type: object
-                    properties:
-                      20209-08-14:
-                        type: array
-                        items: 
-                          $ref: '#/components/schemas/BalanceAccountResponse'
-                      
-                  has_more:
-                    type: boolean
-                    example: false
-                  limit:
-                    type: number
-                    example: 1
-                  total_pages:
-                    type: number
-                    example: 1
-                  page:
-                    type: number
-                    example: 1
-                  offset:
-                    type: number
-                    example: 0
-                  total:
-                    type: number
-                    example: 1
-                  query_count:
-                    type: number
-                    example: 1
+                $ref: '#/components/schemas/VirtualCardActivationHolderResponse'
+        '404':
+          description: Not Found - O marketplaceId ou holderId ou política de embossamento não foram encontrados
+        '412':
+          description: Precondition Failed - Uma condição prévia falhou, como uma conta bancária inválida ou o cartão não estava no status PENDING ao chamar o endpoint
+  "/v3/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/cancel/virtual":
+    post:
+      summary: Cancelar um cartão 
+      tags:
+        - Cartão Virtual
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                observation:
+                  type: string
+                  description: Motivo do bloqueio (máximo 100 caracteres).
 
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VirtualCardCancelHolderResponse'
+        '400':
+          description: Bad Request - requisição não conter o body de requisição
+        '404':
+          description: Not Found - O marketplaceId, holderId ou o externalKey não representam um cartão virtual
+        '412':
+          description: Precondition Failed - Uma pré-condição falhou, como o cartão estando em um estado que não pode ser cancelado
+  "/v3/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/block/virtual":
+    post:
+      summary: Bloquear um cartão 
+      tags:
+        - Cartão Virtual
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                observation:
+                  type: string
+                  description: Motivo do bloqueio (máximo 100 caracteres).
 
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VirtualCardBlockHolderResponse'
+        '400':
+          description: Bad Request - requisição não conter o body de requisição
+        '404':
+          description: Not Found - O marketplaceId, holderId ou o externalKey não representam um cartão virtual
+        '412':
+          description: Precondition Failed - Uma pré-condição falhou, como o cartão estando em um estado que não pode ser cancelado
+  "/v3/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/unblock/virtual":
+    post:
+      summary: Desbloquear um cartão 
+      tags:
+        - Cartão Virtual
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                observation:
+                  type: string
+                  description: Motivo do bloqueio (máximo 100 caracteres).
+
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VirtualCardActivationHolderResponse'
+        '400':
+          description: Bad Request - requisição não conter o body de requisição
+        '404':
+          description: Not Found - O marketplaceId, holderId ou o externalKey não representam um cartão virtual
+        '412':
+          description: Precondition Failed - Uma pré-condição falhou, como o cartão estando em um estado que não pode ser cancelado
+  "/v3/marketplaces/{marketplace_id}/holders/{holder_id}/cards/{externalKey}/virtual":
+    get:
+      summary: Buscar cartão 
+      tags:
+        - Cartão Virtual
+      parameters:
+        - $ref: "#/components/parameters/marketplaceID"
+        - $ref: "#/components/parameters/holderID"
+        - $ref: "#/components/parameters/externalKEY"
+
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VirtualCardListResponse'
+        '400':
+          description: Bad Request - requisição não conter o body de requisição
+        '404':
+          description: Not Found - O marketplaceId, holderId ou o externalKey não representam um cartão virtual
+        '412':
+          description: Precondition Failed - Uma pré-condição falhou, como o cartão estando em um estado que não pode ser cancelado
+
+          
 
 components:
   securitySchemes:
@@ -3186,6 +1968,244 @@ components:
         product_id:
           type: string
           example: "1010"
+
+    VirtualCardHolderRequest:
+      required:
+        - address_id
+        - phone_id
+        - account_id
+        - printed_card_nam
+      type: object
+      properties:
+        account_id:
+          type: string
+          example: "825ae4c8d132402e858bbdf5031108fd"
+          description: "ID da conta do holder."
+        address_id:
+          type: string
+          example: "9cfee57804574dd0a5de65357f69ac55"
+          description: "ID do endereço do holder."
+        card_type:
+          type: string
+          example: "string"
+          description: "Tipo de cartão."
+        embossing_policy_id:
+          type: string
+          example: 037d9fe32bab48ff815c34bd5deda824
+        phone_id:
+          type: string
+          example: "508ed1dc69fd492fb0f295ab0e73c2f4"
+          description: "ID do telefone do holder."
+        printed_card_nam:
+          type: string
+          example: "Maria da Silva"
+          description: "Nome a ser impresso no cartão (máximo de 20 caracteres)."
+    VirtualCardHolderResponse:
+      type: object
+      properties:
+        external_key:
+          type: string
+          example: "037d9fe32bab48ff815c26bd5deda824"
+        account_id:
+          type: string
+          example: "bc0f948a02ee452da75f51db3fc04bd0"
+        holder_id:
+          type: string
+          example: "a6d7c42c661b4e76bd6b77a9c09e82e1"
+        marketplace_id:
+          type: string
+          example: "f8c2bfb884e4486c8e0eee15be5c3ab1"
+        printed_card_name:
+          type: string
+          example: "Maria da Silva"
+        status:
+          type: string
+          example: "PENDING"
+        created_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        updated_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        uri:
+          type: string
+          example: "/marketplaces/f8c2bfb8-84e4-486c-8e0e-ee15be5c3ab1/holders/a6d7c42c-661b-4e76-bd6b-77a9c09e82e1/cards/037d9fe3-2bab-48ff-815c-26bd5deda824"
+        embossing_policy_id:
+          type: string
+          example: 037d9fe32bab48ff815c34bd5deda824
+        card_type:
+          type: string
+          example: "VIRTUAL"
+          description: "Tipo de cartão."
+    VirtualCardActivationHolderResponse:
+      type: object
+      properties:
+        external_key:
+          type: string
+          example: "037d9fe32bab48ff815c26bd5deda824"
+        account_id:
+          type: string
+          example: "bc0f948a02ee452da75f51db3fc04bd0"
+        holder_id:
+          type: string
+          example: "a6d7c42c661b4e76bd6b77a9c09e82e1"
+        marketplace_id:
+          type: string
+          example: "f8c2bfb884e4486c8e0eee15be5c3ab1"
+        pan:
+          type: string
+          example: "4475********3676"
+        expiration_date:
+          type: string
+          example: "2026-12-31"
+        status:
+          type: string
+          example: "ACTIVE"
+        created_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        updated_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        uri:
+          type: string
+          example: "/marketplaces/f8c2bfb8-84e4-486c-8e0e-ee15be5c3ab1/holders/a6d7c42c-661b-4e76-bd6b-77a9c09e82e1/cards/037d9fe3-2bab-48ff-815c-26bd5deda824"
+        embossing_policy_id:
+          type: string
+          example: 037d9fe32bab48ff815c34bd5deda824
+        card_type:
+          type: string
+          example: "VIRTUAL"
+          description: "Tipo de cartão."
+    VirtualCardCancelHolderResponse:
+      type: object
+      properties:
+        external_key:
+          type: string
+          example: "037d9fe32bab48ff815c26bd5deda824"
+        account_id:
+          type: string
+          example: "bc0f948a02ee452da75f51db3fc04bd0"
+        holder_id:
+          type: string
+          example: "a6d7c42c661b4e76bd6b77a9c09e82e1"
+        marketplace_id:
+          type: string
+          example: "f8c2bfb884e4486c8e0eee15be5c3ab1"
+        pan:
+          type: string
+          example: "4475********3676"
+        expiration_date:
+          type: string
+          example: "2026-12-31"
+        status:
+          type: string
+          example: "CANCELLED"
+        created_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        updated_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        uri:
+          type: string
+          example: "/marketplaces/f8c2bfb8-84e4-486c-8e0e-ee15be5c3ab1/holders/a6d7c42c-661b-4e76-bd6b-77a9c09e82e1/cards/037d9fe3-2bab-48ff-815c-26bd5deda824"
+        embossing_policy_id:
+          type: string
+          example: 037d9fe32bab48ff815c34bd5deda824
+        card_type:
+          type: string
+          example: "VIRTUAL"
+          description: "Tipo de cartão."
+    VirtualCardBlockHolderResponse:
+      type: object
+      properties:
+        external_key:
+          type: string
+          example: "037d9fe32bab48ff815c26bd5deda824"
+        account_id:
+          type: string
+          example: "bc0f948a02ee452da75f51db3fc04bd0"
+        holder_id:
+          type: string
+          example: "a6d7c42c661b4e76bd6b77a9c09e82e1"
+        marketplace_id:
+          type: string
+          example: "f8c2bfb884e4486c8e0eee15be5c3ab1"
+        pan:
+          type: string
+          example: "4475********3676"
+        expiration_date:
+          type: string
+          example: "2026-12-31"
+        status:
+          type: string
+          example: "BLOCKED"
+        created_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        updated_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        uri:
+          type: string
+          example: "/marketplaces/f8c2bfb8-84e4-486c-8e0e-ee15be5c3ab1/holders/a6d7c42c-661b-4e76-bd6b-77a9c09e82e1/cards/037d9fe3-2bab-48ff-815c-26bd5deda824"
+        embossing_policy_id:
+          type: string
+          example: 037d9fe32bab48ff815c34bd5deda824
+        card_type:
+          type: string
+          example: "VIRTUAL"
+          description: "Tipo de cartão."
+    VirtualCardListResponse:
+      type: object
+      properties:
+        external_key:
+          type: string
+          example: "037d9fe32bab48ff815c26bd5deda824"
+        account_id:
+          type: string
+          example: "bc0f948a02ee452da75f51db3fc04bd0"
+        holder_id:
+          type: string
+          example: "a6d7c42c661b4e76bd6b77a9c09e82e1"
+        marketplace_id:
+          type: string
+          example: "f8c2bfb884e4486c8e0eee15be5c3ab1"
+        pan:
+          type: string
+          example: "4475********3676"
+        status:
+          type: string
+          example: "ACTIVE"
+        created_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        updated_at:
+          type: string
+          example: "2020-11-06T12:54:11.336975"
+        uri:
+          type: string
+          example: "/marketplaces/f8c2bfb8-84e4-486c-8e0e-ee15be5c3ab1/holders/a6d7c42c-661b-4e76-bd6b-77a9c09e82e1/cards/037d9fe3-2bab-48ff-815c-26bd5deda824"
+        embossing_policy_id:
+          type: string
+          example: 037d9fe32bab48ff815c34bd5deda824
+        card_type:
+          type: string
+          example: "VIRTUAL"
+          description: "Tipo de cartão."
+        expiration_date:
+          type: string
+          example: "2026-12-31"
+        cvv:
+          type: string
+          example: "051"
+        card_number:
+          type: string
+          example: "4475590003414867"
+        plastic_name:
+          type: string
+          example: "EXAMPLECARDTWO"
 
 
     Message400Holder:

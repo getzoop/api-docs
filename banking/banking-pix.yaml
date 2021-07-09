@@ -70,7 +70,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/DictKeyResponse404'
         '412':
-          description: Not Found
+          description: Precondition Failed
           content:
             application/json:
               schema:
@@ -124,8 +124,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/DictKeyResponse400'
+                  $ref: '#/components/schemas/DictKeyResponse400'
   "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/entries/{entry_id}/ownership":
     post:
       parameters:
@@ -208,7 +207,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/DictKeyResponse404'
         '412':
-          description: Not Found
+          description: Precondition Failed
           content:
             application/json:
               schema:
@@ -275,7 +274,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/DictKeyResponse404'
         '412':
-          description: Not Found
+          description: Precondition Failed
           content:
             application/json:
               schema:
@@ -551,7 +550,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/DictKeyResponse404'
         '412':
-          description: Not Found
+          description: Precondition Failed
           content:
             application/json:
               schema:
@@ -604,7 +603,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PixTransferError404Response'
         '412':
-          description: Not Found
+          description: Precondition Failed
           content:
             application/json:
               schema:
@@ -674,7 +673,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PixTransferError404Response'
         '412':
-          description: Not Found
+          description: Precondition Failed
           content:
             application/json:
               schema:
@@ -755,7 +754,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/pixRefundResponse'
-
 
 components:
   securitySchemes:
