@@ -159,27 +159,12 @@ paths:
       responses:
         '200':
           description: OK
-        "400": {
-          "description": "Bad Request",
-          "content": {
-            "application/json": { 
-              "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": '#/components/schemas/DictKeyResponse400'},
-                    {
-                      "$ref": '#/components/schemas/DictKeyResponse4002'},
-                    {
-                      "$ref": '#/components/schemas/DictKeyResponse4003'},
-                    {
-                      "$ref": '#/components/schemas/DictKeyResponse4004'},
-                    {
-                      "$ref": '#/components/schemas/DictKeyResponse4005'}
-                ]
-              }
-            }
-          }
-        }
+        '400': 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/DictKeyResponse400'
         '404':
           description: Not Found
           content:
@@ -1143,10 +1128,10 @@ components:
       properties:
         code:
           type: string
-          example: "1000"
+          example: "1000  // 1002 // 1003  // 1004  // 1005"
         message:
           type: string
-          example: "Account Id is required"
+          example: "Account Id is required  // Key value is not a valid email format // Key of type phone must have 14 characters for its value  // Key value is required for phone or email types  // Key type is no compatible with claim type  // Key value must not be informed for national_registration or evp types "
     DictKeyResponse4001:
       type: object
       properties:
