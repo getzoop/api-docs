@@ -62,12 +62,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/DictKeyResponse400'
-                  - $ref: '#/components/schemas/DictKeyResponse4002'
-                  - $ref: '#/components/schemas/DictKeyResponse4003'
-                  - $ref: '#/components/schemas/DictKeyResponse4004'
-                  - $ref: '#/components/schemas/DictKeyResponse4005'
+                $ref: '#/components/schemas/DictKeyResponse400'
         '404':
           description: Not Found
           content:
@@ -735,16 +730,10 @@ paths:
       summary: Listar devoluções Pix 
       tags:
         - Pagamentos
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-                $ref: '#/components/schemas/pixRefundRequest'
       responses:
         '200':
           description: OK 
-  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/payments/{transaction_id}/refunds/{refunds_id}":
+  "/v3/marketplaces/{marketplace_id}/bankig/dict/holders/{holder_id}/accounts/{account_id}/payments/{transaction_id}/refunds/{refund_id}":
     get:
       parameters:
         - $ref: "#/components/parameters/marketplaceID"
@@ -1132,51 +1121,6 @@ components:
         message:
           type: string
           example: "Account Id is required  // Key value is not a valid email format // Key of type phone must have 14 characters for its value  // Key value is required for phone or email types  // Key type is no compatible with claim type  // Key value must not be informed for national_registration or evp types "
-    DictKeyResponse4001:
-      type: object
-      properties:
-        code:
-          type: string
-          example: "1001"
-        message:
-          type: string
-          example: "Key value is not a valid email format"
-    DictKeyResponse4002:
-      type: object
-      properties:
-        code:
-          type: string
-          example: "1002"
-        message:
-          type: string
-          example: "Key of type phone must have 14 characters for its value"
-    DictKeyResponse4003:
-      type: object
-      properties:
-        code:
-          type: string
-          example: "1003"
-        message:
-          type: string
-          example: "Key value is required for phone or email types"
-    DictKeyResponse4004:
-      type: object
-      properties:
-        code:
-          type: string
-          example: "1004"
-        message:
-          type: string
-          example: "Key type is no compatible with claim type"
-    DictKeyResponse4005:
-      type: object
-      properties:
-        code:
-          type: string
-          example: "1005"
-        message:
-          type: string
-          example: "Key value must not be informed for national_registration or evp types"
     DictKeyResponse404:
       type: object
       properties:
