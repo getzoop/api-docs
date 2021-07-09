@@ -1017,7 +1017,7 @@ components:
       type: object
       properties:
         id:
-          example: "29b0000cb501400ea6c3f21b24ef251c"
+          default: "29b0000cb501400ea6c3f21b24ef251c"
         status:
           example: "active"
         created_at:
